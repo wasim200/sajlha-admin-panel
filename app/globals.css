@@ -51,3 +51,5 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-gold-cream);
 }
+
+/* Force dark theme rebuild */
