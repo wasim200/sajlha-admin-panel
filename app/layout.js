@@ -1,6 +1,6 @@
 export const metadata = {
-  title: 'لوحة تحكم سجلها الفاخرة | Sajlha Admin',
-  description: 'إدارة التراخيص والمشتركين والعمليات',
+  title: 'سجلها - تطبيق المحاسبة وإدارة الديون الذكي للمحلات',
+  description: 'سجلها هو تطبيق المحاسبة الأسهل لإدارة ديون العملاء والفواتير بالذكاء الاصطناعي وبدون إنترنت. مزامنة سحابية آمنة على Google Drive وتنبيهات واتساب و SMS.',
 };
 
 export default function RootLayout({ children }) {
@@ -12,8 +12,8 @@ export default function RootLayout({ children }) {
         <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
         <style>{`
           body {
-            background-color: #fafafc;
-            color: #1e293b;
+            background-color: #0b0c10;
+            color: #e2e8f0;
             margin: 0;
             padding: 0;
             box-sizing: border-box;
