@@ -247,14 +247,13 @@ export default function AdminPage() {
   return (
     <div className="app-wrapper">
       <style>{`
-        /* الهوية البصرية الفاخرة: حجري داكن وذهبي كريمي */
+        /* الهوية البصرية المطابقة للتطبيق: حجري كحلي مع خلفية كريمية فاتحة وذهبي فاخر */
         .app-wrapper {
           min-height: 100vh;
-          background-color: #0b0c10;
-          color: #e2e8f0;
+          background-color: #f4f5f8;
+          color: #1e2235;
           direction: rtl;
           font-family: 'Cairo', sans-serif;
-          font-display: swap;
         }
 
         /* شاشة الدخول */
@@ -264,28 +263,27 @@ export default function AdminPage() {
           align-items: center;
           min-height: 100vh;
           padding: 20px;
-          background-color: #090a0e;
+          background-color: #f4f5f8;
         }
         .login-card {
-          background-color: #11131e;
-          border: 1px solid rgba(213, 176, 117, 0.15);
+          background-color: #ffffff;
+          border: 1.5px solid rgba(198, 164, 106, 0.2);
           border-radius: 24px;
           padding: 44px;
           width: 100%;
           max-width: 400px;
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+          box-shadow: 0 15px 35px rgba(30, 34, 53, 0.05);
           text-align: center;
         }
         .logo-title {
-          color: #d5b075;
+          color: #c6a46a;
           font-size: 32px;
           font-weight: 900;
           margin-bottom: 6px;
           letter-spacing: 0.5px;
-          text-shadow: 0 4px 10px rgba(213, 176, 117, 0.15);
         }
         .logo-subtitle {
-          color: #94a3b8;
+          color: #64748b;
           font-size: 14px;
           margin-bottom: 34px;
           font-weight: 600;
@@ -299,49 +297,50 @@ export default function AdminPage() {
         .form-label {
           display: block;
           font-size: 13.5px;
-          color: #cbd5e1;
+          color: #475569;
           margin-bottom: 8px;
           font-weight: 700;
         }
         .form-input, .form-select {
           width: 100%;
           padding: 12px 16px;
-          background-color: #181b28;
-          border: 1.5px solid rgba(213, 176, 117, 0.12);
+          background-color: #f8f9fa;
+          border: 1.5px solid rgba(226, 232, 240, 0.8);
           border-radius: 12px;
-          color: #ffffff;
+          color: #1e2235;
           font-family: 'Cairo', sans-serif;
           font-size: 14px;
           box-sizing: border-box;
           transition: all 0.25s ease-in-out;
         }
         .form-input::placeholder {
-          color: #64748b;
+          color: #94a3b8;
         }
         .form-input:focus, .form-select:focus {
           outline: none;
-          border-color: #d5b075;
-          box-shadow: 0 0 0 3.5px rgba(213, 176, 117, 0.15);
+          border-color: #c6a46a;
+          box-shadow: 0 0 0 3.5px rgba(198, 164, 106, 0.15);
         }
 
         /* الأزرار الفاخرة */
         .btn-primary {
           width: 100%;
           padding: 14px;
-          background: linear-gradient(135deg, #d5b075, #bca374);
-          color: #0b0c10;
+          background-color: #c6a46a;
+          color: #ffffff;
           border: none;
           border-radius: 12px;
           font-size: 14.5px;
-          font-weight: 700;
+          font-weight: 800;
           font-family: 'Cairo', sans-serif;
           cursor: pointer;
-          box-shadow: 0 4px 14px rgba(213, 176, 117, 0.25);
+          box-shadow: 0 4px 14px rgba(198, 164, 106, 0.3);
           transition: all 0.25s ease-in-out;
         }
         .btn-primary:hover {
           transform: translateY(-1.5px);
-          box-shadow: 0 6px 20px rgba(213, 176, 117, 0.35);
+          box-shadow: 0 6px 20px rgba(198, 164, 106, 0.45);
+          background-color: #bfa063;
         }
 
         /* شاشة الإدارة الهيكلية */
@@ -355,30 +354,29 @@ export default function AdminPage() {
           justify-content: space-between;
           align-items: center;
           margin-bottom: 30px;
-          border-bottom: 1px solid rgba(213, 176, 117, 0.15);
+          border-bottom: 1.5px solid rgba(198, 164, 106, 0.2);
           padding-bottom: 24px;
         }
         .header-title-container {
-          border-right: 4px solid #d5b075;
+          border-right: 4px solid #c6a46a;
           padding-right: 18px;
         }
         .header-title {
           font-size: 26px;
           font-weight: 900;
-          color: #ffffff;
+          color: #1e2235;
           margin: 0;
-          text-shadow: 0 2px 6px rgba(213, 176, 117, 0.1);
         }
         .header-subtitle {
           font-size: 13.5px;
-          color: #94a3b8;
+          color: #64748b;
           margin-top: 4px;
           font-weight: 600;
         }
         .btn-logout {
-          background-color: rgba(239, 68, 68, 0.1);
+          background-color: #fdf2f2;
           color: #ef4444;
-          border: 1px solid rgba(239, 68, 68, 0.2);
+          border: 1px solid rgba(239, 68, 68, 0.15);
           padding: 10px 20px;
           border-radius: 10px;
           font-family: 'Cairo', sans-serif;
@@ -388,11 +386,11 @@ export default function AdminPage() {
           transition: all 0.2s;
         }
         .btn-logout:hover {
-          background-color: rgba(239, 68, 68, 0.2);
+          background-color: #fde8e8;
           transform: translateY(-1px);
         }
 
-        /* شبكة الإحصائيات المتقدمة الحجرية الذهبية */
+        /* شبكة الإحصائيات المتقدمة الكلاسيكية */
         .advanced-stats-grid {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -400,21 +398,21 @@ export default function AdminPage() {
           margin-bottom: 30px;
         }
         .stat-card-advanced {
-          background: #11131e;
-          border: 1px solid rgba(213, 176, 117, 0.08);
+          background: #ffffff;
+          border: 1px solid rgba(226, 232, 240, 0.8);
           border-radius: 20px;
           padding: 22px;
           display: flex;
           flex-direction: column;
-          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+          box-shadow: 0 10px 20px rgba(30, 34, 53, 0.02);
           transition: all 0.25s ease;
           position: relative;
           overflow: hidden;
         }
         .stat-card-advanced:hover {
           transform: translateY(-3px);
-          box-shadow: 0 15px 30px rgba(0, 0, 0, 0.35);
-          border-color: rgba(213, 176, 117, 0.3);
+          box-shadow: 0 15px 30px rgba(198, 164, 106, 0.08);
+          border-color: rgba(198, 164, 106, 0.25);
         }
         .stat-card-advanced::after {
           content: "";
@@ -425,7 +423,7 @@ export default function AdminPage() {
           height: 4px;
           background: transparent;
         }
-        .stat-card-advanced.primary::after { background: #d5b075; }
+        .stat-card-advanced.primary::after { background: #c6a46a; }
         .stat-card-advanced.success::after { background: #10b981; }
         .stat-card-advanced.warning::after { background: #f59e0b; }
         .stat-card-advanced.danger::after { background: #ef4444; }
@@ -450,22 +448,22 @@ export default function AdminPage() {
         .stat-val-big {
           font-size: 32px;
           font-weight: 800;
-          color: #ffffff;
+          color: #1e2235;
           line-height: 1;
           margin-bottom: 4px;
         }
         .stat-lbl-small {
           font-size: 12.5px;
-          color: #94a3b8;
+          color: #64748b;
           font-weight: 700;
         }
 
-        /* التبويبات الفاخرة */
+        /* التبويبات الفاخرة الملونة */
         .tabs-header {
           display: flex;
           gap: 12px;
           margin-bottom: 20px;
-          border-bottom: 2px solid rgba(213, 176, 117, 0.15);
+          border-bottom: 2px solid rgba(198, 164, 106, 0.2);
           padding-bottom: 2px;
         }
         .tab-button {
@@ -475,17 +473,16 @@ export default function AdminPage() {
           font-family: 'Cairo', sans-serif;
           font-size: 14.5px;
           font-weight: 700;
-          color: #94a3b8;
+          color: #64748b;
           cursor: pointer;
           position: relative;
           transition: all 0.2s;
         }
         .tab-button:hover {
-          color: #ffffff;
+          color: #1e2235;
         }
         .tab-button.active {
-          color: #d5b075;
-          text-shadow: 0 0 8px rgba(213, 176, 117, 0.2);
+          color: #c6a46a;
         }
         .tab-button.active::after {
           content: "";
@@ -494,17 +491,17 @@ export default function AdminPage() {
           left: 0;
           right: 0;
           height: 4px;
-          background-color: #d5b075;
+          background-color: #c6a46a;
           border-radius: 2px;
         }
 
         /* الكروت والبطاقات */
         .card {
-          background-color: #11131e;
-          border: 1px solid rgba(213, 176, 117, 0.08);
+          background-color: #ffffff;
+          border: 1px solid rgba(226, 232, 240, 0.8);
           border-radius: 24px;
           padding: 30px;
-          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+          box-shadow: 0 10px 20px rgba(30, 34, 53, 0.02);
         }
         .card-title-bar {
           display: flex;
@@ -515,9 +512,9 @@ export default function AdminPage() {
         .card-title {
           font-size: 17.5px;
           font-weight: 800;
-          color: #ffffff;
+          color: #1e2235;
           margin: 0;
-          border-right: 4px solid #d5b075;
+          border-right: 4px solid #c6a46a;
           padding-right: 12px;
         }
 
@@ -548,31 +545,31 @@ export default function AdminPage() {
           font-size: 14px;
         }
         .license-table th {
-          color: #94a3b8;
+          color: #64748b;
           font-weight: 700;
           padding: 8px 16px;
         }
         .license-table td {
           padding: 16px 16px;
-          background-color: #161824;
-          border-top: 1px solid rgba(213, 176, 117, 0.05);
-          border-bottom: 1px solid rgba(213, 176, 117, 0.05);
+          background-color: #ffffff;
+          border-top: 1px solid rgba(226, 232, 240, 0.8);
+          border-bottom: 1px solid rgba(226, 232, 240, 0.8);
           vertical-align: middle;
-          color: #cbd5e1;
+          color: #475569;
         }
         .license-table td:first-child {
-          border-right: 1px solid rgba(213, 176, 117, 0.05);
+          border-right: 1px solid rgba(226, 232, 240, 0.8);
           border-top-right-radius: 12px;
           border-bottom-right-radius: 12px;
         }
         .license-table td:last-child {
-          border-left: 1px solid rgba(213, 176, 117, 0.05);
+          border-left: 1px solid rgba(226, 232, 240, 0.8);
           border-top-left-radius: 12px;
           border-bottom-left-radius: 12px;
         }
         .license-table tr:hover td {
-          background-color: #1d2031;
-          border-color: rgba(213, 176, 117, 0.2);
+          background-color: #fafbfd;
+          border-color: rgba(198, 164, 106, 0.2);
         }
 
         .status-badge {
@@ -584,19 +581,19 @@ export default function AdminPage() {
           font-weight: 700;
         }
         .status-active {
-          background-color: rgba(16, 185, 129, 0.1);
-          color: #34d399;
-          border: 1px solid rgba(16, 185, 129, 0.25);
+          background-color: rgba(16, 185, 129, 0.08);
+          color: #10b981;
+          border: 1px solid rgba(16, 185, 129, 0.2);
         }
         .status-suspended {
-          background-color: rgba(239, 68, 68, 0.1);
-          color: #f87171;
-          border: 1px solid rgba(239, 68, 68, 0.25);
+          background-color: rgba(239, 68, 68, 0.08);
+          color: #ef4444;
+          border: 1px solid rgba(239, 68, 68, 0.2);
         }
         .status-expired {
-          background-color: rgba(245, 158, 11, 0.1);
-          color: #fbbf24;
-          border: 1px solid rgba(245, 158, 11, 0.25);
+          background-color: rgba(245, 158, 11, 0.08);
+          color: #f59e0b;
+          border: 1px solid rgba(245, 158, 11, 0.2);
         }
 
         .actions-cell {
@@ -616,44 +613,44 @@ export default function AdminPage() {
           transition: all 0.15s ease-in-out;
         }
         .btn-status-toggle {
-          background-color: rgba(255, 255, 255, 0.05);
-          color: #e2e8f0;
-          border-color: rgba(255, 255, 255, 0.1);
+          background-color: #f1f5f9;
+          color: #475569;
+          border-color: #cbd5e1;
         }
         .btn-status-toggle:hover {
-          background-color: rgba(255, 255, 255, 0.1);
+          background-color: #e2e8f0;
         }
         .btn-extend {
-          background-color: rgba(213, 176, 117, 0.1);
-          color: #d5b075;
-          border-color: rgba(213, 176, 117, 0.25);
+          background-color: rgba(198, 164, 106, 0.08);
+          color: #c6a46a;
+          border-color: rgba(198, 164, 106, 0.2);
         }
         .btn-extend:hover {
-          background-color: rgba(213, 176, 117, 0.18);
+          background-color: rgba(198, 164, 106, 0.15);
         }
         .btn-delete {
-          background-color: rgba(239, 68, 68, 0.1);
-          color: #f87171;
-          border-color: rgba(239, 68, 68, 0.2);
+          background-color: #fdf2f2;
+          color: #ef4444;
+          border-color: rgba(239, 68, 68, 0.15);
         }
         .btn-delete:hover {
-          background-color: rgba(239, 68, 68, 0.18);
+          background-color: #fde8e8;
         }
 
         .device-info {
           font-size: 11.5px;
-          color: #94a3b8;
+          color: #64748b;
           font-family: monospace;
-          background-color: #12131c;
+          background-color: #f8f9fa;
           padding: 4px 8px;
           border-radius: 6px;
-          border: 1px solid rgba(213, 176, 117, 0.05);
+          border: 1px solid rgba(226, 232, 240, 0.8);
         }
 
         .error-msg {
-          background-color: rgba(239, 68, 68, 0.1);
+          background-color: #fdf2f2;
           border: 1px solid rgba(239, 68, 68, 0.25);
-          color: #f87171;
+          color: #ef4444;
           padding: 12px 16px;
           border-radius: 12px;
           font-size: 13px;
@@ -670,7 +667,7 @@ export default function AdminPage() {
           left: 0;
           right: 0;
           bottom: 0;
-          background-color: rgba(0, 0, 0, 0.7);
+          background-color: rgba(30, 34, 53, 0.6);
           backdrop-filter: blur(4px);
           display: flex;
           justify-content: center;
@@ -679,13 +676,13 @@ export default function AdminPage() {
           animation: fadeIn 0.25s ease-out;
         }
         .modal-container {
-          background-color: #11131e;
-          border: 1.5px solid rgba(213, 176, 117, 0.2);
+          background-color: #ffffff;
+          border: 1.5px solid rgba(198, 164, 106, 0.2);
           border-radius: 24px;
           padding: 34px;
           width: 100%;
           max-width: 480px;
-          box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+          box-shadow: 0 25px 50px rgba(30, 34, 53, 0.1);
           position: relative;
           animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
@@ -701,12 +698,12 @@ export default function AdminPage() {
           transition: color 0.15s;
         }
         .modal-close-btn:hover {
-          color: #ffffff;
+          color: #1e2235;
         }
 
         .license-result {
-          background-color: rgba(16, 185, 129, 0.05);
-          border: 1.5px dashed #d5b075;
+          background-color: #fefcf8;
+          border: 1.5px dashed #c6a46a;
           border-radius: 12px;
           padding: 16px;
           text-align: center;
@@ -715,7 +712,7 @@ export default function AdminPage() {
         .license-code-display {
           font-size: 24px;
           font-weight: 800;
-          color: #d5b075;
+          color: #c6a46a;
           letter-spacing: 0.5px;
           margin-top: 8px;
           user-select: all;
@@ -729,8 +726,8 @@ export default function AdminPage() {
           gap: 12px;
         }
         .log-item, .scan-item {
-          background: #161824;
-          border: 1px solid rgba(213, 176, 117, 0.05);
+          background: #ffffff;
+          border: 1px solid rgba(226, 232, 240, 0.8);
           border-radius: 14px;
           padding: 16px 20px;
           display: flex;
@@ -739,8 +736,8 @@ export default function AdminPage() {
           transition: all 0.2s;
         }
         .log-item:hover, .scan-item:hover {
-          background-color: #1d2031;
-          border-color: rgba(213, 176, 117, 0.15);
+          background-color: #fafbfd;
+          border-color: rgba(198, 164, 106, 0.15);
         }
         .log-action-tag {
           font-size: 11.5px;
@@ -748,11 +745,11 @@ export default function AdminPage() {
           padding: 4px 8px;
           border-radius: 6px;
         }
-        .tag-create { background: rgba(3, 105, 161, 0.15); color: #38bdf8; }
-        .tag-update { background: rgba(217, 119, 6, 0.15); color: #fbbf24; }
-        .tag-delete { background: rgba(185, 28, 28, 0.15); color: #f87171; }
-        .tag-suspend { background: rgba(194, 65, 12, 0.15); color: #fb923c; }
-        .tag-activate { background: rgba(4, 120, 87, 0.15); color: #34d399; }
+        .tag-create { background: rgba(3, 105, 161, 0.08); color: #0369a1; }
+        .tag-update { background: rgba(217, 119, 6, 0.08); color: #d97706; }
+        .tag-delete { background: rgba(185, 28, 28, 0.08); color: #b91c1c; }
+        .tag-suspend { background: rgba(194, 65, 12, 0.08); color: #c2410c; }
+        .tag-activate { background: rgba(4, 120, 87, 0.08); color: #047857; }
 
         .log-date {
           font-size: 12px;
@@ -769,9 +766,9 @@ export default function AdminPage() {
           font-size: 11.5px;
           font-weight: 700;
         }
-        .scan-success { background: rgba(16, 185, 129, 0.15); color: #34d399; }
-        .scan-failed { background: rgba(239, 68, 68, 0.15); color: #f87171; }
-        .scan-error { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+        .scan-success { background: rgba(16, 185, 129, 0.08); color: #10b981; }
+        .scan-failed { background: rgba(239, 68, 68, 0.08); color: #ef4444; }
+        .scan-error { background: rgba(245, 158, 11, 0.08); color: #f59e0b; }
 
         /* حركات التلاشي للظهور الرائع */
         @keyframes fadeIn {
@@ -819,40 +816,40 @@ export default function AdminPage() {
             <button onClick={handleLogout} className="btn-logout">تسجيل الخروج</button>
           </div>
 
-          {/* شبكة الإحصائيات المتقدمة */}
+          {/* شبكة الإحصائيات المتقدمة الحجرية الذهبية */}
           <div className="advanced-stats-grid">
             <div className="stat-card-advanced primary">
               <div className="stat-header">
                 <span className="stat-lbl-small">إجمالي التراخيص</span>
-                <span className="stat-icon-wrapper" style={{ background: "rgba(213, 176, 117, 0.1)", color: "#d5b075" }}>🔑</span>
+                <span className="stat-icon-wrapper" style={{ background: "rgba(198, 164, 106, 0.08)", color: "#c6a46a" }}>🔑</span>
               </div>
               <div className="stat-val-big">{stats.totalLicenses}</div>
             </div>
             <div className="stat-card-advanced success">
               <div className="stat-header">
                 <span className="stat-lbl-small">نشط وصالح</span>
-                <span className="stat-icon-wrapper" style={{ background: "rgba(16, 185, 129, 0.1)", color: "#10b981" }}>🟢</span>
+                <span className="stat-icon-wrapper" style={{ background: "rgba(16, 185, 129, 0.08)", color: "#10b981" }}>🟢</span>
               </div>
               <div className="stat-val-big">{stats.activeLicenses}</div>
             </div>
             <div className="stat-card-advanced warning">
               <div className="stat-header">
                 <span className="stat-lbl-small">تنتهي قريباً (30 يوم)</span>
-                <span className="stat-icon-wrapper" style={{ background: "rgba(245, 158, 11, 0.1)", color: "#f59e0b" }}>⏰</span>
+                <span className="stat-icon-wrapper" style={{ background: "rgba(245, 158, 11, 0.08)", color: "#f59e0b" }}>⏰</span>
               </div>
               <div className="stat-val-big">{stats.expiringSoon}</div>
             </div>
             <div className="stat-card-advanced danger">
               <div className="stat-header">
                 <span className="stat-lbl-small">عمليات مسح الذكاء الاصطناعي</span>
-                <span className="stat-icon-wrapper" style={{ background: "rgba(239, 68, 68, 0.1)", color: "#ef4444" }}>🤖</span>
+                <span className="stat-icon-wrapper" style={{ background: "rgba(239, 68, 68, 0.08)", color: "#ef4444" }}>🤖</span>
               </div>
               <div className="stat-val-big">{stats.totalAiScans}</div>
             </div>
             <div className="stat-card-advanced revenue">
               <div className="stat-header">
                 <span className="stat-lbl-small">الإيرادات المقدرة</span>
-                <span className="stat-icon-wrapper" style={{ background: "rgba(188, 163, 116, 0.1)", color: "#bca374" }}>💵</span>
+                <span className="stat-icon-wrapper" style={{ background: "rgba(188, 163, 116, 0.08)", color: "#bca374" }}>💵</span>
               </div>
               <div className="stat-val-big">${stats.totalRevenue}</div>
             </div>
@@ -938,16 +935,16 @@ export default function AdminPage() {
                         
                         return (
                           <tr key={lic._id}>
-                            <td style={{ fontWeight: "bold", color: "#d5b075" }}>{lic.license_code}</td>
+                            <td style={{ fontWeight: "bold", color: "#c6a46a" }}>{lic.license_code}</td>
                             <td>
-                              <div style={{ fontWeight: "bold", color: "#ffffff" }}>{lic.owner_name}</div>
-                              <div style={{ fontSize: "11.5px", color: "#94a3b8" }}>{lic.phone_number}</div>
+                              <div style={{ fontWeight: "bold", color: "#1e2235" }}>{lic.owner_name}</div>
+                              <div style={{ fontSize: "11.5px", color: "#64748b" }}>{lic.phone_number}</div>
                             </td>
                             <td>
                               {lic.package_type === "monthly" ? "6 أشهر" : 
                                lic.package_type === "yearly" ? "سنوية" : "سنتين"}
                             </td>
-                            <td style={{ fontWeight: "bold", color: "#e2e8f0" }}>
+                            <td style={{ fontWeight: "bold", color: "#475569" }}>
                               {lic.ai_scan_count || 0}
                             </td>
                             <td>
@@ -963,7 +960,7 @@ export default function AdminPage() {
                               {lic.device_id ? (
                                 <span className="device-info" title={lic.device_id}>{lic.device_id.substring(0, 14)}...</span>
                               ) : (
-                                <span style={{ fontSize: "11.5px", color: "#64748b", fontStyle: "italic" }}>غير مقترن</span>
+                                <span style={{ fontSize: "11.5px", color: "#94a3b8", fontStyle: "italic" }}>غير مقترن</span>
                               )}
                             </td>
                             <td className="actions-cell">
@@ -1024,8 +1021,8 @@ export default function AdminPage() {
                            log.action === "activate_license" ? "تنشيط" : "تحديث"}
                         </span>
                         <div style={{ display: "flex", flexDirection: "column" }}>
-                          <span style={{ fontWeight: "700", fontSize: "14px", color: "#ffffff" }}>{log.details}</span>
-                          <span style={{ fontSize: "11px", color: "#94a3b8" }}>الكود: {log.license_code} | IP: {log.ip_address}</span>
+                          <span style={{ fontWeight: "700", fontSize: "14px", color: "#1e2235" }}>{log.details}</span>
+                          <span style={{ fontSize: "11px", color: "#64748b" }}>الكود: {log.license_code} | IP: {log.ip_address}</span>
                         </div>
                       </div>
                       <span className="log-date">{new Date(log.created_at).toLocaleString("ar-SA")}</span>
@@ -1058,10 +1055,10 @@ export default function AdminPage() {
                            scan.status === "failed" ? "فشلت القراءة" : "خطأ تقني"}
                         </span>
                         <div style={{ display: "flex", flexDirection: "column" }}>
-                          <span style={{ fontWeight: "700", fontSize: "14px", color: "#ffffff" }}>
+                          <span style={{ fontWeight: "700", fontSize: "14px", color: "#1e2235" }}>
                             العميل: {scan.license_id?.owner_name || "غير معروف"} ({scan.license_id?.license_code || "بدون كود"})
                           </span>
-                          <span style={{ fontSize: "11px", color: "#94a3b8" }}>
+                          <span style={{ fontSize: "11px", color: "#64748b" }}>
                             رقم الجهاز: {scan.device_id} {scan.error_message && `| خطأ: ${scan.error_message}`}
                           </span>
                         </div>
@@ -1146,7 +1143,7 @@ export default function AdminPage() {
 
                 {generatedCode && (
                   <div className="license-result">
-                    <div style={{ fontSize: "12px", color: "#94a3b8", fontWeight: "bold" }}>كود الترخيص الجديد (انقر للنسخ):</div>
+                    <div style={{ fontSize: "12px", color: "#64748b", fontWeight: "bold" }}>كود الترخيص الجديد (انقر للنسخ):</div>
                     <div className="license-code-display" onClick={() => {
                       navigator.clipboard.writeText(generatedCode);
                       alert("تم نسخ الكود بنجاح!");
