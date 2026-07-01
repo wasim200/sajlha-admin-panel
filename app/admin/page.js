@@ -2,6 +2,20 @@
 
 import { useState, useEffect } from "react";
 import './admin.css';
+import { 
+  ResponsiveContainer, 
+  ComposedChart, 
+  Bar, 
+  Line, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  PieChart, 
+  Pie, 
+  Cell 
+} from 'recharts';
 
 // مكون العدادات التصاعدية لتطبيق الأنيميشن المالي التفاعلي
 function AnimatedCounter({ value }) {
@@ -63,6 +77,20 @@ export default function AdminPage() {
   const [adminLogs, setAdminLogs] = useState([]);
   const [recentScans, setRecentScans] = useState([]);
   
+  // بيانات التحليلات والرسوم البيانية المتقدمة
+  const [analytics, setAnalytics] = useState({
+    monthlyData: [],
+    packageDistribution: [],
+    recentRegistrations: [],
+    kpis: {
+      conversionRate: 0,
+      arpu: 0,
+      thisMonthCount: 0,
+      lastMonthCount: 0,
+      growthRate: 0,
+    }
+  });
+  
   // حقول إضافة رخصة جديدة
   const [ownerName, setOwnerName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -122,6 +150,15 @@ export default function AdminPage() {
         if (resLogs.ok) {
           const dataLogs = await resLogs.json();
           setAdminLogs(dataLogs.logs || []);
+        }
+
+        // 4. جلب بيانات التحليلات المتقدمة والرسوم البيانية
+        const resAnalytics = await fetch("/api/admin/analytics", {
+          headers: { "Authorization": authHeader },
+        });
+        if (resAnalytics.ok) {
+          const dataAnalytics = await resAnalytics.json();
+          setAnalytics(dataAnalytics.analytics);
         }
 
       } else {
@@ -427,6 +464,15 @@ export default function AdminPage() {
               </svg>
               سجل مسح AI ({recentScans.length})
             </button>
+            <button 
+              className={`tab-button ${activeTab === "analytics" ? "active" : ""}`}
+              onClick={() => setActiveTab("analytics")}
+            >
+              <svg className="tab-icon-vector" viewBox="0 0 24 24">
+                <path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/>
+              </svg>
+              التحليلات والمخططات الذكية
+            </button>
           </div>
 
           {/* مساحة العرض الرئيسية */}
@@ -626,6 +672,155 @@ export default function AdminPage() {
                       لا توجد عمليات مسح AI مسجلة بعد.
                     </div>
                   )}
+                </div>
+              </div>
+            )}
+
+            {activeTab === "analytics" && (
+              <div style={{ display: "flex", flexDirection: "column", gap: "30px" }}>
+                {/* بطاقات KPI إضافية */}
+                <div className="analytics-kpis-grid">
+                  <div className="stat-card-advanced active-card">
+                    <div className="stat-header">
+                      <span className="stat-lbl-small">معدل تحويل التراخيص</span>
+                      <span className="stat-icon-wrapper">
+                        <svg className="stat-icon-vector" viewBox="0 0 24 24">
+                          <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/>
+                        </svg>
+                      </span>
+                    </div>
+                    <div className="stat-val-big">
+                      {analytics.kpis.conversionRate}%
+                    </div>
+                  </div>
+
+                  <div className="stat-card-advanced active-card">
+                    <div className="stat-header">
+                      <span className="stat-lbl-small">متوسط قيمة العميل (ARPU)</span>
+                      <span className="stat-icon-wrapper">
+                        <svg className="stat-icon-vector" viewBox="0 0 24 24">
+                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/>
+                        </svg>
+                      </span>
+                    </div>
+                    <div className="stat-val-big">
+                      ${analytics.kpis.arpu}
+                    </div>
+                  </div>
+
+                  <div className="stat-card-advanced active-card">
+                    <div className="stat-header">
+                      <span className="stat-lbl-small">نمو التسجيلات هذا الشهر</span>
+                      <span className="stat-icon-wrapper">
+                        <svg className="stat-icon-vector" viewBox="0 0 24 24">
+                          <path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/>
+                        </svg>
+                      </span>
+                    </div>
+                    <div className="stat-val-big" style={{ color: analytics.kpis.growthRate >= 0 ? "#2e7d68" : "#c62828" }}>
+                      {analytics.kpis.growthRate >= 0 ? "+" : ""}{analytics.kpis.growthRate}%
+                    </div>
+                  </div>
+                </div>
+
+                {/* شبكة الرسوم البيانية */}
+                <div className="charts-grid-container">
+                  <div className="card chart-card">
+                    <h3 className="card-title" style={{ marginBottom: "20px" }}>نمو التسجيلات والإيرادات الشهرية</h3>
+                    <div style={{ width: "100%", height: 300 }}>
+                      <ResponsiveContainer>
+                        <ComposedChart data={analytics.monthlyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#e8e2d8" opacity={0.5} />
+                          <XAxis dataKey="month" tick={{ fontFamily: 'Cairo', fontSize: 12, fill: '#5A607F' }} />
+                          <YAxis yAxisId="left" tick={{ fontFamily: 'Cairo', fontSize: 12, fill: '#5A607F' }} />
+                          <YAxis yAxisId="right" orientation="right" tick={{ fontFamily: 'Cairo', fontSize: 12, fill: '#5A607F' }} />
+                          <Tooltip 
+                            contentStyle={{ backgroundColor: '#ffffff', borderColor: '#E8E2D8', borderRadius: '12px', fontFamily: 'Cairo', textAlign: 'right' }} 
+                            labelStyle={{ fontWeight: 'bold', color: '#131626' }}
+                          />
+                          <Legend wrapperStyle={{ fontFamily: 'Cairo', fontSize: 12 }} />
+                          <Bar yAxisId="left" dataKey="registrations" name="تسجيلات جديدة" fill="#131626" radius={[4, 4, 0, 0]} />
+                          <Line yAxisId="right" type="monotone" dataKey="revenue" name="الإيرادات ($)" stroke="#B08B4E" strokeWidth={3} dot={{ r: 5, fill: '#B08B4E' }} />
+                        </ComposedChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+
+                  <div className="card chart-card">
+                    <h3 className="card-title" style={{ marginBottom: "20px" }}>توزيع الباقات المشتركة</h3>
+                    <div style={{ width: "100%", height: 300, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
+                      <div style={{ width: "100%", height: 240 }}>
+                        <ResponsiveContainer>
+                          <PieChart>
+                            <Pie
+                              data={analytics.packageDistribution}
+                              cx="50%"
+                              cy="50%"
+                              innerRadius={60}
+                              outerRadius={80}
+                              paddingAngle={5}
+                              dataKey="value"
+                            >
+                              {analytics.packageDistribution.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.color} />
+                              ))}
+                            </Pie>
+                            <Tooltip 
+                              contentStyle={{ backgroundColor: '#ffffff', borderColor: '#E8E2D8', borderRadius: '12px', fontFamily: 'Cairo', textAlign: 'right' }}
+                            />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </div>
+                      <div style={{ display: "flex", gap: "16px", justifyContent: "center", flexWrap: "wrap", fontFamily: 'Cairo', fontSize: '13px' }}>
+                        {analytics.packageDistribution.map((entry, index) => (
+                          <div key={index} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                            <span style={{ width: "12px", height: "12px", borderRadius: "3px", backgroundColor: entry.color }}></span>
+                            <span style={{ color: "#5A607F", fontWeight: "700" }}>{entry.name}: {entry.value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* جدول أحدث المشتركين */}
+                <div className="card">
+                  <h3 className="card-title" style={{ marginBottom: "20px" }}>أحدث المشتركين الجدد</h3>
+                  <div className="table-container">
+                    <table className="license-table">
+                      <thead>
+                        <tr>
+                          <th>الاسم</th>
+                          <th>الهاتف</th>
+                          <th>نوع الباقة</th>
+                          <th>تاريخ التسجيل</th>
+                          <th>تاريخ الانتهاء</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {analytics.recentRegistrations.map((lic) => (
+                          <tr key={lic.id}>
+                            <td style={{ fontWeight: "700" }}>{lic.owner_name}</td>
+                            <td>{lic.phone_number}</td>
+                            <td>
+                              <span className="status-badge status-active">
+                                {lic.package_type === "monthly" ? "6 أشهر" : lic.package_type === "yearly" ? "سنوية" : "سنتين"}
+                              </span>
+                            </td>
+                            <td>{new Date(lic.created_at).toLocaleDateString("ar-SA")}</td>
+                            <td>{new Date(lic.expires_at).toLocaleDateString("ar-SA")}</td>
+                          </tr>
+                        ))}
+                        {analytics.recentRegistrations.length === 0 && (
+                          <tr>
+                            <td colSpan="5" style={{ textAlign: "center", padding: "30px", opacity: 0.5 }}>
+                              لا توجد تسجيلات حديثة.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             )}

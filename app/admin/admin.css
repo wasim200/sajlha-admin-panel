@@ -677,4 +677,43 @@
   .license-code-display {
     font-size: 20px;
   }
+  .analytics-kpis-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .charts-grid-container {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+/* =================================================================
+   📊 أنماط صفحة التحليلات والرسوم البيانية المتقدمة (Analytics Page Styles)
+   ================================================================= */
+.analytics-kpis-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.charts-grid-container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+}
+
+.chart-card {
+  padding: 30px;
+}
+
+/* Recharts RTL fixes & styling overrides */
+.recharts-default-tooltip {
+  border-radius: 12px !important;
+  box-shadow: 0 10px 25px rgba(176, 139, 78, 0.05) !important;
+}
+
+@media (max-width: 992px) {
+  .charts-grid-container {
+    grid-template-columns: 1fr;
+  }
 }
