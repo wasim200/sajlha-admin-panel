@@ -176,7 +176,7 @@ export default function LandingPage() {
         .nav-logo {
           font-size: 26px;
           font-weight: 900;
-          color: #ffffff;
+          color: var(--color-text-bright);
           text-decoration: none;
           display: flex;
           align-items: center;
@@ -200,7 +200,7 @@ export default function LandingPage() {
           transition: all 0.2s;
         }
         .nav-link:hover {
-          color: #ffffff;
+          color: var(--color-text-bright);
           opacity: 1;
         }
         .btn-nav-action {
@@ -226,9 +226,9 @@ export default function LandingPage() {
           border-bottom-right-radius: 40px;
           padding: 100px 0 120px 0;
           position: relative;
-          color: #ffffff;
+          color: var(--color-text-bright);
           border-bottom: 1px solid var(--color-gold-border);
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+          box-shadow: 0 10px 30px rgba(176, 139, 78, 0.04);
         }
         .hero-glow-rings {
           position: absolute;
@@ -282,7 +282,7 @@ export default function LandingPage() {
           line-height: 1.35;
           max-width: 800px;
           margin: 0 auto 24px auto;
-          color: #ffffff;
+          color: var(--color-text-bright);
         }
         .hero-title span {
           color: var(--color-gold-sand);
@@ -318,14 +318,14 @@ export default function LandingPage() {
         }
         .btn-hero-secondary {
           background-color: transparent;
-          color: var(--color-gold-cream);
+          color: var(--color-text-bright);
           border: 2px solid var(--color-gold-border-active);
           padding: 14px 36px;
           border-radius: 14px;
           font-weight: 800;
           font-size: 16px;
           text-decoration: none;
-          transition: all 0.25s ease;
+          transition: all 0.2s ease;
         }
         .btn-hero-secondary:hover {
           background-color: rgba(198, 164, 106, 0.05);
@@ -343,7 +343,7 @@ export default function LandingPage() {
         .section-title {
           font-size: 32px;
           font-weight: 900;
-          color: #ffffff;
+          color: var(--color-text-bright);
           margin-bottom: 12px;
         }
         .section-title span {
@@ -368,7 +368,7 @@ export default function LandingPage() {
           border-radius: 24px;
           padding: 34px;
           transition: all 0.25s ease;
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+          box-shadow: 0 10px 30px rgba(176, 139, 78, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
         }
         .feature-card:hover {
           transform: translateY(-4px);
@@ -388,7 +388,7 @@ export default function LandingPage() {
         .feature-title {
           font-size: 18px;
           font-weight: 800;
-          color: #ffffff;
+          color: var(--color-text-bright);
           margin-bottom: 12px;
         }
         .feature-desc {
@@ -413,13 +413,13 @@ export default function LandingPage() {
           margin-top: 40px;
         }
         .pricing-card {
-          background: var(--color-bg-stone-dark);
+          background: var(--color-bg-stone-card);
           border: 1.5px solid var(--color-gold-border);
           border-radius: 24px;
           padding: 44px 34px;
           position: relative;
           transition: all 0.25s ease;
-          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+          box-shadow: 0 10px 25px rgba(176, 139, 78, 0.04);
           display: flex;
           flex-direction: column;
         }
@@ -430,8 +430,8 @@ export default function LandingPage() {
         }
         .pricing-card.popular {
           border: 2px solid var(--color-gold-sand);
-          background-color: rgba(19, 22, 38, 0.8);
-          box-shadow: 0 15px 35px rgba(198, 164, 106, 0.12);
+          background-color: var(--color-bg-stone-card);
+          box-shadow: 0 15px 35px rgba(176, 139, 78, 0.12), 0 6px 20px rgba(0, 0, 0, 0.02);
         }
         .pricing-badge {
           position: absolute;
@@ -447,13 +447,13 @@ export default function LandingPage() {
         }
         .pricing-card.popular .pricing-badge {
           background: var(--color-gold-sand);
-          color: var(--color-bg-stone-dark);
+          color: #ffffff;
           border: none;
         }
         .plan-name {
           font-size: 22px;
           font-weight: 800;
-          color: #ffffff;
+          color: var(--color-text-bright);
           margin-bottom: 6px;
         }
         .plan-duration {
@@ -471,7 +471,7 @@ export default function LandingPage() {
         .plan-price {
           font-size: 44px;
           font-weight: 900;
-          color: #ffffff;
+          color: var(--color-text-bright);
         }
         .plan-price-curr {
           font-size: 16px;
@@ -536,7 +536,7 @@ export default function LandingPage() {
 
         /* صندوق الإشعار المساعد الجرانيتي المذهب */
         .info-box {
-          background-color: rgba(19, 22, 38, 0.6);
+          background-color: rgba(198, 164, 106, 0.05);
           border: 1px solid var(--color-gold-border-active);
           padding: 18px 24px;
           border-radius: 16px;
@@ -595,7 +595,7 @@ export default function LandingPage() {
         .step-title {
           font-size: 18px;
           font-weight: 800;
-          color: #ffffff;
+          color: var(--color-text-bright);
           margin-bottom: 8px;
         }
         .step-desc {
@@ -634,7 +634,7 @@ export default function LandingPage() {
           padding: 20px 24px;
           background: transparent;
           border: none;
-          color: #ffffff;
+          color: var(--color-text-bright);
           text-align: right;
           font-size: 15px;
           font-weight: 700;
@@ -676,11 +676,11 @@ export default function LandingPage() {
         .footer-logo {
           font-size: 28px;
           font-weight: 900;
-          color: #ffffff;
+          color: var(--color-text-bright);
           margin-bottom: 12px;
           display: inline-block;
           text-decoration: none;
-          text-shadow: 0 0 10px rgba(198, 164, 106, 0.2);
+          text-shadow: 0 0 10px rgba(198, 164, 106, 0.1);
         }
         .footer-logo span {
           color: var(--color-gold-sand);
@@ -708,7 +708,7 @@ export default function LandingPage() {
           transition: all 0.15s;
         }
         .footer-link:hover {
-          color: #ffffff;
+          color: var(--color-text-bright);
           opacity: 1;
         }
         .copyright {

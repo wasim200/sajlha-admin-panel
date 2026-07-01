@@ -1,19 +1,24 @@
 /* 
   Sajlha Web Admin Panel - Master Global CSS
-  Radical Redesign using ONLY Saudi Desert Gold and Stony Granite Charcoal
+  Premium Saudi Desert Gold & Light Sandstone Theme (Day Mode)
 */
 
 :root {
-  --color-bg-stone-dark: #0B0D17;      /* صخر الجرانيت الداكن الفاخر */
-  --color-bg-stone-card: #131626;      /* صخر الجرانيت الفاتح للبطاقات */
-  --color-gold-sand: #C6A46A;          /* رمال الصحراء الذهبية */
-  --color-gold-cream: #E5C583;         /* الذهبي الكريمي السعودي */
+  --color-bg-stone-dark: #F5F6FA;      /* خلفية نهارية ناعمة كالأحجار الرملية */
+  --color-bg-stone-card: #FFFFFF;      /* بطاقات بيضاء ناصعة وفخمة */
+  --color-gold-sand: #B08B4E;          /* رمال الصحراء الذهبية */
+  --color-gold-cream: #5A607F;         /* نصوص ثانوية رمادية ذهبية ناعمة */
+  --color-text-bright: #131626;        /* نصوص رئيسية حجرية داكنة فخمة */
   
   /* ألوان التوهج والحدود المستوحاة من رمال الدهناء */
-  --color-gold-border: rgba(198, 164, 106, 0.15);
-  --color-gold-border-active: rgba(229, 197, 131, 0.4);
-  --color-gold-glow: rgba(198, 164, 106, 0.12);
-  --color-gold-glow-intense: rgba(229, 197, 131, 0.3);
+  --color-gold-border: #E8E2D8;
+  --color-gold-border-active: #C6A46A;
+  --color-gold-glow: rgba(198, 164, 106, 0.08);
+  --color-gold-glow-intense: rgba(198, 164, 106, 0.15);
+  
+  /* ألوان الجداول والصفوف للوضع النهاري */
+  --color-bg-row: #FAF9F6;
+  --color-bg-row-hover: rgba(198, 164, 106, 0.06);
   
   --radius-sm: 8px;
   --radius-md: 14px;
@@ -36,7 +41,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* تحسين شريط التمرير ليطابق الهوية الحجرية الذهبية */
+/* تحسين شريط التمرير ليطابق الهوية الذهبية */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -49,7 +54,5 @@ body {
   border-radius: var(--radius-sm);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-gold-cream);
+  background: var(--color-text-bright);
 }
-
-/* Force dark theme rebuild */
