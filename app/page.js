@@ -30,32 +30,56 @@ export default function LandingPage() {
 
   const features = [
     {
-      icon: "🤖",
+      icon: (
+        <svg viewBox="0 0 24 24" style={{ width: "26px", height: "26px", fill: "#c6a46a" }}>
+          <path d="M19 13H5v-2h14v2zm-2-7H7v2h10V6zm2 14H5v-2h14v2zm-2-7h-4V9h4v2zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+        </svg>
+      ),
       title: "قراءة ذكية بالذكاء الاصطناعي (AI OCR)",
       desc: "التقط صورة للفاتورة الورقية أو قائمة الديون المكتوبة بخط اليد، وسيتولى التطبيق استخراج اسم العميل، المبلغ، والبيان وحفظها تلقائياً."
     },
     {
-      icon: "⚡",
+      icon: (
+        <svg viewBox="0 0 24 24" style={{ width: "26px", height: "26px", fill: "#c6a46a" }}>
+          <path d="M11.5 2L2 13h9v9l9.5-11h-9V2z"/>
+        </svg>
+      ),
       title: "أداء فائق وبدون إنترنت (Offline)",
       desc: "الوصول السريع لبيانات متجرك في أي وقت وبأي مكان دون الحاجة لاتصال بالإنترنت، بفضل قاعدة بيانات SQLite محلية مدمجة وسريعة."
     },
     {
-      icon: "☁️",
+      icon: (
+        <svg viewBox="0 0 24 24" style={{ width: "26px", height: "26px", fill: "#c6a46a" }}>
+          <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3z"/>
+        </svg>
+      ),
       title: "مزامنة سحابية خاصة بـ Google Drive",
       desc: "حماية مطلقة لبيانات متجرك؛ يتم مزامنة النسخ الاحتياطية سحابياً مباشرة لحسابك الشخصي على جوجل درايف دون المرور بأي خوادم وسيطة."
     },
     {
-      icon: "💬",
+      icon: (
+        <svg viewBox="0 0 24 24" style={{ width: "26px", height: "26px", fill: "#c6a46a" }}>
+          <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/>
+        </svg>
+      ),
       title: "تنبيهات تلقائية عبر واتساب و SMS",
       desc: "أرسل كشوفات حساب تفصيلية لعملائك أو تذكيرات ودية بالديون المتأخرة عبر واتساب ورسائل SMS بقوالب جاهزة وقابلة للتخصيص الكامل."
     },
     {
-      icon: "🔒",
+      icon: (
+        <svg viewBox="0 0 24 24" style={{ width: "26px", height: "26px", fill: "#c6a46a" }}>
+          <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+        </svg>
+      ),
       title: "أمان كامل وقفل بالبصمة (PIN/Biometric)",
       desc: "أمّن حسابات متجرك من المتطفلين باستخدام رمز قفل PIN مشفر، مع دعم المصادقة البيومترية كبصمة الإصبع وبصمة الوجه."
     },
     {
-      icon: "📊",
+      icon: (
+        <svg viewBox="0 0 24 24" style={{ width: "26px", height: "26px", fill: "#c6a46a" }}>
+          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+        </svg>
+      ),
       title: "تقارير مالية وإحصائيات رسومية",
       desc: "تابع نمو أعمالك ومعدل سداد الديون، وتعرف على عملائك الأكثر مديونية عبر رسوم بيانية تفاعلية سهلة القراءة والتحليل."
     }
@@ -215,9 +239,10 @@ export default function LandingPage() {
           background: radial-gradient(circle, rgba(198, 164, 106, 0.15) 0%, transparent 80%);
           box-shadow: 0 0 20px rgba(198, 164, 106, 0.1);
         }
-        .hero-icon {
-          font-size: 32px;
-          color: #c6a46a;
+        .hero-icon-vector {
+          width: 32px;
+          height: 32px;
+          fill: #c6a46a;
         }
         .hero-section {
           display: flex;
@@ -344,7 +369,6 @@ export default function LandingPage() {
           align-items: center;
           justify-content: center;
           margin-bottom: 24px;
-          font-size: 26px;
         }
         .feature-title {
           font-size: 18px;
@@ -455,11 +479,11 @@ export default function LandingPage() {
           color: #475569;
           font-weight: 600;
         }
-        .plan-feature-item::before {
-          content: "✓";
-          color: #c6a46a;
-          font-weight: 900;
-          font-size: 15px;
+        .plan-feature-item-icon {
+          width: 14px;
+          height: 14px;
+          fill: #c6a46a;
+          flex-shrink: 0;
         }
         .btn-pricing-cta {
           display: block;
@@ -503,11 +527,12 @@ export default function LandingPage() {
           gap: 14px;
           align-items: flex-start;
         }
-        .info-box-icon {
-          color: #c6a46a;
-          font-size: 20px;
-          font-weight: 900;
-          line-height: 1;
+        .info-box-icon-vector {
+          width: 20px;
+          height: 20px;
+          fill: #c6a46a;
+          flex-shrink: 0;
+          margin-top: 2px;
         }
         .info-box-text {
           font-size: 13.5px;
@@ -608,11 +633,13 @@ export default function LandingPage() {
         .faq-item.active .faq-answer {
           display: block;
         }
-        .faq-arrow {
-          color: #c6a46a;
+        .faq-arrow-vector {
+          width: 12px;
+          height: 12px;
+          fill: #c6a46a;
           transition: transform 0.2s;
         }
-        .faq-item.active .faq-arrow {
+        .faq-item.active .faq-arrow-vector {
           transform: rotate(180deg);
         }
 
@@ -683,7 +710,9 @@ export default function LandingPage() {
       <div className="hero-container-outer">
         <div className="hero-glow-rings">
           <div className="hero-glow-rings-inner">
-            <span className="hero-icon">🔒</span>
+            <svg className="hero-icon-vector" viewBox="0 0 24 24">
+              <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+            </svg>
           </div>
         </div>
         <div className="container">
@@ -714,7 +743,7 @@ export default function LandingPage() {
             {features.map((feat, idx) => (
               <div key={idx} className="feature-card">
                 <div className="feature-icon-wrapper">
-                  <span>{feat.icon}</span>
+                  {feat.icon}
                 </div>
                 <h4 className="feature-title">{feat.title}</h4>
                 <p className="feature-desc">{feat.desc}</p>
@@ -745,7 +774,12 @@ export default function LandingPage() {
                 </div>
                 <ul className="plan-features-list">
                   {plan.features.map((f, i) => (
-                    <li key={i} className="plan-feature-item">{f}</li>
+                    <li key={i} className="plan-feature-item">
+                      <svg className="plan-feature-item-icon" viewBox="0 0 24 24">
+                        <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+                      </svg>
+                      {f}
+                    </li>
                   ))}
                 </ul>
                 <a 
@@ -760,9 +794,11 @@ export default function LandingPage() {
           </div>
 
           <div className="info-box">
-            <span className="info-box-icon">ⓘ</span>
+            <svg className="info-box-icon-vector" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+            </svg>
             <p className="info-box-text">
-              اختر الباقة المناسبة لك ثم اضغط على "اشترك الآن عبر واتساب" وسيتم إرسال طلبك تلقائياً لخدمة المبيعات مع تفاصيل الباقة المحددة لخدمتك وتوليد كود تفعيل فوري.
+              اختر الباقة المناسبة لك ثم اضغط على \"اشترك الآن عبر واتساب\" وسيتم إرسال طلبك تلقائياً لخدمة المبيعات مع تفاصيل الباقة المحددة لخدمتك وتوليد كود تفعيل فوري.
             </p>
           </div>
         </div>
@@ -830,7 +866,9 @@ export default function LandingPage() {
                   onClick={() => setActiveFaq(activeFaq === idx ? null : idx)}
                 >
                   <span>{faq.q}</span>
-                  <span className="faq-arrow">▼</span>
+                  <svg className="faq-arrow-vector" viewBox="0 0 24 24">
+                    <path d="M7 10l5 5 5-5z"/>
+                  </svg>
                 </button>
                 <div className="faq-answer">{faq.a}</div>
               </div>

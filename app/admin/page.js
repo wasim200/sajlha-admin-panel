@@ -2,6 +2,43 @@
 
 import { useState, useEffect } from "react";
 
+// مكون العدادات التصاعدية لتطبيق الأنيميشن المالي التفاعلي
+function AnimatedCounter({ value }) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let start = 0;
+    const end = parseInt(value) || 0;
+    if (end === 0) {
+      setCount(0);
+      return;
+    }
+    const duration = 1200; // مدة الأنيميشن بالملي ثانية
+    const startTime = performance.now();
+
+    function updateCount(currentTime) {
+      const elapsedTime = currentTime - startTime;
+      const progress = Math.min(elapsedTime / duration, 1);
+      
+      // دالة Ease Out لجعله يبطئ تدريجياً في النهاية
+      const easeProgress = 1 - Math.pow(1 - progress, 3);
+      
+      const currentCount = Math.floor(easeProgress * end);
+      setCount(currentCount);
+
+      if (progress < 1) {
+        requestAnimationFrame(updateCount);
+      } else {
+        setCount(end);
+      }
+    }
+
+    requestAnimationFrame(updateCount);
+  }, [value]);
+
+  return <span>{count.toLocaleString()}</span>;
+}
+
 export default function AdminPage() {
   const [password, setPassword] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -254,9 +291,35 @@ export default function AdminPage() {
           color: #1e2235;
           direction: rtl;
           font-family: 'Cairo', sans-serif;
+          overflow-x: hidden;
+          position: relative;
         }
 
-        /* شاشة الدخول */
+        /* توهجات خلفية ناعمة حركية (Fintech Parallax Glow) */
+        .parallax-glow-1 {
+          position: absolute;
+          top: 15%;
+          right: 10%;
+          width: 350px;
+          height: 350px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(198, 164, 106, 0.06) 0%, transparent 70%);
+          pointer-events: none;
+          z-index: 1;
+        }
+        .parallax-glow-2 {
+          position: absolute;
+          bottom: 20%;
+          left: 10%;
+          width: 450px;
+          height: 450px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(198, 164, 106, 0.05) 0%, transparent 70%);
+          pointer-events: none;
+          z-index: 1;
+        }
+
+        /* شاشة الدخول الفاخرة */
         .login-container {
           display: flex;
           justify-content: center;
@@ -264,15 +327,17 @@ export default function AdminPage() {
           min-height: 100vh;
           padding: 20px;
           background-color: #f4f5f8;
+          position: relative;
+          z-index: 2;
         }
         .login-card {
           background-color: #ffffff;
-          border: 1.5px solid rgba(198, 164, 106, 0.2);
+          border: 1.5px solid rgba(198, 164, 106, 0.15);
           border-radius: 24px;
           padding: 44px;
           width: 100%;
           max-width: 400px;
-          box-shadow: 0 15px 35px rgba(30, 34, 53, 0.05);
+          box-shadow: 0 15px 35px rgba(30, 34, 53, 0.04);
           text-align: center;
         }
         .logo-title {
@@ -343,18 +408,20 @@ export default function AdminPage() {
           background-color: #bfa063;
         }
 
-        /* شاشة الإدارة الهيكلية */
+        /* هيكلية لوحة الإدارة */
         .admin-layout {
           max-width: 1500px;
           margin: 0 auto;
           padding: 40px 24px;
+          position: relative;
+          z-index: 2;
         }
         .header {
           display: flex;
           justify-content: space-between;
           align-items: center;
           margin-bottom: 30px;
-          border-bottom: 1.5px solid rgba(198, 164, 106, 0.2);
+          border-bottom: 1.5px solid rgba(198, 164, 106, 0.15);
           padding-bottom: 24px;
         }
         .header-title-container {
@@ -390,7 +457,7 @@ export default function AdminPage() {
           transform: translateY(-1px);
         }
 
-        /* شبكة الإحصائيات المتقدمة الكلاسيكية */
+        /* شبكة الإحصائيات ثلاثية الأبعاد الفاخرة (Fintech Grid) */
         .advanced-stats-grid {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -399,20 +466,20 @@ export default function AdminPage() {
         }
         .stat-card-advanced {
           background: #ffffff;
-          border: 1px solid rgba(226, 232, 240, 0.8);
+          border: 1.5px solid rgba(226, 232, 240, 0.8);
           border-radius: 20px;
           padding: 22px;
           display: flex;
           flex-direction: column;
-          box-shadow: 0 10px 20px rgba(30, 34, 53, 0.02);
-          transition: all 0.25s ease;
+          box-shadow: 0 10px 20px rgba(30, 34, 53, 0.015);
+          transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
           position: relative;
           overflow: hidden;
         }
         .stat-card-advanced:hover {
-          transform: translateY(-3px);
+          transform: translateY(-4px) scale(1.02);
           box-shadow: 0 15px 30px rgba(198, 164, 106, 0.08);
-          border-color: rgba(198, 164, 106, 0.25);
+          border-color: rgba(198, 164, 106, 0.3);
         }
         .stat-card-advanced::after {
           content: "";
@@ -442,8 +509,13 @@ export default function AdminPage() {
           display: flex;
           align-items: center;
           justify-content: center;
-          font-weight: bold;
-          font-size: 16px;
+          background-color: rgba(198, 164, 106, 0.07);
+          color: #c6a46a;
+        }
+        .stat-icon-vector {
+          width: 20px;
+          height: 20px;
+          fill: currentColor;
         }
         .stat-val-big {
           font-size: 32px;
@@ -463,7 +535,7 @@ export default function AdminPage() {
           display: flex;
           gap: 12px;
           margin-bottom: 20px;
-          border-bottom: 2px solid rgba(198, 164, 106, 0.2);
+          border-bottom: 2px solid rgba(198, 164, 106, 0.15);
           padding-bottom: 2px;
         }
         .tab-button {
@@ -477,6 +549,9 @@ export default function AdminPage() {
           cursor: pointer;
           position: relative;
           transition: all 0.2s;
+          display: flex;
+          align-items: center;
+          gap: 8px;
         }
         .tab-button:hover {
           color: #1e2235;
@@ -494,6 +569,11 @@ export default function AdminPage() {
           background-color: #c6a46a;
           border-radius: 2px;
         }
+        .tab-icon-vector {
+          width: 16px;
+          height: 16px;
+          fill: currentColor;
+        }
 
         /* الكروت والبطاقات */
         .card {
@@ -501,7 +581,7 @@ export default function AdminPage() {
           border: 1px solid rgba(226, 232, 240, 0.8);
           border-radius: 24px;
           padding: 30px;
-          box-shadow: 0 10px 20px rgba(30, 34, 53, 0.02);
+          box-shadow: 0 10px 20px rgba(30, 34, 53, 0.015);
         }
         .card-title-bar {
           display: flex;
@@ -611,6 +691,9 @@ export default function AdminPage() {
           cursor: pointer;
           border: 1px solid transparent;
           transition: all 0.15s ease-in-out;
+          display: flex;
+          align-items: center;
+          gap: 6px;
         }
         .btn-status-toggle {
           background-color: #f1f5f9;
@@ -636,6 +719,11 @@ export default function AdminPage() {
         .btn-delete:hover {
           background-color: #fde8e8;
         }
+        .action-icon-vector {
+          width: 13px;
+          height: 13px;
+          fill: currentColor;
+        }
 
         .device-info {
           font-size: 11.5px;
@@ -660,14 +748,14 @@ export default function AdminPage() {
           font-weight: 600;
         }
 
-        /* نافذة الحوار العائمة (Modal Popup) */
+        /* نافذة الحوار العائمة بمرونة وارتداد (Elastic spring physics mockup) */
         .modal-overlay {
           position: fixed;
           top: 0;
           left: 0;
           right: 0;
           bottom: 0;
-          background-color: rgba(30, 34, 53, 0.6);
+          background-color: rgba(30, 34, 53, 0.5);
           backdrop-filter: blur(4px);
           display: flex;
           justify-content: center;
@@ -684,7 +772,7 @@ export default function AdminPage() {
           max-width: 480px;
           box-shadow: 0 25px 50px rgba(30, 34, 53, 0.1);
           position: relative;
-          animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+          animation: springUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .modal-close-btn {
           position: absolute;
@@ -693,9 +781,10 @@ export default function AdminPage() {
           background: transparent;
           border: none;
           color: #94a3b8;
-          font-size: 22px;
+          font-size: 26px;
           cursor: pointer;
           transition: color 0.15s;
+          line-height: 1;
         }
         .modal-close-btn:hover {
           color: #1e2235;
@@ -717,6 +806,10 @@ export default function AdminPage() {
           margin-top: 8px;
           user-select: all;
           cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
         }
 
         /* مكونات سجل النشاط */
@@ -770,16 +863,21 @@ export default function AdminPage() {
         .scan-failed { background: rgba(239, 68, 68, 0.08); color: #ef4444; }
         .scan-error { background: rgba(245, 158, 11, 0.08); color: #f59e0b; }
 
-        /* حركات التلاشي للظهور الرائع */
+        /* حركات التلاشي والارتداد */
         @keyframes fadeIn {
           from { opacity: 0; }
           to { opacity: 1; }
         }
-        @keyframes slideUp {
-          from { transform: translateY(20px); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
+        @keyframes springUp {
+          0% { transform: translateY(50px) scale(0.9); opacity: 0; }
+          60% { transform: translateY(-7px) scale(1.02); opacity: 0.9; }
+          100% { transform: translateY(0) scale(1); opacity: 1; }
         }
       `}</style>
+
+      {/* توهجات خلفية حركية للفنتك */}
+      <div className="parallax-glow-1"></div>
+      <div className="parallax-glow-2"></div>
 
       {!isAuthenticated ? (
         <div className="login-container">
@@ -816,42 +914,72 @@ export default function AdminPage() {
             <button onClick={handleLogout} className="btn-logout">تسجيل الخروج</button>
           </div>
 
-          {/* شبكة الإحصائيات المتقدمة الحجرية الذهبية */}
+          {/* شبكة الإحصائيات المتقدمة الحركية */}
           <div className="advanced-stats-grid">
             <div className="stat-card-advanced primary">
               <div className="stat-header">
                 <span className="stat-lbl-small">إجمالي التراخيص</span>
-                <span className="stat-icon-wrapper" style={{ background: "rgba(198, 164, 106, 0.08)", color: "#c6a46a" }}>🔑</span>
+                <span className="stat-icon-wrapper">
+                  <svg className="stat-icon-vector" viewBox="0 0 24 24">
+                    <path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/>
+                  </svg>
+                </span>
               </div>
-              <div className="stat-val-big">{stats.totalLicenses}</div>
+              <div className="stat-val-big">
+                <AnimatedCounter value={stats.totalLicenses} />
+              </div>
             </div>
             <div className="stat-card-advanced success">
               <div className="stat-header">
                 <span className="stat-lbl-small">نشط وصالح</span>
-                <span className="stat-icon-wrapper" style={{ background: "rgba(16, 185, 129, 0.08)", color: "#10b981" }}>🟢</span>
+                <span className="stat-icon-wrapper" style={{ color: "#10b981", backgroundColor: "rgba(16, 185, 129, 0.07)" }}>
+                  <svg className="stat-icon-vector" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  </svg>
+                </span>
               </div>
-              <div className="stat-val-big">{stats.activeLicenses}</div>
+              <div className="stat-val-big" style={{ color: "#10b981" }}>
+                <AnimatedCounter value={stats.activeLicenses} />
+              </div>
             </div>
             <div className="stat-card-advanced warning">
               <div className="stat-header">
                 <span className="stat-lbl-small">تنتهي قريباً (30 يوم)</span>
-                <span className="stat-icon-wrapper" style={{ background: "rgba(245, 158, 11, 0.08)", color: "#f59e0b" }}>⏰</span>
+                <span className="stat-icon-wrapper" style={{ color: "#f59e0b", backgroundColor: "rgba(245, 158, 11, 0.07)" }}>
+                  <svg className="stat-icon-vector" viewBox="0 0 24 24">
+                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                  </svg>
+                </span>
               </div>
-              <div className="stat-val-big">{stats.expiringSoon}</div>
+              <div className="stat-val-big" style={{ color: "#f59e0b" }}>
+                <AnimatedCounter value={stats.expiringSoon} />
+              </div>
             </div>
             <div className="stat-card-advanced danger">
               <div className="stat-header">
                 <span className="stat-lbl-small">عمليات مسح الذكاء الاصطناعي</span>
-                <span className="stat-icon-wrapper" style={{ background: "rgba(239, 68, 68, 0.08)", color: "#ef4444" }}>🤖</span>
+                <span className="stat-icon-wrapper" style={{ color: "#ef4444", backgroundColor: "rgba(239, 68, 68, 0.07)" }}>
+                  <svg className="stat-icon-vector" viewBox="0 0 24 24">
+                    <path d="M19 13H5v-2h14v2zm-2-7H7v2h10V6zm2 14H5v-2h14v2zm-2-7h-4v-2h4v2zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+                  </svg>
+                </span>
               </div>
-              <div className="stat-val-big">{stats.totalAiScans}</div>
+              <div className="stat-val-big" style={{ color: "#ef4444" }}>
+                <AnimatedCounter value={stats.totalAiScans} />
+              </div>
             </div>
             <div className="stat-card-advanced revenue">
               <div className="stat-header">
                 <span className="stat-lbl-small">الإيرادات المقدرة</span>
-                <span className="stat-icon-wrapper" style={{ background: "rgba(188, 163, 116, 0.08)", color: "#bca374" }}>💵</span>
+                <span className="stat-icon-wrapper" style={{ color: "#bca374", backgroundColor: "rgba(188, 163, 116, 0.07)" }}>
+                  <svg className="stat-icon-vector" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/>
+                  </svg>
+                </span>
               </div>
-              <div className="stat-val-big">${stats.totalRevenue}</div>
+              <div className="stat-val-big" style={{ color: "#bca374" }}>
+                $<AnimatedCounter value={stats.totalRevenue} />
+              </div>
             </div>
           </div>
 
@@ -861,19 +989,28 @@ export default function AdminPage() {
               className={`tab-button ${activeTab === "licenses" ? "active" : ""}`}
               onClick={() => setActiveTab("licenses")}
             >
-              🔑 التراخيص المصدرة ({licenses.length})
+              <svg className="tab-icon-vector" viewBox="0 0 24 24">
+                <path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65z"/>
+              </svg>
+              تراخيص المستخدمين ({licenses.length})
             </button>
             <button 
               className={`tab-button ${activeTab === "logs" ? "active" : ""}`}
               onClick={() => setActiveTab("logs")}
             >
-              📋 نشاط الإدارة ({adminLogs.length})
+              <svg className="tab-icon-vector" viewBox="0 0 24 24">
+                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+              </svg>
+              سجل نشاط الإدارة ({adminLogs.length})
             </button>
             <button 
               className={`tab-button ${activeTab === "ai_scans" ? "active" : ""}`}
               onClick={() => setActiveTab("ai_scans")}
             >
-              🤖 مسح الذكاء الاصطناعي ({recentScans.length})
+              <svg className="tab-icon-vector" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+              </svg>
+              مسح الذكاء الاصطناعي ({recentScans.length})
             </button>
           </div>
 
@@ -967,19 +1104,31 @@ export default function AdminPage() {
                               <button 
                                 onClick={() => handleToggleStatus(lic._id, lic.status)}
                                 className="btn-table-action btn-status-toggle"
+                                title="إيقاف / تشغيل"
                               >
-                                {lic.status === "active" ? "إيقاف" : "تنشيط"}
+                                <svg className="action-icon-vector" viewBox="0 0 24 24">
+                                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4-9H8v2h8v-2z"/>
+                                </svg>
+                                {lic.status === "active" ? "تعليق" : "تنشيط"}
                               </button>
                               <button 
                                 onClick={() => handleExtendLicense(lic._id, lic.expires_at, 360)}
                                 className="btn-table-action btn-extend"
+                                title="تمديد سنة"
                               >
-                                + سنة
+                                <svg className="action-icon-vector" viewBox="0 0 24 24">
+                                  <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                                </svg>
+                                تمديد
                               </button>
                               <button 
                                 onClick={() => handleDeleteLicense(lic._id)}
                                 className="btn-table-action btn-delete"
+                                title="حذف الترخيص"
                               >
+                                <svg className="action-icon-vector" viewBox="0 0 24 24">
+                                  <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                                </svg>
                                 حذف
                               </button>
                             </td>
@@ -1147,7 +1296,12 @@ export default function AdminPage() {
                     <div className="license-code-display" onClick={() => {
                       navigator.clipboard.writeText(generatedCode);
                       alert("تم نسخ الكود بنجاح!");
-                    }}>{generatedCode}</div>
+                    }}>
+                      {generatedCode}
+                      <svg style={{ width: "16px", height: "16px", fill: "currentColor" }} viewBox="0 0 24 24">
+                        <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                      </svg>
+                    </div>
                   </div>
                 )}
               </div>
