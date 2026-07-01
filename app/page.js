@@ -906,7 +906,7 @@ export default function LandingPage() {
             <a href="/admin" className="footer-link">بوابة الإدارة</a>
           </div>
           <p className="copyright">
-            © {new Date().getFullYear()} تطبيق سجلها. جميع الحقوق محفوظة. تطوير بكل ❤️ لخدمة تجارنا.
+            © {new Date().getFullYear()} تطبيق سجلها. جميع الحقوق محفوظة.
           </p>
         </div>
       </footer>
