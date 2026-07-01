@@ -302,19 +302,20 @@ export default function LandingPage() {
           flex-wrap: wrap;
         }
         .btn-hero-primary {
-          background: linear-gradient(135deg, var(--color-gold-sand) 0%, var(--color-gold-cream) 100%);
-          color: var(--color-bg-stone-dark);
+          background-color: #131626;
+          color: #ffffff;
           padding: 14px 36px;
           border-radius: 14px;
           font-weight: 800;
           font-size: 16px;
           text-decoration: none;
-          box-shadow: 0 8px 20px rgba(198, 164, 106, 0.3);
+          box-shadow: 0 8px 20px rgba(19, 22, 38, 0.15);
           transition: all 0.25s ease-in-out;
         }
         .btn-hero-primary:hover {
           transform: translateY(-2px);
-          box-shadow: 0 12px 24px rgba(198, 164, 106, 0.45);
+          box-shadow: 0 12px 24px rgba(19, 22, 38, 0.25);
+          background-color: #0b0d17;
         }
         .btn-hero-secondary {
           background-color: transparent;
