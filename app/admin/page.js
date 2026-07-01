@@ -284,8 +284,7 @@ export default function AdminPage() {
 
   return (
     <div className="app-wrapper">
-
-      {/* توهجات خلفية حركية للفنتك */}
+      {/* هالات التوهج الجرانيتية */}
       <div className="parallax-glow-1"></div>
       <div className="parallax-glow-2"></div>
 
@@ -297,38 +296,38 @@ export default function AdminPage() {
             <form onSubmit={handleLoginSubmit}>
               {error && <div className="error-msg">{error}</div>}
               <div className="form-group">
-                <label className="form-label">رمز الدخول السري للوحة الإدارة</label>
+                <label className="form-label">رمز الدخول السري للمسؤول</label>
                 <input
                   type="password"
                   className="form-input"
-                  placeholder="أدخل كلمة مرور المسؤول..."
+                  placeholder="كلمة المرور..."
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               </div>
-              <button type="submit" className="btn-primary" disabled={loading}>
-                {loading ? "جاري التحقق..." : "دخول للوحة التحكم"}
+              <button type="submit" className="btn-primary" disabled={loading} style={{ background: "linear-gradient(135deg, var(--color-gold-sand) 0%, var(--color-gold-cream) 100%)", color: "var(--color-bg-stone-dark)", border: "none" }}>
+                {loading ? "جاري التحقق..." : "دخول إلى الكونسول"}
               </button>
             </form>
           </div>
         </div>
       ) : (
         <div className="admin-layout">
-          {/* الترويسة الرئيسية */}
+          {/* ترويسة الكونسول */}
           <div className="header">
             <div className="header-title-container">
-              <h1 className="header-title">لوحة تحكم وتراخيص سِجِلّها</h1>
-              <div className="header-subtitle">إدارة سحابية مركزية والتحقق بالذكاء الاصطناعي</div>
+              <h1 className="header-title">كونسول إدارة تراخيص سِجِلّها</h1>
+              <div className="header-subtitle">البنية السحابية الحجرية لإصدار وفحص التراخيص بالذكاء الاصطناعي</div>
             </div>
-            <button onClick={handleLogout} className="btn-logout">تسجيل الخروج</button>
+            <button onClick={handleLogout} className="btn-logout">إنهاء الجلسة</button>
           </div>
 
-          {/* شبكة الإحصائيات المتقدمة الحركية */}
+          {/* شبكة الإحصائيات الجرانيتية المحدثة */}
           <div className="advanced-stats-grid">
-            <div className="stat-card-advanced primary">
+            <div className="stat-card-advanced active-card">
               <div className="stat-header">
-                <span className="stat-lbl-small">إجمالي التراخيص</span>
+                <span className="stat-lbl-small">إجمالي التراخيص المصدرة</span>
                 <span className="stat-icon-wrapper">
                   <svg className="stat-icon-vector" viewBox="0 0 24 24">
                     <path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/>
@@ -339,61 +338,61 @@ export default function AdminPage() {
                 <AnimatedCounter value={stats.totalLicenses} />
               </div>
             </div>
-            <div className="stat-card-advanced success">
+            <div className="stat-card-advanced active-card">
               <div className="stat-header">
-                <span className="stat-lbl-small">نشط وصالح</span>
-                <span className="stat-icon-wrapper" style={{ color: "#10b981", backgroundColor: "rgba(16, 185, 129, 0.07)" }}>
+                <span className="stat-lbl-small">التراخيص النشطة</span>
+                <span className="stat-icon-wrapper">
                   <svg className="stat-icon-vector" viewBox="0 0 24 24">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                   </svg>
                 </span>
               </div>
-              <div className="stat-val-big" style={{ color: "#10b981" }}>
+              <div className="stat-val-big">
                 <AnimatedCounter value={stats.activeLicenses} />
               </div>
             </div>
-            <div className="stat-card-advanced warning">
+            <div className="stat-card-advanced active-card">
               <div className="stat-header">
                 <span className="stat-lbl-small">تنتهي قريباً (30 يوم)</span>
-                <span className="stat-icon-wrapper" style={{ color: "#f59e0b", backgroundColor: "rgba(245, 158, 11, 0.07)" }}>
+                <span className="stat-icon-wrapper">
                   <svg className="stat-icon-vector" viewBox="0 0 24 24">
                     <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
                   </svg>
                 </span>
               </div>
-              <div className="stat-val-big" style={{ color: "#f59e0b" }}>
+              <div className="stat-val-big">
                 <AnimatedCounter value={stats.expiringSoon} />
               </div>
             </div>
-            <div className="stat-card-advanced danger">
+            <div className="stat-card-advanced active-card">
               <div className="stat-header">
-                <span className="stat-lbl-small">عمليات مسح الذكاء الاصطناعي</span>
-                <span className="stat-icon-wrapper" style={{ color: "#ef4444", backgroundColor: "rgba(239, 68, 68, 0.07)" }}>
+                <span className="stat-lbl-small">فحوصات الذكاء الاصطناعي</span>
+                <span className="stat-icon-wrapper">
                   <svg className="stat-icon-vector" viewBox="0 0 24 24">
                     <path d="M19 13H5v-2h14v2zm-2-7H7v2h10V6zm2 14H5v-2h14v2zm-2-7h-4v-2h4v2zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
                   </svg>
                 </span>
               </div>
-              <div className="stat-val-big" style={{ color: "#ef4444" }}>
+              <div className="stat-val-big">
                 <AnimatedCounter value={stats.totalAiScans} />
               </div>
             </div>
-            <div className="stat-card-advanced revenue">
+            <div className="stat-card-advanced active-card">
               <div className="stat-header">
                 <span className="stat-lbl-small">الإيرادات المقدرة</span>
-                <span className="stat-icon-wrapper" style={{ color: "#bca374", backgroundColor: "rgba(188, 163, 116, 0.07)" }}>
+                <span className="stat-icon-wrapper">
                   <svg className="stat-icon-vector" viewBox="0 0 24 24">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/>
                   </svg>
                 </span>
               </div>
-              <div className="stat-val-big" style={{ color: "#bca374" }}>
+              <div className="stat-val-big">
                 $<AnimatedCounter value={stats.totalRevenue} />
               </div>
             </div>
           </div>
 
-          {/* تبويبات لوحة التحكم */}
+          {/* تبويبات الكونسول */}
           <div className="tabs-header">
             <button 
               className={`tab-button ${activeTab === "licenses" ? "active" : ""}`}
@@ -402,7 +401,7 @@ export default function AdminPage() {
               <svg className="tab-icon-vector" viewBox="0 0 24 24">
                 <path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65z"/>
               </svg>
-              تراخيص المستخدمين ({licenses.length})
+              قاعدة التراخيص ({licenses.length})
             </button>
             <button 
               className={`tab-button ${activeTab === "logs" ? "active" : ""}`}
@@ -411,7 +410,7 @@ export default function AdminPage() {
               <svg className="tab-icon-vector" viewBox="0 0 24 24">
                 <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
               </svg>
-              سجل نشاط الإدارة ({adminLogs.length})
+              التدقيق والنشاط الإداري ({adminLogs.length})
             </button>
             <button 
               className={`tab-button ${activeTab === "ai_scans" ? "active" : ""}`}
@@ -420,11 +419,11 @@ export default function AdminPage() {
               <svg className="tab-icon-vector" viewBox="0 0 24 24">
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
               </svg>
-              مسح الذكاء الاصطناعي ({recentScans.length})
+              سجل مسح AI ({recentScans.length})
             </button>
           </div>
 
-          {/* محتوى التبويب النشط */}
+          {/* مساحة العرض الرئيسية */}
           <div className="content-area">
             {activeTab === "licenses" && (
               <div className="card">
@@ -433,18 +432,18 @@ export default function AdminPage() {
                   <button 
                     onClick={() => { setGeneratedCode(""); setIsModalOpen(true); }}
                     className="btn-primary" 
-                    style={{ width: "auto", padding: "10px 24px" }}
+                    style={{ width: "auto", padding: "10px 24px", background: "linear-gradient(135deg, var(--color-gold-sand) 0%, var(--color-gold-cream) 100%)", color: "var(--color-bg-stone-dark)", border: "none" }}
                   >
-                    + توليد كود جديد
+                    + إصدار ترخيص
                   </button>
                 </div>
 
-                {/* شريط البحث والفلترة */}
+                {/* خيارات البحث والفلترة */}
                 <div className="search-filter-row">
                   <input
                     type="text"
                     className="form-input search-box"
-                    placeholder="ابحث عن مالك، هاتف، أو كود الترخيص..."
+                    placeholder="بحث في كود الترخيص، المالك، أو الهاتف..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
@@ -454,9 +453,9 @@ export default function AdminPage() {
                     onChange={(e) => setFilterStatus(e.target.value)}
                   >
                     <option value="all">كل الحالات</option>
-                    <option value="active">نشط</option>
-                    <option value="expired">منتهي</option>
-                    <option value="suspended">موقوف</option>
+                    <option value="active">نشط وصالح</option>
+                    <option value="expired">منتهي الصلاحية</option>
+                    <option value="suspended">موقوف مؤقتاً</option>
                   </select>
                 </div>
 
@@ -468,11 +467,11 @@ export default function AdminPage() {
                         <th style={{ textAlign: "right" }}>كود الترخيص</th>
                         <th style={{ textAlign: "right" }}>المالك والهاتف</th>
                         <th style={{ textAlign: "right" }}>الباقة</th>
-                        <th style={{ textAlign: "right" }}>عمليات AI</th>
+                        <th style={{ textAlign: "right" }}>مسحات AI</th>
                         <th style={{ textAlign: "right" }}>تاريخ الانتهاء</th>
-                        <th style={{ textAlign: "right" }}>حالة الترخيص</th>
+                        <th style={{ textAlign: "right" }}>الحالة</th>
                         <th style={{ textAlign: "right" }}>الجهاز المقترن</th>
-                        <th style={{ textAlign: "left" }}>خيارات التحكم</th>
+                        <th style={{ textAlign: "left" }}>إجراءات التحكم</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -482,16 +481,16 @@ export default function AdminPage() {
                         
                         return (
                           <tr key={lic._id}>
-                            <td style={{ fontWeight: "bold", color: "#c6a46a" }}>{lic.license_code}</td>
+                            <td style={{ fontWeight: "bold", color: "var(--color-gold-cream)" }}>{lic.license_code}</td>
                             <td>
-                              <div style={{ fontWeight: "bold", color: "#1e2235" }}>{lic.owner_name}</div>
-                              <div style={{ fontSize: "11.5px", color: "#64748b" }}>{lic.phone_number}</div>
+                              <div style={{ fontWeight: "bold", color: "#ffffff" }}>{lic.owner_name}</div>
+                              <div style={{ fontSize: "12px", color: "var(--color-gold-cream)", opacity: 0.7 }}>{lic.phone_number}</div>
                             </td>
                             <td>
                               {lic.package_type === "monthly" ? "6 أشهر" : 
                                lic.package_type === "yearly" ? "سنوية" : "سنتين"}
                             </td>
-                            <td style={{ fontWeight: "bold", color: "#475569" }}>
+                            <td style={{ fontWeight: "bold" }}>
                               {lic.ai_scan_count || 0}
                             </td>
                             <td>
@@ -507,14 +506,14 @@ export default function AdminPage() {
                               {lic.device_id ? (
                                 <span className="device-info" title={lic.device_id}>{lic.device_id.substring(0, 14)}...</span>
                               ) : (
-                                <span style={{ fontSize: "11.5px", color: "#94a3b8", fontStyle: "italic" }}>غير مقترن</span>
+                                <span style={{ fontSize: "12px", color: "var(--color-gold-cream)", opacity: 0.5, fontStyle: "italic" }}>غير مقترن</span>
                               )}
                             </td>
                             <td className="actions-cell">
                               <button 
                                 onClick={() => handleToggleStatus(lic._id, lic.status)}
-                                className="btn-table-action btn-status-toggle"
-                                title="إيقاف / تشغيل"
+                                className="btn-table-action"
+                                title="إيقاف / تفعيل مؤقت"
                               >
                                 <svg className="action-icon-vector" viewBox="0 0 24 24">
                                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4-9H8v2h8v-2z"/>
@@ -523,18 +522,18 @@ export default function AdminPage() {
                               </button>
                               <button 
                                 onClick={() => handleExtendLicense(lic._id, lic.expires_at, 360)}
-                                className="btn-table-action btn-extend"
-                                title="تمديد سنة"
+                                className="btn-table-action"
+                                title="تمديد الرخصة لسنة إضافية"
                               >
                                 <svg className="action-icon-vector" viewBox="0 0 24 24">
                                   <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
                                 </svg>
-                                تمديد
+                                + سنة
                               </button>
                               <button 
                                 onClick={() => handleDeleteLicense(lic._id)}
-                                className="btn-table-action btn-delete"
-                                title="حذف الترخيص"
+                                className="btn-table-action delete-action"
+                                title="حذف نهائي"
                               >
                                 <svg className="action-icon-vector" viewBox="0 0 24 24">
                                   <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
@@ -547,8 +546,8 @@ export default function AdminPage() {
                       })}
                       {filteredLicenses.length === 0 && (
                         <tr>
-                          <td colSpan="8" style={{ textAlign: "center", color: "#64748b", padding: "40px" }}>
-                            لا توجد تراخيص مطابقة لخيارات البحث.
+                          <td colSpan="8" style={{ textAlign: "center", color: "var(--color-gold-cream)", opacity: 0.7, padding: "40px" }}>
+                            لا توجد تراخيص مسجلة مطابقة للبحث.
                           </td>
                         </tr>
                       )}
@@ -568,28 +567,23 @@ export default function AdminPage() {
                   {adminLogs.map((log) => (
                     <div key={log._id} className="log-item">
                       <div style={{ display: "flex", gap: "14px", alignItems: "center" }}>
-                        <span className={`log-action-tag ${
-                          log.action === "create_license" ? "tag-create" :
-                          log.action === "delete_license" ? "tag-delete" :
-                          log.action === "suspend_license" ? "tag-suspend" :
-                          log.action === "activate_license" ? "tag-activate" : "tag-update"
-                        }`}>
-                          {log.action === "create_license" ? "إنشاء ترخيص" :
-                           log.action === "delete_license" ? "حذف ترخيص" :
-                           log.action === "suspend_license" ? "إيقاف" :
-                           log.action === "activate_license" ? "تنشيط" : "تحديث"}
+                        <span className="log-action-tag">
+                          {log.action === "create_license" ? "إصدار" :
+                           log.action === "delete_license" ? "حذف" :
+                           log.action === "suspend_license" ? "تعليق" :
+                           log.action === "activate_license" ? "تنشيط" : "تعديل"}
                         </span>
                         <div style={{ display: "flex", flexDirection: "column" }}>
-                          <span style={{ fontWeight: "700", fontSize: "14px", color: "#1e2235" }}>{log.details}</span>
-                          <span style={{ fontSize: "11px", color: "#64748b" }}>الكود: {log.license_code} | IP: {log.ip_address}</span>
+                          <span style={{ fontWeight: "700", fontSize: "14.5px", color: "#ffffff" }}>{log.details}</span>
+                          <span style={{ fontSize: "12px", color: "var(--color-gold-cream)", opacity: 0.7 }}>الكود: {log.license_code} | IP: {log.ip_address}</span>
                         </div>
                       </div>
                       <span className="log-date">{new Date(log.created_at).toLocaleString("ar-SA")}</span>
                     </div>
                   ))}
                   {adminLogs.length === 0 && (
-                    <div style={{ textAlign: "center", color: "#64748b", padding: "30px" }}>
-                      لا توجد سجلات نشاط مسجلة بعد.
+                    <div style={{ textAlign: "center", color: "var(--color-gold-cream)", opacity: 0.5, padding: "30px" }}>
+                      لا توجد سجلات تدقيق مسجلة حالياً.
                     </div>
                   )}
                 </div>
@@ -598,7 +592,7 @@ export default function AdminPage() {
 
             {activeTab === "ai_scans" && (
               <div className="card">
-                <h2 className="card-title">آخر 10 عمليات مسح بالذكاء الاصطناعي</h2>
+                <h2 className="card-title">آخر عمليات مسح الفواتير بالذكاء الاصطناعي</h2>
                 <div style={{ marginBottom: "20px" }}>
                   {error && <div className="error-msg">{error}</div>}
                 </div>
@@ -606,19 +600,15 @@ export default function AdminPage() {
                   {recentScans.map((scan) => (
                     <div key={scan._id} className="scan-item">
                       <div style={{ display: "flex", gap: "14px", alignItems: "center" }}>
-                        <span className={`scan-badge ${
-                          scan.status === "success" ? "scan-success" :
-                          scan.status === "failed" ? "scan-failed" : "scan-error"
-                        }`}>
-                          {scan.status === "success" ? "عملية ناجحة" :
-                           scan.status === "failed" ? "فشلت القراءة" : "خطأ تقني"}
+                        <span className="scan-badge scan-success">
+                          {scan.status === "success" ? "قراءة ناجحة" : "فشل القراءة"}
                         </span>
                         <div style={{ display: "flex", flexDirection: "column" }}>
-                          <span style={{ fontWeight: "700", fontSize: "14px", color: "#1e2235" }}>
+                          <span style={{ fontWeight: "700", fontSize: "14.5px", color: "#ffffff" }}>
                             العميل: {scan.license_id?.owner_name || "غير معروف"} ({scan.license_id?.license_code || "بدون كود"})
                           </span>
-                          <span style={{ fontSize: "11px", color: "#64748b" }}>
-                            رقم الجهاز: {scan.device_id} {scan.error_message && `| خطأ: ${scan.error_message}`}
+                          <span style={{ fontSize: "12px", color: "var(--color-gold-cream)", opacity: 0.7 }}>
+                            رقم الجهاز: {scan.device_id} {scan.error_message && `| تفاصيل الخطأ: ${scan.error_message}`}
                           </span>
                         </div>
                       </div>
@@ -626,7 +616,7 @@ export default function AdminPage() {
                     </div>
                   ))}
                   {recentScans.length === 0 && (
-                    <div style={{ textAlign: "center", color: "#64748b", padding: "30px" }}>
+                    <div style={{ textAlign: "center", color: "var(--color-gold-cream)", opacity: 0.5, padding: "30px" }}>
                       لا توجد عمليات مسح AI مسجلة بعد.
                     </div>
                   )}
@@ -635,22 +625,22 @@ export default function AdminPage() {
             )}
           </div>
 
-          {/* محاورة توليد كود ترخيص جديد العائمة (Modal) */}
+          {/* محاورة توليد كود ترخيص جديد العائمة */}
           {isModalOpen && (
             <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
               <div className="modal-container" onClick={(e) => e.stopPropagation()}>
                 <button className="modal-close-btn" onClick={() => setIsModalOpen(false)}>×</button>
-                <h3 className="card-title" style={{ marginBottom: "24px" }}>توليد كود ترخيص جديد</h3>
+                <h3 className="card-title" style={{ marginBottom: "24px" }}>إصدار كود ترخيص جديد</h3>
                 
                 {error && <div className="error-msg">{error}</div>}
                 
                 <form onSubmit={handleCreateLicense}>
                   <div className="form-group">
-                    <label className="form-label">اسم صاحب المحل</label>
+                    <label className="form-label">اسم صاحب المحل / المشترك</label>
                     <input
                       type="text"
                       className="form-input"
-                      placeholder="مثال: البقالة الفاخرة..."
+                      placeholder="اسم صاحب المحل..."
                       value={ownerName}
                       onChange={(e) => setOwnerName(e.target.value)}
                       required
@@ -661,31 +651,31 @@ export default function AdminPage() {
                     <input
                       type="text"
                       className="form-input"
-                      placeholder="مثال: 9665xxxxxxxx..."
+                      placeholder="رقم الهاتف..."
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(e.target.value)}
                       required
                     />
                   </div>
                   <div className="form-group">
-                    <label className="form-label">نوع الباقة</label>
+                    <label className="form-label">نوع الباقة المالية</label>
                     <select 
                       className="form-select"
                       value={packageType}
                       onChange={(e) => {
                         setPackageType(e.target.value);
-                        if (e.target.value === "monthly") setDurationDays("180"); // 6 أشهر
-                        else if (e.target.value === "yearly") setDurationDays("360"); // سنة
-                        else if (e.target.value === "lifetime") setDurationDays("720"); // سنتين
+                        if (e.target.value === "monthly") setDurationDays("180");
+                        else if (e.target.value === "yearly") setDurationDays("360");
+                        else if (e.target.value === "lifetime") setDurationDays("720");
                       }}
                     >
                       <option value="monthly">6 أشهر (8$)</option>
-                      <option value="yearly">سنة (14$)</option>
+                      <option value="yearly">سنوية (14$)</option>
                       <option value="lifetime">سنتين (28$)</option>
                     </select>
                   </div>
                   <div className="form-group">
-                    <label className="form-label">مدة الصلاحية (أيام)</label>
+                    <label className="form-label">مدة صلاحية الترخيص (أيام)</label>
                     <input
                       type="number"
                       className="form-input"
@@ -695,17 +685,17 @@ export default function AdminPage() {
                       required
                     />
                   </div>
-                  <button type="submit" className="btn-primary" disabled={loading}>
-                    {loading ? "جاري إنشاء الترخيص..." : "توليد الكود وتفعيله"}
+                  <button type="submit" className="btn-primary" disabled={loading} style={{ background: "linear-gradient(135deg, var(--color-gold-sand) 0%, var(--color-gold-cream) 100%)", color: "var(--color-bg-stone-dark)", border: "none" }}>
+                    {loading ? "جاري إنشاء الترخيص..." : "توليد كود التفعيل المعتمد"}
                   </button>
                 </form>
 
                 {generatedCode && (
                   <div className="license-result">
-                    <div style={{ fontSize: "12px", color: "#64748b", fontWeight: "bold" }}>كود الترخيص الجديد (انقر للنسخ):</div>
+                    <div style={{ fontSize: "12px", color: "var(--color-gold-cream)", opacity: 0.7, fontWeight: "bold" }}>كود الترخيص الجديد (انقر للنسخ الفوري):</div>
                     <div className="license-code-display" onClick={() => {
                       navigator.clipboard.writeText(generatedCode);
-                      alert("تم نسخ الكود بنجاح!");
+                      alert("تم نسخ كود التفعيل بنجاح!");
                     }}>
                       {generatedCode}
                       <svg style={{ width: "16px", height: "16px", fill: "currentColor" }} viewBox="0 0 24 24">

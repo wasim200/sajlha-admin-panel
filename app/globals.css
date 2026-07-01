@@ -1,39 +1,24 @@
 /* 
-  Sajlha Web Admin Panel - Global CSS
-  Premium Fintech Aesthetic using original colors
+  Sajlha Web Admin Panel - Master Global CSS
+  Radical Redesign using ONLY Saudi Desert Gold and Stony Granite Charcoal
 */
 
 :root {
-  /* Original Color Palette Maintained */
-  --color-primary: #c6a46a; /* Gold */
-  --color-primary-hover: #bfa063;
-  --color-primary-light: rgba(198, 164, 106, 0.1);
-  --color-primary-glow: rgba(198, 164, 106, 0.4);
-
-  --color-bg-light: #f4f5f8;
-  --color-bg-card: #ffffff;
-  --color-bg-dark-1: #151724;
-  --color-bg-dark-2: #1e2235;
-
-  --color-text-dark: #1e293b;
-  --color-text-muted: #64748b;
-  --color-text-light: #e2e8f0;
-
-  --color-border: rgba(226, 232, 240, 0.8);
-  --color-border-dark: rgba(198, 164, 106, 0.15);
-
-  --color-success: #10b981;
-  --color-danger: #ef4444;
-  --color-warning: #f59e0b;
-
-  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 10px 20px rgba(30, 34, 53, 0.03);
-  --shadow-lg: 0 20px 40px rgba(30, 34, 53, 0.08);
-  --shadow-glow: 0 8px 25px var(--color-primary-glow);
+  --color-bg-stone-dark: #0B0D17;      /* صخر الجرانيت الداكن الفاخر */
+  --color-bg-stone-card: #131626;      /* صخر الجرانيت الفاتح للبطاقات */
+  --color-gold-sand: #C6A46A;          /* رمال الصحراء الذهبية */
+  --color-gold-cream: #E5C583;         /* الذهبي الكريمي السعودي */
   
-  --radius-md: 12px;
+  /* ألوان التوهج والحدود المستوحاة من رمال الدهناء */
+  --color-gold-border: rgba(198, 164, 106, 0.15);
+  --color-gold-border-active: rgba(229, 197, 131, 0.4);
+  --color-gold-glow: rgba(198, 164, 106, 0.12);
+  --color-gold-glow-intense: rgba(229, 197, 131, 0.3);
+  
+  --radius-sm: 8px;
+  --radius-md: 14px;
   --radius-lg: 20px;
-  --radius-xl: 24px;
+  --radius-xl: 30px;
 }
 
 * {
@@ -43,108 +28,26 @@
 }
 
 body {
-  background-color: var(--color-bg-light);
-  color: var(--color-text-dark);
+  background-color: var(--color-bg-stone-dark);
+  color: var(--color-gold-cream);
   font-family: 'Cairo', sans-serif;
   direction: rtl;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+/* تحسين شريط التمرير ليطابق الهوية الحجرية الذهبية */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
-
-@keyframes springUp {
-  0% { opacity: 0; transform: scale(0.95) translateY(20px); }
-  50% { transform: scale(1.02) translateY(-5px); }
-  100% { opacity: 1; transform: scale(1) translateY(0); }
+::-webkit-scrollbar-track {
+  background: var(--color-bg-stone-dark);
 }
-
-@keyframes pulseGlow {
-  0% { box-shadow: 0 0 0 0 rgba(198, 164, 106, 0.4); }
-  70% { box-shadow: 0 0 0 15px rgba(198, 164, 106, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(198, 164, 106, 0); }
+::-webkit-scrollbar-thumb {
+  background: var(--color-gold-sand);
+  border-radius: var(--radius-sm);
 }
-
-/* Global Utility Classes */
-.fade-in {
-  animation: fadeIn 0.5s ease-out forwards;
-}
-
-.glass-panel {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: var(--shadow-md);
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 12px 24px;
-  border-radius: var(--radius-md);
-  font-family: inherit;
-  font-weight: 800;
-  font-size: 15px;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  text-decoration: none;
-  border: none;
-}
-
-.btn-primary {
-  background-color: var(--color-primary);
-  color: #ffffff;
-  box-shadow: 0 4px 15px rgba(198, 164, 106, 0.3);
-}
-
-.btn-primary:hover {
-  background-color: var(--color-primary-hover);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-glow);
-}
-
-.btn-outline {
-  background-color: transparent;
-  color: var(--color-primary);
-  border: 2px solid var(--color-primary);
-}
-
-.btn-outline:hover {
-  background-color: var(--color-primary-light);
-  transform: translateY(-2px);
-}
-
-/* Form Elements */
-.input-field {
-  width: 100%;
-  padding: 14px 18px;
-  background-color: #f8f9fa;
-  border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-md);
-  color: var(--color-text-dark);
-  font-family: inherit;
-  font-size: 14px;
-  transition: all 0.25s ease;
-}
-
-.input-field:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  background-color: #ffffff;
-  box-shadow: 0 0 0 4px var(--color-primary-light);
-}
-
-.form-label {
-  display: block;
-  font-size: 14px;
-  color: var(--color-text-muted);
-  margin-bottom: 8px;
-  font-weight: 700;
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold-cream);
 }
