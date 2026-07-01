@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import './page.css';
 
 export default function LandingPage() {
   const [activeFaq, setActiveFaq] = useState(null);
@@ -31,7 +32,7 @@ export default function LandingPage() {
   const features = [
     {
       icon: (
-        <svg viewBox="0 0 24 24" style={{ width: "26px", height: "26px", fill: "#c6a46a" }}>
+        <svg viewBox="0 0 24 24" style={{ width: "26px", height: "26px", fill: "#c6a46a", transition: "fill 0.3s" }}>
           <path d="M19 13H5v-2h14v2zm-2-7H7v2h10V6zm2 14H5v-2h14v2zm-2-7h-4V9h4v2zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
         </svg>
       ),
@@ -40,7 +41,7 @@ export default function LandingPage() {
     },
     {
       icon: (
-        <svg viewBox="0 0 24 24" style={{ width: "26px", height: "26px", fill: "#c6a46a" }}>
+        <svg viewBox="0 0 24 24" style={{ width: "26px", height: "26px", fill: "#c6a46a", transition: "fill 0.3s" }}>
           <path d="M11.5 2L2 13h9v9l9.5-11h-9V2z"/>
         </svg>
       ),
@@ -49,7 +50,7 @@ export default function LandingPage() {
     },
     {
       icon: (
-        <svg viewBox="0 0 24 24" style={{ width: "26px", height: "26px", fill: "#c6a46a" }}>
+        <svg viewBox="0 0 24 24" style={{ width: "26px", height: "26px", fill: "#c6a46a", transition: "fill 0.3s" }}>
           <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3z"/>
         </svg>
       ),
@@ -58,7 +59,7 @@ export default function LandingPage() {
     },
     {
       icon: (
-        <svg viewBox="0 0 24 24" style={{ width: "26px", height: "26px", fill: "#c6a46a" }}>
+        <svg viewBox="0 0 24 24" style={{ width: "26px", height: "26px", fill: "#c6a46a", transition: "fill 0.3s" }}>
           <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/>
         </svg>
       ),
@@ -67,7 +68,7 @@ export default function LandingPage() {
     },
     {
       icon: (
-        <svg viewBox="0 0 24 24" style={{ width: "26px", height: "26px", fill: "#c6a46a" }}>
+        <svg viewBox="0 0 24 24" style={{ width: "26px", height: "26px", fill: "#c6a46a", transition: "fill 0.3s" }}>
           <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
         </svg>
       ),
@@ -76,7 +77,7 @@ export default function LandingPage() {
     },
     {
       icon: (
-        <svg viewBox="0 0 24 24" style={{ width: "26px", height: "26px", fill: "#c6a46a" }}>
+        <svg viewBox="0 0 24 24" style={{ width: "26px", height: "26px", fill: "#c6a46a", transition: "fill 0.3s" }}>
           <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
         </svg>
       ),
@@ -135,608 +136,45 @@ export default function LandingPage() {
 
   return (
     <div className="landing-wrapper">
-      <style>{`
-        /* الهوية البصرية المتوافقة مع صور التطبيق المرفقة (حجري كريمي وذهبي فاخر) */
-        .landing-wrapper {
-          background-color: #f4f5f8;
-          color: #1e293b;
-          font-family: 'Cairo', sans-serif;
-          direction: rtl;
-          min-height: 100vh;
-          overflow-x: hidden;
-        }
-
-        /* حاويات الأقسام */
-        .container {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 0 24px;
-        }
-
-        /* شريط التنقل العلوي الفاخر */
-        .navbar {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 24px 0;
-          border-bottom: 1.5px solid rgba(198, 164, 106, 0.15);
-        }
-        .nav-logo {
-          font-size: 26px;
-          font-weight: 900;
-          color: #1e2235;
-          text-decoration: none;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-        .nav-logo span {
-          color: #c6a46a;
-        }
-        .nav-links {
-          display: flex;
-          gap: 28px;
-          align-items: center;
-        }
-        .nav-link {
-          color: #475569;
-          text-decoration: none;
-          font-weight: 700;
-          font-size: 14.5px;
-          transition: color 0.2s;
-        }
-        .nav-link:hover {
-          color: #c6a46a;
-        }
-        .btn-nav-action {
-          background-color: #c6a46a;
-          color: #ffffff;
-          padding: 10px 24px;
-          border-radius: 12px;
-          font-weight: 800;
-          text-decoration: none;
-          font-size: 14px;
-          box-shadow: 0 4px 14px rgba(198, 164, 106, 0.3);
-          transition: all 0.25s ease;
-        }
-        .btn-nav-action:hover {
-          transform: translateY(-1.5px);
-          box-shadow: 0 6px 20px rgba(198, 164, 106, 0.45);
-          background-color: #bfa063;
-        }
-
-        /* قسم الهيرو الرئيسي - مستوحى من هيدر شاشة انتهاء الصلاحية */
-        .hero-container-outer {
-          background: linear-gradient(180deg, #151724 0%, #1e2235 100%);
-          border-bottom-left-radius: 40px;
-          border-bottom-right-radius: 40px;
-          padding: 80px 0 100px 0;
-          position: relative;
-          color: #ffffff;
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-        }
-        .hero-glow-rings {
-          position: absolute;
-          top: 30px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 120px;
-          height: 120px;
-          border-radius: 50%;
-          border: 1px solid rgba(198, 164, 106, 0.15);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .hero-glow-rings-inner {
-          width: 90px;
-          height: 90px;
-          border-radius: 50%;
-          border: 1.5px solid rgba(198, 164, 106, 0.3);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: radial-gradient(circle, rgba(198, 164, 106, 0.15) 0%, transparent 80%);
-          box-shadow: 0 0 20px rgba(198, 164, 106, 0.1);
-        }
-        .hero-icon-vector {
-          width: 32px;
-          height: 32px;
-          fill: #c6a46a;
-        }
-        .hero-section {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          text-align: center;
-          padding-top: 80px;
-        }
-        .hero-tag {
-          font-size: 13.5px;
-          font-weight: 800;
-          color: #c6a46a;
-          background-color: rgba(198, 164, 106, 0.08);
-          border: 1.5px solid rgba(198, 164, 106, 0.25);
-          padding: 6px 14px;
-          border-radius: 20px;
-          display: inline-block;
-          margin-bottom: 24px;
-        }
-        .hero-title {
-          font-size: 42px;
-          font-weight: 900;
-          line-height: 1.35;
-          max-width: 800px;
-          margin: 0 auto 24px auto;
-          color: #ffffff;
-        }
-        .hero-title span {
-          color: #c6a46a;
-        }
-        .hero-subtitle {
-          font-size: 16.5px;
-          color: #cbd5e1;
-          max-width: 600px;
-          line-height: 1.7;
-          margin: 0 auto 40px auto;
-        }
-        .hero-ctas {
-          display: flex;
-          gap: 16px;
-          justify-content: center;
-          flex-wrap: wrap;
-        }
-        .btn-hero-primary {
-          background-color: #c6a46a;
-          color: #ffffff;
-          padding: 14px 36px;
-          border-radius: 14px;
-          font-weight: 800;
-          font-size: 16px;
-          text-decoration: none;
-          box-shadow: 0 8px 20px rgba(198, 164, 106, 0.35);
-          transition: all 0.25s ease-in-out;
-        }
-        .btn-hero-primary:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 12px 24px rgba(198, 164, 106, 0.5);
-          background-color: #bfa063;
-        }
-        .btn-hero-secondary {
-          background-color: transparent;
-          color: #ffffff;
-          border: 2px solid rgba(198, 164, 106, 0.4);
-          padding: 14px 36px;
-          border-radius: 14px;
-          font-weight: 800;
-          font-size: 16px;
-          text-decoration: none;
-          transition: all 0.25s ease;
-        }
-        .btn-hero-secondary:hover {
-          background-color: rgba(198, 164, 106, 0.08);
-          border-color: #c6a46a;
-        }
-
-        /* حاويات الميزات والبطاقات - مستوحاة من كروت الشاشة الرئيسية */
-        .features-section {
-          padding: 100px 0;
-        }
-        .section-header {
-          text-align: center;
-          margin-bottom: 60px;
-        }
-        .section-title {
-          font-size: 32px;
-          font-weight: 900;
-          color: #1e2235;
-          margin-bottom: 12px;
-        }
-        .section-title span {
-          color: #c6a46a;
-        }
-        .section-subtitle {
-          color: #64748b;
-          font-size: 15.5px;
-          max-width: 550px;
-          margin: 0 auto;
-          line-height: 1.6;
-        }
-        .features-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-          gap: 24px;
-        }
-        .feature-card {
-          background: #ffffff;
-          border: 1px solid rgba(226, 232, 240, 0.8);
-          border-radius: 24px;
-          padding: 34px;
-          transition: all 0.25s ease;
-          box-shadow: 0 10px 20px rgba(30, 34, 53, 0.02);
-        }
-        .feature-card:hover {
-          transform: translateY(-4px);
-          border-color: rgba(198, 164, 106, 0.3);
-          box-shadow: 0 15px 30px rgba(198, 164, 106, 0.08);
-        }
-        .feature-icon-wrapper {
-          width: 54px;
-          height: 54px;
-          border-radius: 14px;
-          background-color: rgba(198, 164, 106, 0.06);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin-bottom: 24px;
-        }
-        .feature-title {
-          font-size: 18px;
-          font-weight: 800;
-          color: #1e2235;
-          margin-bottom: 12px;
-        }
-        .feature-desc {
-          font-size: 14px;
-          color: #64748b;
-          line-height: 1.7;
-        }
-
-        /* قسم الباقات وكروت الأسعار - مستوحى من كروت اختيار الباقة */
-        .pricing-section {
-          padding: 100px 0;
-          background-color: #fafbfd;
-          border-top: 1px solid rgba(226, 232, 240, 0.8);
-          border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-        }
-        .pricing-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-          gap: 24px;
-          align-items: stretch;
-          margin-top: 40px;
-        }
-        .pricing-card {
-          background: #ffffff;
-          border: 1.5px solid rgba(226, 232, 240, 0.8);
-          border-radius: 24px;
-          padding: 44px 34px;
-          position: relative;
-          transition: all 0.25s ease;
-          box-shadow: 0 10px 25px rgba(30, 34, 53, 0.03);
-          display: flex;
-          flex-direction: column;
-        }
-        .pricing-card:hover {
-          transform: translateY(-4px);
-          border-color: rgba(198, 164, 106, 0.3);
-          box-shadow: 0 15px 30px rgba(198, 164, 106, 0.08);
-        }
-        .pricing-card.popular {
-          border: 2px solid #c6a46a;
-          background-color: #fefcf8;
-          box-shadow: 0 15px 35px rgba(198, 164, 106, 0.12);
-        }
-        .pricing-badge {
-          position: absolute;
-          top: 24px;
-          left: 24px;
-          font-size: 11px;
-          font-weight: 800;
-          color: #c6a46a;
-          background: rgba(198, 164, 106, 0.08);
-          border: 1.5px solid rgba(198, 164, 106, 0.2);
-          padding: 4px 12px;
-          border-radius: 20px;
-        }
-        .pricing-card.popular .pricing-badge {
-          background: #c6a46a;
-          color: #ffffff;
-          border: none;
-        }
-        .plan-name {
-          font-size: 22px;
-          font-weight: 800;
-          color: #1e2235;
-          margin-bottom: 6px;
-        }
-        .plan-duration {
-          font-size: 13.5px;
-          color: #64748b;
-          margin-bottom: 24px;
-          font-weight: 700;
-        }
-        .plan-price-row {
-          display: flex;
-          align-items: baseline;
-          margin-bottom: 30px;
-        }
-        .plan-price {
-          font-size: 44px;
-          font-weight: 900;
-          color: #1e2235;
-        }
-        .plan-price-curr {
-          font-size: 16px;
-          color: #c6a46a;
-          margin-right: 6px;
-          font-weight: 800;
-        }
-        .plan-features-list {
-          list-style: none;
-          padding: 0;
-          margin: 0 0 34px 0;
-          display: flex;
-          flex-direction: column;
-          gap: 14px;
-          flex-grow: 1;
-        }
-        .plan-feature-item {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          font-size: 14px;
-          color: #475569;
-          font-weight: 600;
-        }
-        .plan-feature-item-icon {
-          width: 14px;
-          height: 14px;
-          fill: #c6a46a;
-          flex-shrink: 0;
-        }
-        .btn-pricing-cta {
-          display: block;
-          width: 100%;
-          padding: 14px;
-          text-align: center;
-          background-color: #ffffff;
-          color: #c6a46a;
-          border: 2px solid rgba(198, 164, 106, 0.4);
-          border-radius: 14px;
-          font-weight: 800;
-          font-size: 14.5px;
-          text-decoration: none;
-          transition: all 0.25s;
-          box-sizing: border-box;
-        }
-        .btn-pricing-cta:hover {
-          background-color: #c6a46a;
-          color: #ffffff;
-          border-color: #c6a46a;
-          box-shadow: 0 6px 16px rgba(198, 164, 106, 0.25);
-        }
-        .popular .btn-pricing-cta {
-          background-color: #c6a46a;
-          color: #ffffff;
-          border: none;
-          box-shadow: 0 8px 20px rgba(198, 164, 106, 0.3);
-        }
-        .popular .btn-pricing-cta:hover {
-          background-color: #bfa063;
-        }
-
-        /* صندوق الإشعار المساعد - مستوحى من صندوق تلميحات التفعيل */
-        .info-box {
-          background-color: #fdf8f5;
-          border: 1px solid rgba(198, 164, 106, 0.2);
-          padding: 18px 24px;
-          border-radius: 16px;
-          margin-top: 40px;
-          display: flex;
-          gap: 14px;
-          align-items: flex-start;
-        }
-        .info-box-icon-vector {
-          width: 20px;
-          height: 20px;
-          fill: #c6a46a;
-          flex-shrink: 0;
-          margin-top: 2px;
-        }
-        .info-box-text {
-          font-size: 13.5px;
-          color: #64748b;
-          line-height: 1.6;
-          margin: 0;
-          font-weight: 600;
-        }
-
-        /* قسم خطوات التشغيل */
-        .guide-section {
-          padding: 100px 0;
-        }
-        .steps-container {
-          max-width: 800px;
-          margin: 0 auto;
-        }
-        .step-item {
-          display: flex;
-          gap: 24px;
-          margin-bottom: 40px;
-        }
-        .step-number {
-          width: 50px;
-          height: 50px;
-          border-radius: 50%;
-          background: rgba(198, 164, 106, 0.08);
-          border: 1.5px solid #c6a46a;
-          color: #c6a46a;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: 900;
-          font-size: 18px;
-          flex-shrink: 0;
-          box-shadow: 0 0 15px rgba(198, 164, 106, 0.1);
-        }
-        .step-content {
-          text-align: right;
-          padding-top: 6px;
-        }
-        .step-title {
-          font-size: 18px;
-          font-weight: 800;
-          color: #1e2235;
-          margin-bottom: 8px;
-        }
-        .step-desc {
-          font-size: 14px;
-          color: #64748b;
-          line-height: 1.6;
-        }
-
-        /* قسم الأسئلة الشائعة */
-        .faq-section {
-          padding: 100px 0;
-          background-color: #fafbfd;
-        }
-        .faq-container {
-          max-width: 750px;
-          margin: 0 auto;
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-        }
-        .faq-item {
-          background-color: #ffffff;
-          border: 1px solid rgba(226, 232, 240, 0.8);
-          border-radius: 16px;
-          overflow: hidden;
-          transition: all 0.2s;
-        }
-        .faq-item:hover {
-          border-color: rgba(198, 164, 106, 0.25);
-        }
-        .faq-question {
-          width: 100%;
-          padding: 20px 24px;
-          background: transparent;
-          border: none;
-          color: #1e2235;
-          text-align: right;
-          font-size: 15px;
-          font-weight: 700;
-          font-family: 'Cairo', sans-serif;
-          cursor: pointer;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-        .faq-answer {
-          padding: 0 24px 20px 24px;
-          font-size: 14px;
-          color: #64748b;
-          line-height: 1.7;
-          display: none;
-        }
-        .faq-item.active .faq-answer {
-          display: block;
-        }
-        .faq-arrow-vector {
-          width: 12px;
-          height: 12px;
-          fill: #c6a46a;
-          transition: transform 0.2s;
-        }
-        .faq-item.active .faq-arrow-vector {
-          transform: rotate(180deg);
-        }
-
-        /* التذييل */
-        .footer {
-          border-top: 1.5px solid rgba(198, 164, 106, 0.15);
-          padding: 55px 0;
-          background-color: #151724;
-          color: #e2e8f0;
-          text-align: center;
-        }
-        .footer-logo {
-          font-size: 28px;
-          font-weight: 900;
-          color: #ffffff;
-          margin-bottom: 12px;
-          display: inline-block;
-          text-decoration: none;
-        }
-        .footer-logo span {
-          color: #c6a46a;
-        }
-        .footer-desc {
-          color: #94a3b8;
-          font-size: 13.5px;
-          max-width: 450px;
-          margin: 0 auto 30px auto;
-          line-height: 1.6;
-        }
-        .footer-links {
-          display: flex;
-          justify-content: center;
-          gap: 24px;
-          margin-bottom: 30px;
-        }
-        .footer-link {
-          color: #cbd5e1;
-          text-decoration: none;
-          font-size: 14px;
-          font-weight: 600;
-          transition: color 0.15s;
-        }
-        .footer-link:hover {
-          color: #c6a46a;
-        }
-        .copyright {
-          font-size: 12px;
-          color: #64748b;
-          font-weight: 600;
-        }
-      `}</style>
-
-      {/* شريط التنقل */}
-      <div className="container" style={{ backgroundColor: "#ffffff" }}>
-        <header className="navbar">
-          <a href="#" className="nav-logo">سِجِلّها<span>.</span></a>
-          <nav className="nav-links">
-            <a href="#features" className="nav-link">الميزات</a>
-            <a href="#pricing" className="nav-link">الباقات</a>
-            <a href="#guide" className="nav-link">طريقة التفعيل</a>
-            <a href="#faq" className="nav-link">الأسئلة الشائعة</a>
-            <a href="/admin" className="btn-nav-action">لوحة التحكم</a>
-          </nav>
-        </header>
+      <div className="navbar-wrapper">
+        <div className="container">
+          <header className="navbar">
+            <a href="#" className="nav-logo">سِجِلّها<span>.</span></a>
+            <nav className="nav-links">
+              <a href="#features" className="nav-link">الميزات</a>
+              <a href="#pricing" className="nav-link">الباقات</a>
+              <a href="#guide" className="nav-link">طريقة التفعيل</a>
+              <a href="#faq" className="nav-link">الأسئلة الشائعة</a>
+              <a href="/admin" className="btn btn-primary">لوحة التحكم</a>
+            </nav>
+          </header>
+        </div>
       </div>
 
-      {/* هيدر الهيرو الرئيسي (الوضع الداكن المدمج) */}
       <div className="hero-container-outer">
-        <div className="hero-glow-rings">
-          <div className="hero-glow-rings-inner">
-            <svg className="hero-icon-vector" viewBox="0 0 24 24">
-              <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
-            </svg>
-          </div>
-        </div>
+        <div className="hero-glow-1"></div>
+        <div className="hero-glow-2"></div>
         <div className="container">
           <section className="hero-section">
-            <span className="hero-tag">تطبيق المحاسبة وإدارة الديون</span>
+            <span className="hero-tag">تطبيق المحاسبة وإدارة الديون رقم 1</span>
             <h2 className="hero-title">سجل ديون عملائك وفواتيرهم <span>بكل ثقة وذكاء</span></h2>
             <p className="hero-subtitle">
-              تطبيق سجلها يمنحك حلاً محاسبياً متكاملاً لإدارة ديون متجرك وقراءة فواتيرك بالذكاء الاصطناعي وبدون اتصال بالإنترنت.
+              تطبيق سجلها يمنحك حلاً محاسبياً متكاملاً لإدارة ديون متجرك وقراءة فواتيرك بالذكاء الاصطناعي وبدون اتصال بالإنترنت، مع مزامنة سحابية آمنة كلياً.
             </p>
             <div className="hero-ctas">
-              <a href="https://wa.me/967781911651?text=مرحباً،%20أرغب%20بتحميل%20تطبيق%20سجلها%20وتجربته." target="_blank" className="btn-hero-primary">تحميل وتجربة التطبيق</a>
-              <a href="#pricing" className="btn-hero-secondary">باقات التفعيل والاشتراك</a>
+              <a href="https://wa.me/967781911651?text=مرحباً،%20أرغب%20بتحميل%20تطبيق%20سجلها%20وتجربته." target="_blank" className="btn btn-primary">تحميل وتجربة التطبيق مجاناً</a>
+              <a href="#pricing" className="btn btn-outline" style={{ borderColor: 'rgba(255,255,255,0.4)', color: '#fff' }}>عرض باقات الاشتراك</a>
             </div>
           </section>
         </div>
       </div>
 
-      {/* قسم الميزات */}
       <section id="features" className="features-section">
         <div className="container">
-          <div className="section-header">
+          <div className="section-header fade-in">
             <h3 className="section-title">لماذا يختار التجار <span>سجلها</span>؟</h3>
             <p className="section-subtitle">
-              حزمة متكاملة من الأدوات المحاسبية الحديثة والآمنة التي تسهّل إدارة تجارتك اليومية
+              حزمة متكاملة من الأدوات المحاسبية الحديثة والآمنة التي تسهّل إدارة تجارتك اليومية وتحفظ وقتك.
             </p>
           </div>
           <div className="features-grid">
