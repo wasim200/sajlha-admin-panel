@@ -584,3 +584,78 @@
   60% { transform: scale(1.02) translateY(-6px); }
   100% { opacity: 1; transform: scale(1) translateY(0); }
 }
+
+/* =================================================================
+   🎨 التجاوب مع شاشات الجوال والهواتف للوحة التحكم (Responsive Admin Console)
+   ================================================================= */
+@media (max-width: 768px) {
+  .admin-layout {
+    padding: 20px 12px;
+  }
+  .header {
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px 24px;
+    align-items: flex-start;
+  }
+  .btn-logout {
+    width: 100%;
+    text-align: center;
+  }
+  .advanced-stats-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px;
+  }
+  .stat-card-advanced {
+    padding: 20px;
+  }
+  .tabs-header {
+    flex-direction: column;
+    gap: 8px;
+    padding: 6px;
+  }
+  .tab-button {
+    width: 100%;
+    padding: 12px 16px;
+    justify-content: center;
+  }
+  .card-title-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .card-title-bar .btn-primary {
+    width: 100%;
+  }
+  .search-filter-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .search-box, .filter-select {
+    width: 100% !important;
+  }
+  .actions-cell {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+  .btn-table-action {
+    width: 100%;
+    justify-content: center;
+  }
+  .log-item, .scan-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .log-date {
+    align-self: flex-end;
+  }
+  .modal-container {
+    padding: 24px 20px;
+    width: 95%;
+  }
+  .license-code-display {
+    font-size: 20px;
+  }
+}

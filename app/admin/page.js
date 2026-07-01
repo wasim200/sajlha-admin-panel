@@ -75,8 +75,10 @@ export default function AdminPage() {
 
   // فتح/إغلاق نافذة توليد كود ترخيص جديد العائمة
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     // محاولة استرجاع كلمة المرور المحفوظة محلياً
     const savedPassword = localStorage.getItem("sajlha_admin_pwd");
     if (savedPassword) {
@@ -281,6 +283,10 @@ export default function AdminPage() {
 
     return matchesSearch && matchesStatus;
   });
+
+  if (!mounted) {
+    return <div style={{ backgroundColor: "#0B0D17", minHeight: "100vh" }}></div>;
+  }
 
   return (
     <div className="app-wrapper">

@@ -1,9 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function LandingPage() {
   const [activeFaq, setActiveFaq] = useState(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const faqs = [
     {
@@ -132,6 +137,13 @@ export default function LandingPage() {
       whatsappMsg: "مرحباً، أرغب بالاشتراك في الباقة الثنائية (سنتين) لتطبيق سجلها."
     }
   ];
+
+  // منع مشاكل الهيدريشن للنسخة المسبقة البناء
+  if (!mounted) {
+    return (
+      <div style={{ backgroundColor: "#0B0D17", minHeight: "100vh" }}></div>
+    );
+  }
 
   return (
     <div className="landing-wrapper">
@@ -705,6 +717,104 @@ export default function LandingPage() {
           opacity: 0.5;
           font-weight: 600;
         }
+
+        /* =================================================================
+           🎨 التجاوب مع شاشات الجوال والهواتف المحمولة (Responsive CSS)
+           ================================================================= */
+        @media (max-width: 768px) {
+          .navbar {
+            flex-direction: column;
+            gap: 16px;
+            padding: 16px 0;
+            text-align: center;
+          }
+          .nav-links {
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 14px;
+          }
+          .btn-nav-action {
+            width: 100%;
+            text-align: center;
+          }
+          .hero-container-outer {
+            padding: 60px 0 80px 0;
+          }
+          .hero-glow-rings {
+            top: 15px;
+            width: 90px;
+            height: 90px;
+          }
+          .hero-glow-rings-inner {
+            width: 70px;
+            height: 70px;
+          }
+          .hero-icon-vector {
+            width: 24px;
+            height: 24px;
+          }
+          .hero-section {
+            padding-top: 50px;
+          }
+          .hero-title {
+            font-size: 26px !important;
+            line-height: 1.4;
+          }
+          .hero-subtitle {
+            font-size: 14px !important;
+            padding: 0 10px;
+            margin-bottom: 30px;
+          }
+          .hero-ctas {
+            flex-direction: column;
+            width: 100%;
+            gap: 12px;
+          }
+          .btn-hero-primary, .btn-hero-secondary {
+            width: 100%;
+            text-align: center;
+            padding: 12px 24px;
+          }
+          .features-section, .pricing-section, .guide-section, .faq-section {
+            padding: 60px 0;
+          }
+          .section-title {
+            font-size: 24px !important;
+          }
+          .section-subtitle {
+            font-size: 13.5px;
+          }
+          .features-grid, .pricing-grid {
+            grid-template-columns: 1fr !important;
+            gap: 16px;
+          }
+          .feature-card {
+            padding: 24px;
+          }
+          .pricing-card {
+            padding: 30px 20px !important;
+          }
+          .info-box {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 8px;
+            padding: 14px 18px;
+          }
+          .step-item {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 12px;
+          }
+          .step-content {
+            text-align: center !important;
+          }
+          .footer-links {
+            flex-wrap: wrap;
+            gap: 16px;
+          }
+        }
       `}</style>
 
       {/* شريط التنقل */}
@@ -813,7 +923,7 @@ export default function LandingPage() {
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
             </svg>
             <p className="info-box-text">
-              اختر الباقة المناسبة لك ثم اضغط على \"اشترك الآن عبر واتساب\" وسيتم إرسال طلبك تلقائياً لخدمة المبيعات مع تفاصيل الباقة المحددة لخدمتك وتوليد كود تفعيل فوري.
+              اختر الباقة المناسبة لك ثم اضغط على "اشترك الآن عبر واتساب" وسيتم إرسال طلبك تلقائياً لخدمة المبيعات مع تفاصيل الباقة المحددة لخدمتك وتوليد كود تفعيل فوري.
             </p>
           </div>
         </div>
