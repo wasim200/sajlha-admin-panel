@@ -826,7 +826,6 @@ export default function LandingPage() {
             <a href="#pricing" className="nav-link">الباقات</a>
             <a href="#guide" className="nav-link">طريقة التفعيل</a>
             <a href="#faq" className="nav-link">الأسئلة الشائعة</a>
-            <a href="/admin" className="btn-nav-action">لوحة التحكم</a>
           </nav>
         </header>
       </div>
