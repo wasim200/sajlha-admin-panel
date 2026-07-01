@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '../../../../lib/db';
 import License from '../../../../models/License';
+import ScanLog from '../../../../models/ScanLog';
 
 export async function POST(request) {
+  let license = null;
   try {
     const { image, mimeType, device_id } = await request.json();
 
@@ -15,7 +17,7 @@ export async function POST(request) {
 
     // 1. الاتصال بقاعدة البيانات والتحقق من الترخيص
     await dbConnect();
-    const license = await License.findOne({ device_id, status: 'active' });
+    license = await License.findOne({ device_id, status: 'active' });
     
     if (!license) {
       return NextResponse.json(
@@ -34,9 +36,20 @@ export async function POST(request) {
       );
     }
 
+    // تحديث تاريخ آخر تحقق وعدد عمليات المسح
+    license.last_check_at = new Date();
+    license.ai_scan_count = (license.ai_scan_count || 0) + 1;
+    await license.save();
+
     // 2. التحضير للاتصال بـ Gemini API
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
     if (!GEMINI_API_KEY) {
+      await ScanLog.create({
+        license_id: license._id,
+        device_id,
+        status: 'error',
+        error_message: 'AI Key للذكاء الاصطناعي غير مهيأ على الخادم.',
+      });
       return NextResponse.json(
         { error: 'API Key للذكاء الاصطناعي غير مهيأ على الخادم.' },
         { status: 500 }
@@ -97,6 +110,12 @@ Do not include any Markdown tags, backticks (like \`\`\`json), or explanations. 
 
     if (!response.ok) {
       const errText = await response.text();
+      await ScanLog.create({
+        license_id: license._id,
+        device_id,
+        status: 'failed',
+        error_message: `Gemini API response not ok: ${errText}`,
+      });
       return NextResponse.json(
         { error: `فشل استدعاء الذكاء الاصطناعي: ${errText}` },
         { status: response.status }
@@ -107,6 +126,12 @@ Do not include any Markdown tags, backticks (like \`\`\`json), or explanations. 
     const textResponse = responseData.candidates?.[0]?.content?.parts?.[0]?.text;
 
     if (!textResponse || textResponse.trim().length === 0) {
+      await ScanLog.create({
+        license_id: license._id,
+        device_id,
+        status: 'failed',
+        error_message: 'AI API returned empty response.',
+      });
       return NextResponse.json(
         { error: 'لم يستطع الذكاء الاصطناعي قراءة المستند، يرجى المحاولة بصورة أوضح' },
         { status: 422 }
@@ -119,10 +144,26 @@ Do not include any Markdown tags, backticks (like \`\`\`json), or explanations. 
     }
 
     const parsedResult = JSON.parse(cleanJson);
+
+    // تسجيل نجاح العملية
+    await ScanLog.create({
+      license_id: license._id,
+      device_id,
+      status: 'success',
+    });
+
     return NextResponse.json(parsedResult);
 
   } catch (error) {
     console.error('OCR Proxy Error:', error);
+    if (license) {
+      await ScanLog.create({
+        license_id: license._id,
+        device_id: license.device_id || 'unknown',
+        status: 'error',
+        error_message: error.message,
+      });
+    }
     return NextResponse.json(
       { error: `خطأ داخلي في الخادم: ${error.message}` },
       { status: 500 }

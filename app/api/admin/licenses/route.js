@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '../../../../lib/db';
 import License from '../../../../models/License';
+import AdminLog from '../../../../models/AdminLog';
 import { checkRateLimit, rateLimitResponse } from '../../../../lib/rateLimit';
 
 // الحماية بكلمة مرور بسيطة لإدارة اللوحة مع Rate Limiting
@@ -92,6 +93,15 @@ export async function POST(request) {
       status: 'active'
     });
 
+    // تسجيل العملية
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+    await AdminLog.create({
+      action: 'create_license',
+      license_code,
+      details: `إنشاء ترخيص جديد لـ ${owner_name} (رقم الهاتف: ${phone_number}، باقة: ${package_type}، مدة: ${duration_days} يوم)`,
+      ip_address: ip,
+    });
+
     return NextResponse.json({ success: true, license: newLicense });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -117,10 +127,37 @@ export async function PUT(request) {
       return NextResponse.json({ error: 'الترخيص غير موجود' }, { status: 404 });
     }
 
-    if (status) license.status = status;
-    if (expires_at) license.expires_at = new Date(expires_at);
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+    let details = [];
+    let logAction = 'update_license';
 
-    await license.save();
+    if (status && status !== license.status) {
+      details.push(`تغيير الحالة من ${license.status} إلى ${status}`);
+      if (status === 'suspended') logAction = 'suspend_license';
+      if (status === 'active') logAction = 'activate_license';
+      license.status = status;
+    }
+    
+    if (expires_at) {
+      const oldExpiry = license.expires_at.toISOString().split('T')[0];
+      const newExpiry = new Date(expires_at).toISOString().split('T')[0];
+      if (oldExpiry !== newExpiry) {
+        details.push(`تحديث تاريخ الانتهاء من ${oldExpiry} إلى ${newExpiry}`);
+        license.expires_at = new Date(expires_at);
+      }
+    }
+
+    if (details.length > 0) {
+      await license.save();
+      // تسجيل التغيير
+      await AdminLog.create({
+        action: logAction,
+        license_code: license.license_code,
+        details: `تحديث الترخيص لـ ${license.owner_name}: ${details.join(' و ')}`,
+        ip_address: ip,
+      });
+    }
+
     return NextResponse.json({ success: true, license });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -140,7 +177,20 @@ export async function DELETE(request) {
     const { id } = await request.json();
 
     await dbConnect();
-    await License.findByIdAndDelete(id);
+    const license = await License.findById(id);
+
+    if (license) {
+      const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+      // تسجيل الحذف قبل تنفيذه
+      await AdminLog.create({
+        action: 'delete_license',
+        license_code: license.license_code,
+        details: `حذف الترخيص التابع للمستخدم ${license.owner_name} (الهاتف: ${license.phone_number})`,
+        ip_address: ip,
+      });
+
+      await License.findByIdAndDelete(id);
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {

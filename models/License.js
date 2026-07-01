@@ -36,6 +36,14 @@ const LicenseSchema = new mongoose.Schema({
     type: Date,
     required: [true, 'Please provide expiration date'],
   },
+  ai_scan_count: {
+    type: Number,
+    default: 0,
+  },
+  last_check_at: {
+    type: Date,
+    default: null,
+  },
   created_at: {
     type: Date,
     default: Date.now,
