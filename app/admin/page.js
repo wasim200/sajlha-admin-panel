@@ -312,7 +312,7 @@ export default function AdminPage() {
                   required
                 />
               </div>
-              <button type="submit" className="btn-primary" disabled={loading} style={{ background: "linear-gradient(135deg, var(--color-gold-sand) 0%, var(--color-gold-cream) 100%)", color: "var(--color-bg-stone-dark)", border: "none" }}>
+              <button type="submit" className="btn-primary" disabled={loading} style={{ background: "#131626", color: "#ffffff", border: "none" }}>
                 {loading ? "جاري التحقق..." : "دخول إلى الكونسول"}
               </button>
             </form>
@@ -438,7 +438,7 @@ export default function AdminPage() {
                   <button 
                     onClick={() => { setGeneratedCode(""); setIsModalOpen(true); }}
                     className="btn-primary" 
-                    style={{ width: "auto", padding: "10px 24px", background: "linear-gradient(135deg, var(--color-gold-sand) 0%, var(--color-gold-cream) 100%)", color: "var(--color-bg-stone-dark)", border: "none" }}
+                    style={{ width: "auto", padding: "10px 24px", background: "#131626", color: "#ffffff", border: "none" }}
                   >
                     + إصدار ترخيص
                   </button>
@@ -691,7 +691,7 @@ export default function AdminPage() {
                       required
                     />
                   </div>
-                  <button type="submit" className="btn-primary" disabled={loading} style={{ background: "linear-gradient(135deg, var(--color-gold-sand) 0%, var(--color-gold-cream) 100%)", color: "var(--color-bg-stone-dark)", border: "none" }}>
+                  <button type="submit" className="btn-primary" disabled={loading} style={{ background: "#131626", color: "#ffffff", border: "none" }}>
                     {loading ? "جاري إنشاء الترخيص..." : "توليد كود التفعيل المعتمد"}
                   </button>
                 </form>

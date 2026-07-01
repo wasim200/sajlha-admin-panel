@@ -204,19 +204,20 @@ export default function LandingPage() {
           opacity: 1;
         }
         .btn-nav-action {
-          background: linear-gradient(135deg, var(--color-gold-sand) 0%, var(--color-gold-cream) 100%);
-          color: var(--color-bg-stone-dark);
+          background-color: #131626;
+          color: #ffffff;
           padding: 10px 24px;
           border-radius: 12px;
           font-weight: 800;
           text-decoration: none;
           font-size: 14px;
-          box-shadow: 0 4px 14px rgba(198, 164, 106, 0.25);
+          box-shadow: 0 4px 14px rgba(19, 22, 38, 0.12);
           transition: all 0.25s ease;
         }
         .btn-nav-action:hover {
           transform: translateY(-1.5px);
-          box-shadow: 0 6px 20px rgba(198, 164, 106, 0.4);
+          box-shadow: 0 6px 20px rgba(19, 22, 38, 0.22);
+          background-color: #0b0d17;
         }
 
         /* قسم الهيرو الرئيسي - كونسول داكن فاخر */
@@ -525,14 +526,15 @@ export default function LandingPage() {
           box-shadow: 0 6px 16px rgba(198, 164, 106, 0.25);
         }
         .popular .btn-pricing-cta {
-          background: linear-gradient(135deg, var(--color-gold-sand) 0%, var(--color-gold-cream) 100%);
-          color: var(--color-bg-stone-dark);
+          background: #131626;
+          color: #ffffff;
           border: none;
-          box-shadow: 0 8px 20px rgba(198, 164, 106, 0.3);
+          box-shadow: 0 8px 20px rgba(19, 22, 38, 0.15);
         }
         .popular .btn-pricing-cta:hover {
           transform: translateY(-1.5px);
-          box-shadow: 0 12px 24px rgba(198, 164, 106, 0.45);
+          box-shadow: 0 12px 24px rgba(19, 22, 38, 0.25);
+          background-color: #0b0d17;
         }
 
         /* صندوق الإشعار المساعد الجرانيتي المذهب */
