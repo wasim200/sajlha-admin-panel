@@ -2,6 +2,12 @@ import { NextResponse } from 'next/server';
 import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
 
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
 export async function POST(request) {
   try {
     const authHeader = request.headers.get('Authorization');
@@ -19,33 +25,59 @@ export async function POST(request) {
     }
 
     if (!file.name.endsWith('.apk')) {
-      return NextResponse.json({ error: 'يرجى اختيار ملف بصلالة .apk فقط' }, { status: 400 });
+      return NextResponse.json({ error: 'يرجى اختيار ملف بصيغة .apk فقط' }, { status: 400 });
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    // تجهيز مجلد التنزيل العام
-    const publicDownloadsDir = path.join(process.cwd(), 'public', 'downloads');
+    // 1. تجربة الرفع السحابي المباشر عبر محرك التخزين السريع (Catbox / Cloud Host)
     try {
-      await mkdir(publicDownloadsDir, { recursive: true });
+      const uploadFormData = new FormData();
+      uploadFormData.append('reqtype', 'fileupload');
+      uploadFormData.append('fileToUpload', file);
+
+      const catboxRes = await fetch('https://catbox.moe/user/api.php', {
+        method: 'POST',
+        body: uploadFormData,
+      });
+
+      if (catboxRes.ok) {
+        const catboxUrl = (await catboxRes.text()).trim();
+        if (catboxUrl.startsWith('http')) {
+          return NextResponse.json({
+            success: true,
+            message: 'تم رفع وتوفير ملف الـ APK المباشر بنجاح سحابياً!',
+            downloadUrl: catboxUrl,
+            fileName: file.name,
+            fileSize: file.size,
+          });
+        }
+      }
     } catch (_) {}
 
-    const fileName = 'sajlha.apk';
-    const filePath = path.join(publicDownloadsDir, fileName);
-    await writeFile(filePath, buffer);
+    // 2. المحاولة البديلة: التخزين المحلي في مجلد public/downloads
+    try {
+      const bytes = await file.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+      const publicDownloadsDir = path.join(process.cwd(), 'public', 'downloads');
+      await mkdir(publicDownloadsDir, { recursive: true });
 
-    const host = request.headers.get('host') || 'sajlha.vercel.app';
-    const protocol = host.includes('localhost') ? 'http' : 'https';
-    const downloadUrl = `${protocol}://${host}/downloads/${fileName}`;
+      const fileName = 'sajlha.apk';
+      const filePath = path.join(publicDownloadsDir, fileName);
+      await writeFile(filePath, buffer);
 
-    return NextResponse.json({
-      success: true,
-      message: 'تم رفع ملف التحديث بنجاح!',
-      downloadUrl,
-      fileName: file.name,
-      fileSize: file.size,
-    });
+      const host = request.headers.get('host') || 'sajlha.vercel.app';
+      const protocol = host.includes('localhost') ? 'http' : 'https';
+      const downloadUrl = `${protocol}://${host}/downloads/${fileName}`;
+
+      return NextResponse.json({
+        success: true,
+        message: 'تم حفظ الملف محلياً بنجاح!',
+        downloadUrl,
+        fileName: file.name,
+        fileSize: file.size,
+      });
+    } catch (fsErr) {
+      return NextResponse.json({ error: 'تعذر حفظ ملف الـ APK على السيرفر، يرجى استخدام رابط مباشر.' }, { status: 500 });
+    }
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

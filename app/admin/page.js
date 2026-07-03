@@ -116,9 +116,10 @@ export default function AdminPage() {
   const [verMsg, setVerMsg] = useState(null);
 
   const [apkUploading, setApkUploading] = useState(false);
+  const [apkProgress, setApkProgress] = useState(0);
   const [apkUploadMsg, setApkUploadMsg] = useState(null);
 
-  const handleFileUpload = async (e) => {
+  const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
     if (!file.name.endsWith('.apk')) {
@@ -127,32 +128,58 @@ export default function AdminPage() {
     }
 
     setApkUploading(true);
-    setApkUploadMsg({ type: 'info', text: `جاري رفع ملف ${file.name} (${(file.size / (1024 * 1024)).toFixed(1)} MB)...` });
+    setApkProgress(0);
+    const totalMb = (file.size / (1024 * 1024)).toFixed(1);
+    setApkUploadMsg({ type: 'info', text: `جاري بدء رفع ${file.name} (${totalMb} MB)...` });
 
+    const xhr = new XMLHttpRequest();
     const formData = new FormData();
     formData.append('file', file);
 
-    try {
-      const response = await fetch('/api/admin/upload-apk', {
-        method: 'POST',
-        headers: {
-          'Authorization': password,
-        },
-        body: formData,
-      });
-
-      const data = await response.json();
-      if (response.ok && data.success) {
-        setVerDownloadUrl(data.downloadUrl);
-        setApkUploadMsg({ type: 'success', text: `✅ تم رفع الملف بنجاح! الرابط التلقائي: ${data.downloadUrl}` });
-      } else {
-        setApkUploadMsg({ type: 'error', text: data.error || 'فشل رفع الملف.' });
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const percent = Math.round((event.loaded / event.total) * 100);
+        setApkProgress(percent);
+        const loadedMb = (event.loaded / (1024 * 1024)).toFixed(1);
+        setApkUploadMsg({
+          type: 'info',
+          text: `جاري الرفع السحابي... ${percent}% (${loadedMb} MB / ${totalMb} MB)`,
+        });
       }
-    } catch (err) {
-      setApkUploadMsg({ type: 'error', text: 'حدث خطأ أثناء الاتصال بالشبكة لرفع الملف.' });
-    } finally {
+    };
+
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        try {
+          const data = JSON.parse(xhr.responseText);
+          if (data.success && data.downloadUrl) {
+            setVerDownloadUrl(data.downloadUrl);
+            setApkUploadMsg({ type: 'success', text: `✅ تم رفع الملف وتجهيز الرابط بنجاح! الرابط: ${data.downloadUrl}` });
+          } else {
+            setApkUploadMsg({ type: 'error', text: data.error || 'فشل حفظ الملف.' });
+          }
+        } catch (_) {
+          setApkUploadMsg({ type: 'error', text: 'حدث خطأ في معالجة استجابة السيرفر.' });
+        }
+      } else {
+        try {
+          const data = JSON.parse(xhr.responseText);
+          setApkUploadMsg({ type: 'error', text: data.error || `فشل الرفع (رمز الاستجابة: ${xhr.status})` });
+        } catch (_) {
+          setApkUploadMsg({ type: 'error', text: `فشل الرفع رمز: ${xhr.status}` });
+        }
+      }
       setApkUploading(false);
-    }
+    };
+
+    xhr.onerror = () => {
+      setApkUploadMsg({ type: 'error', text: 'حدث خطأ في الشبكة أثناء الرفع.' });
+      setApkUploading(false);
+    };
+
+    xhr.open('POST', '/api/admin/upload-apk', true);
+    xhr.setRequestHeader('Authorization', password);
+    xhr.send(formData);
   };
 
   useEffect(() => {
@@ -687,6 +714,19 @@ export default function AdminPage() {
                         disabled={apkUploading}
                         style={{ fontSize: '12.5px' }}
                       />
+                      {apkUploading && (
+                        <div style={{ marginTop: '10px' }}>
+                          <div style={{ width: '100%', height: '8px', background: '#E2E8F0', borderRadius: '4px', overflow: 'hidden' }}>
+                            <div style={{
+                              width: `${apkProgress}%`,
+                              height: '100%',
+                              background: '#10B981',
+                              transition: 'width 0.2s ease-in-out'
+                            }} />
+                          </div>
+                        </div>
+                      )}
+
                       {apkUploadMsg && (
                         <div style={{
                           marginTop: '8px',
