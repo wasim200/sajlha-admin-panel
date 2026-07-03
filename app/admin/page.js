@@ -115,6 +115,46 @@ export default function AdminPage() {
   const [verLoading, setVerLoading] = useState(false);
   const [verMsg, setVerMsg] = useState(null);
 
+  const [apkUploading, setApkUploading] = useState(false);
+  const [apkUploadMsg, setApkUploadMsg] = useState(null);
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!file.name.endsWith('.apk')) {
+      setApkUploadMsg({ type: 'error', text: 'يرجى اختيار ملف بصيغة .apk فقط' });
+      return;
+    }
+
+    setApkUploading(true);
+    setApkUploadMsg({ type: 'info', text: `جاري رفع ملف ${file.name} (${(file.size / (1024 * 1024)).toFixed(1)} MB)...` });
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch('/api/admin/upload-apk', {
+        method: 'POST',
+        headers: {
+          'Authorization': password,
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setVerDownloadUrl(data.downloadUrl);
+        setApkUploadMsg({ type: 'success', text: `✅ تم رفع الملف بنجاح! الرابط التلقائي: ${data.downloadUrl}` });
+      } else {
+        setApkUploadMsg({ type: 'error', text: data.error || 'فشل رفع الملف.' });
+      }
+    } catch (err) {
+      setApkUploadMsg({ type: 'error', text: 'حدث خطأ أثناء الاتصال بالشبكة لرفع الملف.' });
+    } finally {
+      setApkUploading(false);
+    }
+  };
+
   useEffect(() => {
     fetch("/api/public/version-check")
       .then(res => res.json())
@@ -635,6 +675,28 @@ export default function AdminPage() {
                         required 
                         style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13.5px' }}
                       />
+                    </div>
+
+                    {/* خيار رفع ملف الـ APK المباشر */}
+                    <div style={{ marginBottom: '14px', padding: '12px', background: '#F8FAFC', borderRadius: '10px', border: '1px dashed #94A3B8' }}>
+                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#1E293B', marginBottom: '6px' }}>📁 رفع ملف التطبيق المباشر (.apk):</label>
+                      <input 
+                        type="file" 
+                        accept=".apk" 
+                        onChange={handleFileUpload}
+                        disabled={apkUploading}
+                        style={{ fontSize: '12.5px' }}
+                      />
+                      {apkUploadMsg && (
+                        <div style={{
+                          marginTop: '8px',
+                          fontSize: '11.5px',
+                          fontWeight: 'bold',
+                          color: apkUploadMsg.type === 'success' ? '#047857' : (apkUploadMsg.type === 'error' ? '#DC2626' : '#2563EB')
+                        }}>
+                          {apkUploadMsg.text}
+                        </div>
+                      )}
                     </div>
 
                     <div style={{ marginBottom: '14px' }}>
