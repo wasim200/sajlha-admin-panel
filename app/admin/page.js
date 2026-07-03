@@ -130,11 +130,13 @@ export default function AdminPage() {
     setApkUploading(true);
     setApkProgress(0);
     const totalMb = (file.size / (1024 * 1024)).toFixed(1);
-    setApkUploadMsg({ type: 'info', text: `جاري بدء رفع ${file.name} (${totalMb} MB)...` });
+    setApkUploadMsg({ type: 'info', text: `جاري بدء الرفع السحابي المباشر لـ ${file.name} (${totalMb} MB)...` });
+
+    const formData = new FormData();
+    formData.append('reqtype', 'fileupload');
+    formData.append('fileToUpload', file);
 
     const xhr = new XMLHttpRequest();
-    const formData = new FormData();
-    formData.append('file', file);
 
     xhr.upload.onprogress = (event) => {
       if (event.lengthComputable) {
@@ -143,7 +145,46 @@ export default function AdminPage() {
         const loadedMb = (event.loaded / (1024 * 1024)).toFixed(1);
         setApkUploadMsg({
           type: 'info',
-          text: `جاري الرفع السحابي... ${percent}% (${loadedMb} MB / ${totalMb} MB)`,
+          text: `جاري الرفع المباشر... ${percent}% (${loadedMb} MB / ${totalMb} MB)`,
+        });
+      }
+    };
+
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        const resultUrl = xhr.responseText.trim();
+        if (resultUrl.startsWith('http')) {
+          setVerDownloadUrl(resultUrl);
+          setApkUploadMsg({ type: 'success', text: `✅ تم رفع وتوفير ملف الـ APK المباشر بنجاح! الرابط: ${resultUrl}` });
+          setApkUploading(false);
+          return;
+        }
+      }
+      _uploadToTmpFiles(file, totalMb);
+    };
+
+    xhr.onerror = () => {
+      _uploadToTmpFiles(file, totalMb);
+    };
+
+    xhr.open('POST', 'https://catbox.moe/user/api.php', true);
+    xhr.send(formData);
+  };
+
+  const _uploadToTmpFiles = (file, totalMb) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const xhr = new XMLHttpRequest();
+
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const percent = Math.round((event.loaded / event.total) * 100);
+        setApkProgress(percent);
+        const loadedMb = (event.loaded / (1024 * 1024)).toFixed(1);
+        setApkUploadMsg({
+          type: 'info',
+          text: `جاري الرفع البديل... ${percent}% (${loadedMb} MB / ${totalMb} MB)`,
         });
       }
     };
@@ -151,34 +192,26 @@ export default function AdminPage() {
     xhr.onload = () => {
       if (xhr.status === 200) {
         try {
-          const data = JSON.parse(xhr.responseText);
-          if (data.success && data.downloadUrl) {
-            setVerDownloadUrl(data.downloadUrl);
-            setApkUploadMsg({ type: 'success', text: `✅ تم رفع الملف وتجهيز الرابط بنجاح! الرابط: ${data.downloadUrl}` });
-          } else {
-            setApkUploadMsg({ type: 'error', text: data.error || 'فشل حفظ الملف.' });
+          const res = JSON.parse(xhr.responseText);
+          if (res.status === 'success' && res.data && res.data.url) {
+            const directUrl = res.data.url.replace('tmpfiles.org/', 'tmpfiles.org/dl/');
+            setVerDownloadUrl(directUrl);
+            setApkUploadMsg({ type: 'success', text: `✅ تم رفع وتوفير الملف بنجاح! الرابط: ${directUrl}` });
+            setApkUploading(false);
+            return;
           }
-        } catch (_) {
-          setApkUploadMsg({ type: 'error', text: 'حدث خطأ في معالجة استجابة السيرفر.' });
-        }
-      } else {
-        try {
-          const data = JSON.parse(xhr.responseText);
-          setApkUploadMsg({ type: 'error', text: data.error || `فشل الرفع (رمز الاستجابة: ${xhr.status})` });
-        } catch (_) {
-          setApkUploadMsg({ type: 'error', text: `فشل الرفع رمز: ${xhr.status}` });
-        }
+        } catch (_) {}
       }
+      setApkUploadMsg({ type: 'error', text: 'فشل الرفع السحابي. يمكنك وضع رابط التحميل المباشر يدوياً في الخانة أدناه.' });
       setApkUploading(false);
     };
 
     xhr.onerror = () => {
-      setApkUploadMsg({ type: 'error', text: 'حدث خطأ في الشبكة أثناء الرفع.' });
+      setApkUploadMsg({ type: 'error', text: 'حدث خطأ في الاتصال بالشبكة أثناء الرفع.' });
       setApkUploading(false);
     };
 
-    xhr.open('POST', '/api/admin/upload-apk', true);
-    xhr.setRequestHeader('Authorization', password);
+    xhr.open('POST', 'https://tmpfiles.org/api/v1/upload', true);
     xhr.send(formData);
   };
 
