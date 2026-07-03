@@ -98,6 +98,46 @@ export default function AdminPage() {
   const [durationDays, setDurationDays] = useState("360");
   const [generatedCode, setGeneratedCode] = useState("");
 
+  // حقول إرسال إشعار عام للتجار
+  const [broadcastTitle, setBroadcastTitle] = useState("");
+  const [broadcastBody, setBroadcastBody] = useState("");
+  const [broadcastType, setBroadcastType] = useState("release");
+  const [broadcastLoading, setBroadcastLoading] = useState(false);
+  const [broadcastMsg, setBroadcastMsg] = useState(null);
+
+  const handleSendBroadcast = async (e) => {
+    e.preventDefault();
+    if (!broadcastTitle || !broadcastBody) return;
+    setBroadcastLoading(true);
+    setBroadcastMsg(null);
+    try {
+      const response = await fetch("/api/admin/broadcast", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": password,
+        },
+        body: JSON.stringify({
+          title: broadcastTitle,
+          body: broadcastBody,
+          type: broadcastType,
+        }),
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setBroadcastMsg({ type: "success", text: "✅ تم إرسال الإشعار بنجاح لكافة التجار!" });
+        setBroadcastTitle("");
+        setBroadcastBody("");
+      } else {
+        setBroadcastMsg({ type: "error", text: data.error || "فشل إرسال الإشعار." });
+      }
+    } catch (err) {
+      setBroadcastMsg({ type: "error", text: "حدث خطأ في الاتصال بالشبكة." });
+    } finally {
+      setBroadcastLoading(false);
+    }
+  };
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -471,12 +511,106 @@ export default function AdminPage() {
               <svg className="tab-icon-vector" viewBox="0 0 24 24">
                 <path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/>
               </svg>
-              التحليلات والمخططات الذكية
+              📊 التحليلات والمخططات الذكية
+            </button>
+            <button 
+              className={`tab-button ${activeTab === "broadcast" ? "active" : ""}`}
+              onClick={() => setActiveTab("broadcast")}
+            >
+              <svg className="tab-icon-vector" viewBox="0 0 24 24">
+                <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+              </svg>
+              📢 إرسال إشعار للتجار
             </button>
           </div>
 
           {/* مساحة العرض الرئيسية */}
           <div className="content-area">
+            {activeTab === "broadcast" && (
+              <div className="analytics-section" style={{ padding: '24px', background: '#fff', borderRadius: '18px', boxShadow: '0 4px 20px rgba(0,0,0,0.04)' }}>
+                <div style={{ marginBottom: '20px' }}>
+                  <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#131626', marginBottom: '6px' }}>📢 إرسال إشعار وبث حي لكافة التجار</h3>
+                  <p style={{ fontSize: '13px', color: '#64748B' }}>اكتب رسالة أو تنبيه أو عرض خاص ليصل فوراً لأيقونة الإشعارات في تطبيق سجلها الجوّال</p>
+                </div>
+
+                <div style={{ maxWidth: '600px' }}>
+                  <form onSubmit={handleSendBroadcast}>
+                    <div style={{ marginBottom: '16px' }}>
+                      <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', color: '#1E293B', marginBottom: '6px' }}>عنوان الإشعار:</label>
+                      <input 
+                        type="text" 
+                        value={broadcastTitle} 
+                        onChange={(e) => setBroadcastTitle(e.target.value)}
+                        placeholder="مثال: 🎉 ميزة جديدة في الإصدار 2.5 أو خصم خاص!"
+                        required 
+                        style={{ width: '100%', padding: '12px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '14px', outline: 'none' }}
+                      />
+                    </div>
+
+                    <div style={{ marginBottom: '16px' }}>
+                      <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', color: '#1E293B', marginBottom: '6px' }}>نص وتفاصيل الإشعار:</label>
+                      <textarea 
+                        value={broadcastBody} 
+                        onChange={(e) => setBroadcastBody(e.target.value)}
+                        placeholder="اكتب نص الإشعار بالتفصيل للتاجر..."
+                        required 
+                        rows={4}
+                        style={{ width: '100%', padding: '12px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '14px', outline: 'none', fontFamily: 'inherit' }}
+                      />
+                    </div>
+
+                    <div style={{ marginBottom: '16px' }}>
+                      <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', color: '#1E293B', marginBottom: '6px' }}>نوع الإشعار:</label>
+                      <select 
+                        value={broadcastType} 
+                        onChange={(e) => setBroadcastType(e.target.value)}
+                        style={{ width: '100%', padding: '12px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '14px', outline: 'none', background: '#fff' }}
+                      >
+                        <option value="release">🚀 تحديث إصدار جديد (Release)</option>
+                        <option value="offer">🎁 عرض وتخفيض خاص (Offer)</option>
+                        <option value="info">ℹ️ إعلان ومعلومات عامة (Info)</option>
+                        <option value="alert">⚠️ تنبيه إداري عاجل (Alert)</option>
+                      </select>
+                    </div>
+
+                    {broadcastMsg && (
+                      <div style={{
+                        padding: '12px 16px',
+                        borderRadius: '10px',
+                        marginBottom: '16px',
+                        fontSize: '13px',
+                        fontWeight: 'bold',
+                        background: broadcastMsg.type === 'success' ? '#ECFDF5' : '#FEF2F2',
+                        color: broadcastMsg.type === 'success' ? '#047857' : '#DC2626',
+                        border: `1px solid ${broadcastMsg.type === 'success' ? '#A7F3D0' : '#FECACA'}`,
+                      }}>
+                        {broadcastMsg.text}
+                      </div>
+                    )}
+
+                    <button 
+                      type="submit" 
+                      disabled={broadcastLoading}
+                      style={{
+                        width: '100%',
+                        padding: '13px',
+                        borderRadius: '12px',
+                        background: '#131626',
+                        color: '#fff',
+                        fontWeight: 'bold',
+                        fontSize: '14px',
+                        border: 'none',
+                        cursor: 'pointer',
+                        transition: 'opacity 0.2s',
+                        opacity: broadcastLoading ? 0.7 : 1,
+                      }}
+                    >
+                      {broadcastLoading ? "جاري الإرسال..." : "📡 إرسال الإشعار الفوري لكافة التجار"}
+                    </button>
+                  </form>
+                </div>
+              </div>
+            )}
             {activeTab === "licenses" && (
               <div className="card">
                 <div className="card-title-bar">
