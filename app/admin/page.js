@@ -105,6 +105,69 @@ export default function AdminPage() {
   const [broadcastLoading, setBroadcastLoading] = useState(false);
   const [broadcastMsg, setBroadcastMsg] = useState(null);
 
+  // حقول إدارة وإطلاق إصدارات التطبيق
+  const [verLatest, setVerLatest] = useState("2.5.0");
+  const [verMin, setVerMin] = useState("2.4.0");
+  const [verTitle, setVerTitle] = useState("تحديث تطبيق سجلها الجيل الذهبي 2.5");
+  const [verNotesText, setVerNotesText] = useState("معرض صور الفواتير والمرفقات المتعددة\nمشاركة كشف الحساب كصورة عالية الدقة\nالبحث الذكي الشامل للسلع والمبالغ\nمنتقي التاريخ العصري السريع");
+  const [verDownloadUrl, setVerDownloadUrl] = useState("https://sajlha.vercel.app");
+  const [verIsForce, setVerIsForce] = useState(false);
+  const [verLoading, setVerLoading] = useState(false);
+  const [verMsg, setVerMsg] = useState(null);
+
+  useEffect(() => {
+    fetch("/api/public/version-check")
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.versionInfo) {
+          const v = data.versionInfo;
+          setVerLatest(v.latestVersion || "2.5.0");
+          setVerMin(v.minVersion || "2.4.0");
+          setVerTitle(v.title || "");
+          if (Array.isArray(v.releaseNotes)) {
+            setVerNotesText(v.releaseNotes.join("\n"));
+          }
+          setVerDownloadUrl(v.downloadUrl || "https://sajlha.vercel.app");
+          setVerIsForce(Boolean(v.isForceUpdate));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const handlePublishVersion = async (e) => {
+    e.preventDefault();
+    if (!verLatest || !verMin) return;
+    setVerLoading(true);
+    setVerMsg(null);
+    try {
+      const response = await fetch("/api/public/version-check", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": password,
+        },
+        body: JSON.stringify({
+          latestVersion: verLatest,
+          minVersion: verMin,
+          title: verTitle,
+          releaseNotes: verNotesText.split("\n").filter(Boolean),
+          downloadUrl: verDownloadUrl,
+          isForceUpdate: verIsForce,
+        }),
+      });
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setVerMsg({ type: "success", text: `🚀 تم نشر وتفعيل إطلاق الإصدار ${verLatest} بنجاح لكافة التجار!` });
+      } else {
+        setVerMsg({ type: "error", text: data.error || "فشل نشر التحديث." });
+      }
+    } catch (err) {
+      setVerMsg({ type: "error", text: "حدث خطأ في الاتصال بالشبكة." });
+    } finally {
+      setVerLoading(false);
+    }
+  };
+
   const handleSendBroadcast = async (e) => {
     e.preventDefault();
     if (!broadcastTitle || !broadcastBody) return;
@@ -527,44 +590,162 @@ export default function AdminPage() {
           {/* مساحة العرض الرئيسية */}
           <div className="content-area">
             {activeTab === "broadcast" && (
-              <div className="analytics-section" style={{ padding: '24px', background: '#fff', borderRadius: '18px', boxShadow: '0 4px 20px rgba(0,0,0,0.04)' }}>
-                <div style={{ marginBottom: '20px' }}>
-                  <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#131626', marginBottom: '6px' }}>📢 إرسال إشعار وبث حي لكافة التجار</h3>
-                  <p style={{ fontSize: '13px', color: '#64748B' }}>اكتب رسالة أو تنبيه أو عرض خاص ليصل فوراً لأيقونة الإشعارات في تطبيق سجلها الجوّال</p>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '24px' }}>
+                
+                {/* البطاقة 1: إدارة وإطلاق إصدارات التطبيق (Version Release Control) */}
+                <div style={{ padding: '24px', background: '#fff', borderRadius: '18px', boxShadow: '0 4px 20px rgba(0,0,0,0.04)' }}>
+                  <div style={{ marginBottom: '20px' }}>
+                    <h3 style={{ fontSize: '17px', fontWeight: 'bold', color: '#131626', marginBottom: '6px' }}>🚀 إطلاق وتحديث إصدار التطبيق (App Release Manager)</h3>
+                    <p style={{ fontSize: '12.5px', color: '#64748B' }}>التحكم برقم الإصدار وتفعيل التحديثات الإلزامية/الاختيارية ونشر الميزات الجديدة</p>
+                  </div>
+
+                  <form onSubmit={handlePublishVersion}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
+                      <div>
+                        <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#1E293B', marginBottom: '4px' }}>أحدث إصدار (Latest Version):</label>
+                        <input 
+                          type="text" 
+                          value={verLatest} 
+                          onChange={(e) => setVerLatest(e.target.value)}
+                          placeholder="2.6.0"
+                          required 
+                          style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13.5px' }}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#1E293B', marginBottom: '4px' }}>الحد الأدنى المطلوب (Min Version):</label>
+                        <input 
+                          type="text" 
+                          value={verMin} 
+                          onChange={(e) => setVerMin(e.target.value)}
+                          placeholder="2.4.0"
+                          required 
+                          style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13.5px' }}
+                        />
+                      </div>
+                    </div>
+
+                    <div style={{ marginBottom: '14px' }}>
+                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#1E293B', marginBottom: '4px' }}>عنوان التحديث:</label>
+                      <input 
+                        type="text" 
+                        value={verTitle} 
+                        onChange={(e) => setVerTitle(e.target.value)}
+                        placeholder="تحديث جديد لتطبيق سجلها"
+                        required 
+                        style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13.5px' }}
+                      />
+                    </div>
+
+                    <div style={{ marginBottom: '14px' }}>
+                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#1E293B', marginBottom: '4px' }}>رابط التحديث والتحميل (Play Store / APK Link):</label>
+                      <input 
+                        type="url" 
+                        value={verDownloadUrl} 
+                        onChange={(e) => setVerDownloadUrl(e.target.value)}
+                        placeholder="https://sajlha.vercel.app"
+                        required 
+                        style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13.5px' }}
+                      />
+                    </div>
+
+                    <div style={{ marginBottom: '14px' }}>
+                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#1E293B', marginBottom: '4px' }}>مميزات التحديث (كل ميزة في سطر):</label>
+                      <textarea 
+                        value={verNotesText} 
+                        onChange={(e) => setVerNotesText(e.target.value)}
+                        rows={3}
+                        style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px', fontFamily: 'inherit' }}
+                      />
+                    </div>
+
+                    <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <input 
+                        type="checkbox" 
+                        id="isForceCheck" 
+                        checked={verIsForce} 
+                        onChange={(e) => setVerIsForce(e.target.checked)}
+                        style={{ width: '16px', height: '16px', cursor: 'pointer' }}
+                      />
+                      <label htmlFor="isForceCheck" style={{ fontSize: '13px', fontWeight: 'bold', color: verIsForce ? '#DC2626' : '#1E293B', cursor: 'pointer' }}>
+                        {verIsForce ? "⚠️ جعل التحديث إجبارياً للجميع (Force Update)" : "إشعارات تحديث اختياري (Optional Update)"}
+                      </label>
+                    </div>
+
+                    {verMsg && (
+                      <div style={{
+                        padding: '10px 14px',
+                        borderRadius: '8px',
+                        marginBottom: '14px',
+                        fontSize: '12.5px',
+                        fontWeight: 'bold',
+                        background: verMsg.type === 'success' ? '#ECFDF5' : '#FEF2F2',
+                        color: verMsg.type === 'success' ? '#047857' : '#DC2626',
+                        border: `1px solid ${verMsg.type === 'success' ? '#A7F3D0' : '#FECACA'}`,
+                      }}>
+                        {verMsg.text}
+                      </div>
+                    )}
+
+                    <button 
+                      type="submit" 
+                      disabled={verLoading}
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        borderRadius: '10px',
+                        background: '#9E2A2B',
+                        color: '#fff',
+                        fontWeight: 'bold',
+                        fontSize: '13.5px',
+                        border: 'none',
+                        cursor: 'pointer',
+                        opacity: verLoading ? 0.7 : 1,
+                      }}
+                    >
+                      {verLoading ? "جاري نشر التحديث..." : "🚀 تفعيل وإطلاق الإصدار الجديد الآن"}
+                    </button>
+                  </form>
                 </div>
 
-                <div style={{ maxWidth: '600px' }}>
+                {/* البطاقة 2: إرسال إشعار وبث حي لكافة التجار */}
+                <div style={{ padding: '24px', background: '#fff', borderRadius: '18px', boxShadow: '0 4px 20px rgba(0,0,0,0.04)' }}>
+                  <div style={{ marginBottom: '20px' }}>
+                    <h3 style={{ fontSize: '17px', fontWeight: 'bold', color: '#131626', marginBottom: '6px' }}>📡 إرسال إشعار وبث حي لكافة التجار</h3>
+                    <p style={{ fontSize: '12.5px', color: '#64748B' }}>اكتب رسالة أو تنبيه أو عرض خاص ليصل فوراً لأيقونة الإشعارات في الجوّال</p>
+                  </div>
+
                   <form onSubmit={handleSendBroadcast}>
-                    <div style={{ marginBottom: '16px' }}>
-                      <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', color: '#1E293B', marginBottom: '6px' }}>عنوان الإشعار:</label>
+                    <div style={{ marginBottom: '14px' }}>
+                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#1E293B', marginBottom: '4px' }}>عنوان الإشعار:</label>
                       <input 
                         type="text" 
                         value={broadcastTitle} 
                         onChange={(e) => setBroadcastTitle(e.target.value)}
                         placeholder="مثال: 🎉 ميزة جديدة في الإصدار 2.5 أو خصم خاص!"
                         required 
-                        style={{ width: '100%', padding: '12px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '14px', outline: 'none' }}
+                        style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13.5px' }}
                       />
                     </div>
 
-                    <div style={{ marginBottom: '16px' }}>
-                      <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', color: '#1E293B', marginBottom: '6px' }}>نص وتفاصيل الإشعار:</label>
+                    <div style={{ marginBottom: '14px' }}>
+                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#1E293B', marginBottom: '4px' }}>نص وتفاصيل الإشعار:</label>
                       <textarea 
                         value={broadcastBody} 
                         onChange={(e) => setBroadcastBody(e.target.value)}
                         placeholder="اكتب نص الإشعار بالتفصيل للتاجر..."
                         required 
                         rows={4}
-                        style={{ width: '100%', padding: '12px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '14px', outline: 'none', fontFamily: 'inherit' }}
+                        style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13.5px', fontFamily: 'inherit' }}
                       />
                     </div>
 
-                    <div style={{ marginBottom: '16px' }}>
-                      <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', color: '#1E293B', marginBottom: '6px' }}>نوع الإشعار:</label>
+                    <div style={{ marginBottom: '14px' }}>
+                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#1E293B', marginBottom: '4px' }}>نوع الإشعار:</label>
                       <select 
                         value={broadcastType} 
                         onChange={(e) => setBroadcastType(e.target.value)}
-                        style={{ width: '100%', padding: '12px 14px', borderRadius: '10px', border: '1px solid #CBD5E1', fontSize: '14px', outline: 'none', background: '#fff' }}
+                        style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13.5px', background: '#fff' }}
                       >
                         <option value="release">🚀 تحديث إصدار جديد (Release)</option>
                         <option value="offer">🎁 عرض وتخفيض خاص (Offer)</option>
@@ -575,10 +756,10 @@ export default function AdminPage() {
 
                     {broadcastMsg && (
                       <div style={{
-                        padding: '12px 16px',
-                        borderRadius: '10px',
-                        marginBottom: '16px',
-                        fontSize: '13px',
+                        padding: '10px 14px',
+                        borderRadius: '8px',
+                        marginBottom: '14px',
+                        fontSize: '12.5px',
                         fontWeight: 'bold',
                         background: broadcastMsg.type === 'success' ? '#ECFDF5' : '#FEF2F2',
                         color: broadcastMsg.type === 'success' ? '#047857' : '#DC2626',
@@ -593,15 +774,14 @@ export default function AdminPage() {
                       disabled={broadcastLoading}
                       style={{
                         width: '100%',
-                        padding: '13px',
-                        borderRadius: '12px',
+                        padding: '12px',
+                        borderRadius: '10px',
                         background: '#131626',
                         color: '#fff',
                         fontWeight: 'bold',
-                        fontSize: '14px',
+                        fontSize: '13.5px',
                         border: 'none',
                         cursor: 'pointer',
-                        transition: 'opacity 0.2s',
                         opacity: broadcastLoading ? 0.7 : 1,
                       }}
                     >
@@ -609,6 +789,7 @@ export default function AdminPage() {
                     </button>
                   </form>
                 </div>
+
               </div>
             )}
             {activeTab === "licenses" && (
