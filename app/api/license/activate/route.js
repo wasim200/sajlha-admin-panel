@@ -15,7 +15,7 @@ export async function POST(request) {
       return rateLimitResponse(rateCheck.retryAfterMs);
     }
 
-    const { license_code, device_id } = await request.json();
+    const { license_code, device_id, app_version } = await request.json();
 
     if (!license_code || !device_id) {
       return NextResponse.json(
@@ -61,11 +61,13 @@ export async function POST(request) {
       );
     }
 
-    // ربط الترخيص بالجهاز
-    if (!license.device_id) {
-      license.device_id = device_id;
-      await license.save();
+    // ربط الترخيص بالجهاز وحفظ أحدث إصدار للجوال
+    license.device_id = device_id;
+    if (app_version) {
+      license.app_version = app_version;
     }
+    license.last_seen_at = new Date();
+    await license.save();
 
     return NextResponse.json({
       success: true,

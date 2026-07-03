@@ -834,6 +834,7 @@ export default function AdminPage() {
                         <th style={{ textAlign: "right" }}>كود الترخيص</th>
                         <th style={{ textAlign: "right" }}>المالك والهاتف</th>
                         <th style={{ textAlign: "right" }}>الباقة</th>
+                        <th style={{ textAlign: "right" }}>إصدار التطبيق</th>
                         <th style={{ textAlign: "right" }}>مسحات AI</th>
                         <th style={{ textAlign: "right" }}>تاريخ الانتهاء</th>
                         <th style={{ textAlign: "right" }}>الحالة</th>
@@ -845,6 +846,7 @@ export default function AdminPage() {
                       {filteredLicenses.map((lic) => {
                         const isExpired = new Date(lic.expires_at) <= new Date();
                         const showStatus = lic.status === "active" && isExpired ? "expired" : lic.status;
+                        const isLatest = lic.app_version === verLatest || lic.app_version === '2.5.0';
                         
                         return (
                           <tr key={lic._id}>
@@ -856,6 +858,19 @@ export default function AdminPage() {
                             <td>
                               {lic.package_type === "monthly" ? "6 أشهر" : 
                                lic.package_type === "yearly" ? "سنوية" : "سنتين"}
+                            </td>
+                            <td>
+                              <span style={{
+                                padding: '4px 10px',
+                                borderRadius: '12px',
+                                fontSize: '11.5px',
+                                fontWeight: 'bold',
+                                background: isLatest ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)',
+                                color: isLatest ? '#10B981' : '#F59E0B',
+                                border: `1px solid ${isLatest ? '#10B981' : '#F59E0B'}`
+                              }}>
+                                v{lic.app_version || '2.5.0'}
+                              </span>
                             </td>
                             <td style={{ fontWeight: "bold" }}>
                               {lic.ai_scan_count || 0}

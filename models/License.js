@@ -44,6 +44,14 @@ const LicenseSchema = new mongoose.Schema({
     type: Date,
     default: null,
   },
+  app_version: {
+    type: String,
+    default: '2.5.0',
+  },
+  last_seen_at: {
+    type: Date,
+    default: Date.now,
+  },
   created_at: {
     type: Date,
     default: Date.now,

@@ -4,7 +4,7 @@ import License from '../../../../models/License';
 
 export async function POST(request) {
   try {
-    const { device_id } = await request.json();
+    const { device_id, app_version } = await request.json();
 
     if (!device_id) {
       return NextResponse.json(
@@ -24,12 +24,17 @@ export async function POST(request) {
       });
     }
 
+    if (app_version) {
+      license.app_version = app_version;
+    }
+    license.last_seen_at = new Date();
+
     // التحقق من تاريخ الانتهاء
     const expired = new Date() > new Date(license.expires_at);
     if (expired && license.status === 'active') {
       license.status = 'expired';
-      await license.save();
     }
+    await license.save();
 
     const isActive = license.status === 'active' && !expired;
 
@@ -38,6 +43,7 @@ export async function POST(request) {
       status: license.status,
       expires_at: license.expires_at,
       package_type: license.package_type,
+      app_version: license.app_version,
     });
 
   } catch (error) {
