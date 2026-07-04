@@ -11,7 +11,6 @@ export default function AdminLayout({ children }) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [activePage, setActivePage] = useState("dashboard");
   const [mounted, setMounted] = useState(false);
   const [checking, setChecking] = useState(true);
 
@@ -19,15 +18,6 @@ export default function AdminLayout({ children }) {
     setMounted(true);
     const savedTheme = localStorage.getItem("sajlha_theme") || "light";
     document.documentElement.setAttribute("data-theme", savedTheme);
-
-    // Detect active page from URL
-    const path = window.location.pathname;
-    if (path.includes("/admin/licenses")) setActivePage("licenses");
-    else if (path.includes("/admin/analytics")) setActivePage("analytics");
-    else if (path.includes("/admin/logs")) setActivePage("logs");
-    else if (path.includes("/admin/ai-scans")) setActivePage("ai-scans");
-    else if (path.includes("/admin/broadcast")) setActivePage("broadcast");
-    else setActivePage("dashboard");
 
     const savedPwd = localStorage.getItem("sajlha_admin_pwd");
     if (savedPwd) {
@@ -70,20 +60,6 @@ export default function AdminLayout({ children }) {
     localStorage.removeItem("sajlha_admin_pwd");
     setPassword("");
     setIsAuthenticated(false);
-    setActivePage("dashboard");
-  };
-
-  const handleNavigate = (page) => {
-    setActivePage(page);
-    const pathMap = {
-      dashboard: "/admin",
-      licenses: "/admin/licenses",
-      analytics: "/admin/analytics",
-      logs: "/admin/logs",
-      "ai-scans": "/admin/ai-scans",
-      broadcast: "/admin/broadcast",
-    };
-    window.history.pushState({}, "", pathMap[page] || "/admin");
   };
 
   if (!mounted || checking) {
@@ -151,9 +127,9 @@ export default function AdminLayout({ children }) {
     <AdminProvider>
       <ToastProvider>
         <div className="admin-shell">
-          <Sidebar activePage={activePage} onNavigate={handleNavigate} onLogout={handleLogout} />
+          <Sidebar onLogout={handleLogout} />
           <main className="admin-main">
-            <TopBar activePage={activePage} />
+            <TopBar />
             <div className="admin-content">
               {children}
             </div>

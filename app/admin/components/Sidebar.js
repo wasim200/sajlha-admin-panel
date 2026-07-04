@@ -1,5 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import ThemeToggle from "./ThemeToggle";
 
 const navItems = [
@@ -65,7 +67,8 @@ const navItems = [
   },
 ];
 
-export default function Sidebar({ activePage, onNavigate, onLogout }) {
+export default function Sidebar({ onLogout }) {
+  const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -87,14 +90,14 @@ export default function Sidebar({ activePage, onNavigate, onLogout }) {
     <aside className={`sidebar ${collapsed ? "sidebar-collapsed" : ""}`}>
       {/* Logo */}
       <div className="sidebar-logo-section">
-        <div className="sidebar-logo" onClick={() => onNavigate("dashboard")}>
+        <Link href="/admin" className="sidebar-logo">
           <div className="sidebar-logo-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
               <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
             </svg>
           </div>
           {!collapsed && <span className="sidebar-logo-text">سِجِلّها</span>}
-        </div>
+        </Link>
         <button className="sidebar-collapse-btn" onClick={toggleCollapsed} title={collapsed ? "توسيع القائمة" : "طي القائمة"}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: collapsed ? "rotate(180deg)" : "none", transition: "transform 0.3s" }}>
             <polyline points="15 18 9 12 15 6"/>
@@ -106,18 +109,25 @@ export default function Sidebar({ activePage, onNavigate, onLogout }) {
       <nav className="sidebar-nav">
         <div className="sidebar-nav-group">
           {!collapsed && <span className="sidebar-nav-label">القائمة الرئيسية</span>}
-          {navItems.map((item) => (
-            <button
-              key={item.id}
-              className={`sidebar-nav-item ${activePage === item.id ? "active" : ""}`}
-              onClick={() => onNavigate(item.id)}
-              title={collapsed ? item.label : ""}
-            >
-              <span className="sidebar-nav-icon">{item.icon}</span>
-              {!collapsed && <span className="sidebar-nav-text">{item.label}</span>}
-              {!collapsed && activePage === item.id && <span className="sidebar-nav-active-dot" />}
-            </button>
-          ))}
+          {navItems.map((item) => {
+            const isActive = item.href === "/admin" 
+              ? pathname === "/admin" 
+              : pathname.startsWith(item.href);
+
+            return (
+              <Link
+                key={item.id}
+                href={item.href}
+                className={`sidebar-nav-item ${isActive ? "active" : ""}`}
+                title={collapsed ? item.label : ""}
+                style={{ textDecoration: "none" }}
+              >
+                <span className="sidebar-nav-icon">{item.icon}</span>
+                {!collapsed && <span className="sidebar-nav-text">{item.label}</span>}
+                {!collapsed && isActive && <span className="sidebar-nav-active-dot" />}
+              </Link>
+            );
+          })}
         </div>
       </nav>
 

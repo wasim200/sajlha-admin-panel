@@ -1,16 +1,18 @@
 "use client";
+import { usePathname } from "next/navigation";
 
 const pageTitles = {
-  dashboard: { title: "لوحة التحكم", subtitle: "نظرة عامة على أداء سجلها" },
-  licenses: { title: "إدارة التراخيص", subtitle: "إصدار وإدارة تراخيص المستخدمين" },
-  analytics: { title: "التحليلات والمخططات", subtitle: "رسوم بيانية ومؤشرات الأداء" },
-  logs: { title: "سجل النشاط الإداري", subtitle: "تتبع جميع العمليات والإجراءات" },
-  "ai-scans": { title: "سجل مسح الذكاء الاصطناعي", subtitle: "عمليات مسح الفواتير بالـ AI" },
-  broadcast: { title: "الإشعارات وإدارة الإصدارات", subtitle: "إرسال إشعارات وإطلاق تحديثات التطبيق" },
+  "/admin": { title: "لوحة التحكم", subtitle: "نظرة عامة على أداء سجلها" },
+  "/admin/licenses": { title: "إدارة التراخيص", subtitle: "إصدار وإدارة تراخيص المستخدمين" },
+  "/admin/analytics": { title: "التحليلات والمخططات", subtitle: "رسوم بيانية ومؤشرات الأداء" },
+  "/admin/logs": { title: "سجل النشاط الإداري", subtitle: "تتبع جميع العمليات والإجراءات" },
+  "/admin/ai-scans": { title: "سجل مسح الذكاء الاصطناعي", subtitle: "عمليات مسح الفواتير بالـ AI" },
+  "/admin/broadcast": { title: "الإشعارات وإدارة الإصدارات", subtitle: "إرسال إشعارات وإطلاق تحديثات التطبيق" },
 };
 
-export default function TopBar({ activePage }) {
-  const pageInfo = pageTitles[activePage] || pageTitles.dashboard;
+export default function TopBar() {
+  const pathname = usePathname();
+  const pageInfo = pageTitles[pathname] || pageTitles["/admin"];
 
   return (
     <header className="topbar">
