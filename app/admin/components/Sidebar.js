@@ -67,7 +67,7 @@ const navItems = [
   },
 ];
 
-export default function Sidebar({ onLogout }) {
+export default function Sidebar({ onLogout, mobileOpen, onCloseMobile }) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -78,6 +78,13 @@ export default function Sidebar({ onLogout }) {
     if (saved === "true") setCollapsed(true);
   }, []);
 
+  // Close mobile sidebar on route change
+  useEffect(() => {
+    if (mobileOpen && onCloseMobile) {
+      onCloseMobile();
+    }
+  }, [pathname]);
+
   const toggleCollapsed = () => {
     const next = !collapsed;
     setCollapsed(next);
@@ -87,62 +94,70 @@ export default function Sidebar({ onLogout }) {
   if (!mounted) return null;
 
   return (
-    <aside className={`sidebar ${collapsed ? "sidebar-collapsed" : ""}`}>
-      {/* Logo */}
-      <div className="sidebar-logo-section">
-        <Link href="/admin" className="sidebar-logo">
-          <div className="sidebar-logo-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+    <>
+      {/* Backdrop for Mobile */}
+      {mobileOpen && (
+        <div className="sidebar-backdrop" onClick={onCloseMobile} />
+      )}
+
+      <aside className={`sidebar ${collapsed ? "sidebar-collapsed" : ""} ${mobileOpen ? "mobile-sidebar-open" : ""}`}>
+        {/* Logo */}
+        <div className="sidebar-logo-section">
+          <Link href="/admin" className="sidebar-logo" onClick={onCloseMobile}>
+            <div className="sidebar-logo-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+              </svg>
+            </div>
+            <span className="sidebar-logo-text">سِجِلّها</span>
+          </Link>
+          <button className="sidebar-collapse-btn" onClick={toggleCollapsed} title={collapsed ? "توسيع القائمة" : "طي القائمة"}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: collapsed ? "rotate(180deg)" : "none", transition: "transform 0.3s" }}>
+              <polyline points="15 18 9 12 15 6"/>
             </svg>
-          </div>
-          {!collapsed && <span className="sidebar-logo-text">سِجِلّها</span>}
-        </Link>
-        <button className="sidebar-collapse-btn" onClick={toggleCollapsed} title={collapsed ? "توسيع القائمة" : "طي القائمة"}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: collapsed ? "rotate(180deg)" : "none", transition: "transform 0.3s" }}>
-            <polyline points="15 18 9 12 15 6"/>
-          </svg>
-        </button>
-      </div>
-
-      {/* Navigation */}
-      <nav className="sidebar-nav">
-        <div className="sidebar-nav-group">
-          {!collapsed && <span className="sidebar-nav-label">القائمة الرئيسية</span>}
-          {navItems.map((item) => {
-            const isActive = item.href === "/admin" 
-              ? pathname === "/admin" 
-              : pathname.startsWith(item.href);
-
-            return (
-              <Link
-                key={item.id}
-                href={item.href}
-                className={`sidebar-nav-item ${isActive ? "active" : ""}`}
-                title={collapsed ? item.label : ""}
-                style={{ textDecoration: "none" }}
-              >
-                <span className="sidebar-nav-icon">{item.icon}</span>
-                {!collapsed && <span className="sidebar-nav-text">{item.label}</span>}
-                {!collapsed && isActive && <span className="sidebar-nav-active-dot" />}
-              </Link>
-            );
-          })}
+          </button>
         </div>
-      </nav>
 
-      {/* Footer */}
-      <div className="sidebar-footer">
-        {!collapsed && <ThemeToggle />}
-        <button className="sidebar-nav-item sidebar-logout-btn" onClick={onLogout} title="تسجيل الخروج">
-          <span className="sidebar-nav-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
-            </svg>
-          </span>
-          {!collapsed && <span className="sidebar-nav-text">تسجيل الخروج</span>}
-        </button>
-      </div>
-    </aside>
+        {/* Navigation */}
+        <nav className="sidebar-nav">
+          <div className="sidebar-nav-group">
+            <span className="sidebar-nav-label">القائمة الرئيسية</span>
+            {navItems.map((item) => {
+              const isActive = item.href === "/admin" 
+                ? pathname === "/admin" 
+                : pathname.startsWith(item.href);
+
+              return (
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  className={`sidebar-nav-item ${isActive ? "active" : ""}`}
+                  title={item.label}
+                  style={{ textDecoration: "none" }}
+                  onClick={onCloseMobile}
+                >
+                  <span className="sidebar-nav-icon">{item.icon}</span>
+                  <span className="sidebar-nav-text">{item.label}</span>
+                  {isActive && <span className="sidebar-nav-active-dot" />}
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
+
+        {/* Footer */}
+        <div className="sidebar-footer">
+          <ThemeToggle />
+          <button className="sidebar-nav-item sidebar-logout-btn" onClick={onLogout} title="تسجيل الخروج">
+            <span className="sidebar-nav-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+              </svg>
+            </span>
+            <span className="sidebar-nav-text">تسجيل الخروج</span>
+          </button>
+        </div>
+      </aside>
+    </>
   );
 }

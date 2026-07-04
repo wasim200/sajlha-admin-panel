@@ -13,6 +13,7 @@ export default function AdminLayout({ children }) {
   const [error, setError] = useState("");
   const [mounted, setMounted] = useState(false);
   const [checking, setChecking] = useState(true);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -127,9 +128,13 @@ export default function AdminLayout({ children }) {
     <AdminProvider>
       <ToastProvider>
         <div className="admin-shell">
-          <Sidebar onLogout={handleLogout} />
+          <Sidebar
+            onLogout={handleLogout}
+            mobileOpen={mobileSidebarOpen}
+            onCloseMobile={() => setMobileSidebarOpen(false)}
+          />
           <main className="admin-main">
-            <TopBar />
+            <TopBar onToggleMobileMenu={() => setMobileSidebarOpen(!mobileSidebarOpen)} />
             <div className="admin-content">
               {children}
             </div>
