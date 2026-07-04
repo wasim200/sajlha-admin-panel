@@ -68,7 +68,7 @@ export default function PricingSection() {
     if (!selectedPlan) return;
     const cleanDevice = deviceId.trim() || "لم يتم إدخال Device ID";
     const fullMsg = `${selectedPlan.whatsappMsg}\nرقم الجهاز (Device ID): ${cleanDevice}`;
-    const url = `https://wa.me/966500000000?text=${encodeURIComponent(fullMsg)}`;
+    const url = `https://wa.me/967781911651?text=${encodeURIComponent(fullMsg)}`;
     window.open(url, "_blank");
     setIsModalOpen(false);
   };
