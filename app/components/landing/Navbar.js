@@ -16,7 +16,7 @@ export default function LandingNavbar() {
                 <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
               </svg>
             </div>
-            <span>سِجِلّ</span>ها
+            <span className="brand-logo-text">سِجِلّها</span>
           </Link>
 
           {/* Desktop Links */}
@@ -31,10 +31,10 @@ export default function LandingNavbar() {
 
           {/* Actions */}
           <div className="landing-nav-actions">
-            <Link href="/admin" className="btn-outline btn-sm">
+            <Link href="/admin" className="btn-outline btn-sm nav-desktop-only">
               لوحة الإدارة
             </Link>
-            <a href="#pricing" className="btn-primary btn-sm btn-gold">
+            <a href="#pricing" className="btn-primary btn-sm btn-gold nav-desktop-only">
               تفعيل الاشتراك
             </a>
             <button
@@ -42,7 +42,7 @@ export default function LandingNavbar() {
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label="Toggle menu"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 {mobileOpen ? (
                   <>
                     <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -67,9 +67,15 @@ export default function LandingNavbar() {
           <a href="#pricing" className="mobile-drawer-link">الباقات والأسعار</a>
           <a href="#steps" className="mobile-drawer-link">طريقة التفعيل</a>
           <a href="#faq" className="mobile-drawer-link">الأسئلة الشائعة</a>
-          <Link href="/admin" className="btn-primary" style={{ marginTop: 12, textAlign: "center" }}>
-            لوحة الإدارة
-          </Link>
+          
+          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 16 }}>
+            <a href="#pricing" className="btn-primary btn-gold" style={{ textAlign: "center", justifyContent: "center" }}>
+              تفعيل الاشتراك
+            </a>
+            <Link href="/admin" className="btn-outline" style={{ textAlign: "center", justifyContent: "center" }}>
+              لوحة الإدارة
+            </Link>
+          </div>
         </div>
       )}
     </header>

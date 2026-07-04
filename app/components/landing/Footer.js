@@ -6,7 +6,7 @@ export default function LandingFooter() {
     <footer className="landing-footer">
       <div className="landing-container">
         <Link href="/" className="footer-logo">
-          سِجِلّ<span>ها</span>
+          سِجِلّها
         </Link>
 
         <p className="footer-desc">
