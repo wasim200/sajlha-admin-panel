@@ -1,1380 +1,306 @@
 "use client";
-
 import { useState, useEffect } from "react";
-import './admin.css';
-import { 
-  ResponsiveContainer, 
-  ComposedChart, 
-  Bar, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  Legend, 
-  PieChart, 
-  Pie, 
-  Cell 
-} from 'recharts';
+import StatCard from "./components/StatCard";
+import SkeletonLoader from "./components/SkeletonLoader";
+import {
+  ResponsiveContainer,
+  ComposedChart,
+  Bar,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
 
-// مكون العدادات التصاعدية لتطبيق الأنيميشن المالي التفاعلي
-function AnimatedCounter({ value }) {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    let start = 0;
-    const end = parseInt(value) || 0;
-    if (end === 0) {
-      setCount(0);
-      return;
-    }
-    const duration = 1200; // مدة الأنيميشن بالملي ثانية
-    const startTime = performance.now();
-
-    function updateCount(currentTime) {
-      const elapsedTime = currentTime - startTime;
-      const progress = Math.min(elapsedTime / duration, 1);
-      
-      // دالة Ease Out لجعله يبطئ تدريجياً في النهاية
-      const easeProgress = 1 - Math.pow(1 - progress, 3);
-      
-      const currentCount = Math.floor(easeProgress * end);
-      setCount(currentCount);
-
-      if (progress < 1) {
-        requestAnimationFrame(updateCount);
-      } else {
-        setCount(end);
-      }
-    }
-
-    requestAnimationFrame(updateCount);
-  }, [value]);
-
-  return <span>{count.toLocaleString()}</span>;
-}
-
-export default function AdminPage() {
-  const [password, setPassword] = useState("");
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [licenses, setLicenses] = useState([]);
-  const [activeTab, setActiveTab] = useState("licenses"); // "licenses" | "logs" | "ai_scans"
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("all");
-  
-  // إحصائيات متقدمة من الباكند
-  const [stats, setStats] = useState({
-    totalLicenses: 0,
-    activeLicenses: 0,
-    expiredLicenses: 0,
-    suspendedLicenses: 0,
-    expiringSoon: 0,
-    totalAiScans: 0,
-    packagesCount: { monthly: 0, yearly: 0, lifetime: 0 },
-    totalRevenue: 0,
-  });
-
+export default function DashboardPage() {
+  const [stats, setStats] = useState(null);
+  const [analytics, setAnalytics] = useState(null);
   const [adminLogs, setAdminLogs] = useState([]);
-  const [recentScans, setRecentScans] = useState([]);
-  
-  // بيانات التحليلات والرسوم البيانية المتقدمة
-  const [analytics, setAnalytics] = useState({
-    monthlyData: [],
-    packageDistribution: [],
-    recentRegistrations: [],
-    kpis: {
-      conversionRate: 0,
-      arpu: 0,
-      thisMonthCount: 0,
-      lastMonthCount: 0,
-      growthRate: 0,
-    }
-  });
-  
-  // حقول إضافة رخصة جديدة
-  const [ownerName, setOwnerName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [packageType, setPackageType] = useState("yearly");
-  const [durationDays, setDurationDays] = useState("360");
-  const [generatedCode, setGeneratedCode] = useState("");
-
-  // حقول إرسال إشعار عام للتجار
-  const [broadcastTitle, setBroadcastTitle] = useState("");
-  const [broadcastBody, setBroadcastBody] = useState("");
-  const [broadcastType, setBroadcastType] = useState("release");
-  const [broadcastLoading, setBroadcastLoading] = useState(false);
-  const [broadcastMsg, setBroadcastMsg] = useState(null);
-
-  // حقول إدارة وإطلاق إصدارات التطبيق
-  const [verLatest, setVerLatest] = useState("2.5.0");
-  const [verMin, setVerMin] = useState("2.4.0");
-  const [verTitle, setVerTitle] = useState("تحديث تطبيق سجلها الجيل الذهبي 2.5");
-  const [verNotesText, setVerNotesText] = useState("معرض صور الفواتير والمرفقات المتعددة\nمشاركة كشف الحساب كصورة عالية الدقة\nالبحث الذكي الشامل للسلع والمبالغ\nمنتقي التاريخ العصري السريع");
-  const [verDownloadUrl, setVerDownloadUrl] = useState("https://sajlha.vercel.app");
-  const [verIsForce, setVerIsForce] = useState(false);
-  const [verLoading, setVerLoading] = useState(false);
-  const [verMsg, setVerMsg] = useState(null);
-
-  const [apkUploading, setApkUploading] = useState(false);
-  const [apkProgress, setApkProgress] = useState(0);
-  const [apkUploadMsg, setApkUploadMsg] = useState(null);
-
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    if (!file.name.endsWith('.apk')) {
-      setApkUploadMsg({ type: 'error', text: 'يرجى اختيار ملف بصيغة .apk فقط' });
-      return;
-    }
-
-    setApkUploading(true);
-    setApkProgress(0);
-    const totalMb = (file.size / (1024 * 1024)).toFixed(1);
-    setApkUploadMsg({ type: 'info', text: `جاري بدء الرفع السحابي المباشر لـ ${file.name} (${totalMb} MB)...` });
-
-    const formData = new FormData();
-    formData.append('reqtype', 'fileupload');
-    formData.append('fileToUpload', file);
-
-    const xhr = new XMLHttpRequest();
-
-    xhr.upload.onprogress = (event) => {
-      if (event.lengthComputable) {
-        const percent = Math.round((event.loaded / event.total) * 100);
-        setApkProgress(percent);
-        const loadedMb = (event.loaded / (1024 * 1024)).toFixed(1);
-        setApkUploadMsg({
-          type: 'info',
-          text: `جاري الرفع المباشر... ${percent}% (${loadedMb} MB / ${totalMb} MB)`,
-        });
-      }
-    };
-
-    xhr.onload = () => {
-      if (xhr.status === 200) {
-        const resultUrl = xhr.responseText.trim();
-        if (resultUrl.startsWith('http')) {
-          setVerDownloadUrl(resultUrl);
-          setApkUploadMsg({ type: 'success', text: `✅ تم رفع وتوفير ملف الـ APK المباشر بنجاح! الرابط: ${resultUrl}` });
-          setApkUploading(false);
-          return;
-        }
-      }
-      _uploadToTmpFiles(file, totalMb);
-    };
-
-    xhr.onerror = () => {
-      _uploadToTmpFiles(file, totalMb);
-    };
-
-    xhr.open('POST', 'https://catbox.moe/user/api.php', true);
-    xhr.send(formData);
-  };
-
-  const _uploadToTmpFiles = (file, totalMb) => {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    const xhr = new XMLHttpRequest();
-
-    xhr.upload.onprogress = (event) => {
-      if (event.lengthComputable) {
-        const percent = Math.round((event.loaded / event.total) * 100);
-        setApkProgress(percent);
-        const loadedMb = (event.loaded / (1024 * 1024)).toFixed(1);
-        setApkUploadMsg({
-          type: 'info',
-          text: `جاري الرفع البديل... ${percent}% (${loadedMb} MB / ${totalMb} MB)`,
-        });
-      }
-    };
-
-    xhr.onload = () => {
-      if (xhr.status === 200) {
-        try {
-          const res = JSON.parse(xhr.responseText);
-          if (res.status === 'success' && res.data && res.data.url) {
-            const directUrl = res.data.url.replace('tmpfiles.org/', 'tmpfiles.org/dl/');
-            setVerDownloadUrl(directUrl);
-            setApkUploadMsg({ type: 'success', text: `✅ تم رفع وتوفير الملف بنجاح! الرابط: ${directUrl}` });
-            setApkUploading(false);
-            return;
-          }
-        } catch (_) {}
-      }
-      setApkUploadMsg({ type: 'error', text: 'فشل الرفع السحابي. يمكنك وضع رابط التحميل المباشر يدوياً في الخانة أدناه.' });
-      setApkUploading(false);
-    };
-
-    xhr.onerror = () => {
-      setApkUploadMsg({ type: 'error', text: 'حدث خطأ في الاتصال بالشبكة أثناء الرفع.' });
-      setApkUploading(false);
-    };
-
-    xhr.open('POST', 'https://tmpfiles.org/api/v1/upload', true);
-    xhr.send(formData);
-  };
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/public/version-check")
-      .then(res => res.json())
-      .then(data => {
-        if (data.success && data.versionInfo) {
-          const v = data.versionInfo;
-          setVerLatest(v.latestVersion || "2.5.0");
-          setVerMin(v.minVersion || "2.4.0");
-          setVerTitle(v.title || "");
-          if (Array.isArray(v.releaseNotes)) {
-            setVerNotesText(v.releaseNotes.join("\n"));
-          }
-          setVerDownloadUrl(v.downloadUrl || "https://sajlha.vercel.app");
-          setVerIsForce(Boolean(v.isForceUpdate));
-        }
-      })
-      .catch(() => {});
+    loadDashboard();
   }, []);
 
-  const handlePublishVersion = async (e) => {
-    e.preventDefault();
-    if (!verLatest || !verMin) return;
-    setVerLoading(true);
-    setVerMsg(null);
-    try {
-      const response = await fetch("/api/public/version-check", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": password,
-        },
-        body: JSON.stringify({
-          latestVersion: verLatest,
-          minVersion: verMin,
-          title: verTitle,
-          releaseNotes: verNotesText.split("\n").filter(Boolean),
-          downloadUrl: verDownloadUrl,
-          isForceUpdate: verIsForce,
-        }),
-      });
-      const data = await response.json();
-      if (response.ok && data.success) {
-        setVerMsg({ type: "success", text: `🚀 تم نشر وتفعيل إطلاق الإصدار ${verLatest} بنجاح لكافة التجار!` });
-      } else {
-        setVerMsg({ type: "error", text: data.error || "فشل نشر التحديث." });
-      }
-    } catch (err) {
-      setVerMsg({ type: "error", text: "حدث خطأ في الاتصال بالشبكة." });
-    } finally {
-      setVerLoading(false);
-    }
-  };
-
-  const handleSendBroadcast = async (e) => {
-    e.preventDefault();
-    if (!broadcastTitle || !broadcastBody) return;
-    setBroadcastLoading(true);
-    setBroadcastMsg(null);
-    try {
-      const response = await fetch("/api/admin/broadcast", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": password,
-        },
-        body: JSON.stringify({
-          title: broadcastTitle,
-          body: broadcastBody,
-          type: broadcastType,
-        }),
-      });
-      const data = await response.json();
-      if (response.ok && data.success) {
-        setBroadcastMsg({ type: "success", text: "✅ تم إرسال الإشعار بنجاح لكافة التجار!" });
-        setBroadcastTitle("");
-        setBroadcastBody("");
-      } else {
-        setBroadcastMsg({ type: "error", text: data.error || "فشل إرسال الإشعار." });
-      }
-    } catch (err) {
-      setBroadcastMsg({ type: "error", text: "حدث خطأ في الاتصال بالشبكة." });
-    } finally {
-      setBroadcastLoading(false);
-    }
-  };
-
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  // فتح/إغلاق نافذة توليد كود ترخيص جديد العائمة
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    // محاولة استرجاع كلمة المرور المحفوظة محلياً
-    const savedPassword = localStorage.getItem("sajlha_admin_pwd");
-    if (savedPassword) {
-      setPassword(savedPassword);
-      validateAndLoad(savedPassword);
-    }
-  }, []);
-
-  const validateAndLoad = async (pwdToTest) => {
+  const loadDashboard = async () => {
     setLoading(true);
-    setError("");
-    const authHeader = pwdToTest || password;
+    const auth = localStorage.getItem("sajlha_admin_pwd") || "";
     try {
-      // 1. جلب التراخيص الأساسية
-      const resLicenses = await fetch("/api/admin/licenses", {
-        headers: { "Authorization": authHeader },
-      });
+      const [resStats, resAnalytics, resLogs] = await Promise.all([
+        fetch("/api/admin/stats", { headers: { Authorization: auth } }),
+        fetch("/api/admin/analytics", { headers: { Authorization: auth } }),
+        fetch("/api/admin/logs", { headers: { Authorization: auth } }),
+      ]);
 
-      if (resLicenses.ok) {
-        const dataLicenses = await resLicenses.json();
-        setLicenses(dataLicenses.licenses);
-        setIsAuthenticated(true);
-        if (pwdToTest) {
-          localStorage.setItem("sajlha_admin_pwd", pwdToTest);
-        }
-
-        // 2. جلب الإحصائيات المتقدمة وآخر عمليات مسح AI
-        const resStats = await fetch("/api/admin/stats", {
-          headers: { "Authorization": authHeader },
-        });
-        if (resStats.ok) {
-          const dataStats = await resStats.json();
-          setStats(dataStats.stats);
-          setRecentScans(dataStats.recentScans || []);
-        }
-
-        // 3. جلب سجل النشاط الإداري
-        const resLogs = await fetch("/api/admin/logs", {
-          headers: { "Authorization": authHeader },
-        });
-        if (resLogs.ok) {
-          const dataLogs = await resLogs.json();
-          setAdminLogs(dataLogs.logs || []);
-        }
-
-        // 4. جلب بيانات التحليلات المتقدمة والرسوم البيانية
-        const resAnalytics = await fetch("/api/admin/analytics", {
-          headers: { "Authorization": authHeader },
-        });
-        if (resAnalytics.ok) {
-          const dataAnalytics = await resAnalytics.json();
-          setAnalytics(dataAnalytics.analytics);
-        }
-
-      } else {
-        try {
-          const errData = await resLicenses.json();
-          setError(errData.error || "كلمة المرور غير صحيحة أو انتهت الجلسة.");
-        } catch (_) {
-          setError("حدث خطأ في الخادم (رمز 500). يرجى مراجعة إعدادات قاعدة البيانات.");
-        }
-        setIsAuthenticated(false);
+      if (resStats.ok) {
+        const d = await resStats.json();
+        setStats(d.stats);
+      }
+      if (resAnalytics.ok) {
+        const d = await resAnalytics.json();
+        setAnalytics(d.analytics);
+      }
+      if (resLogs.ok) {
+        const d = await resLogs.json();
+        setAdminLogs((d.logs || []).slice(0, 6));
       }
     } catch (err) {
-      setError("فشل الاتصال بالخادم وقاعدة البيانات.");
+      console.error("Dashboard load error:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleLoginSubmit = (e) => {
-    e.preventDefault();
-    if (!password) return;
-    validateAndLoad(password);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("sajlha_admin_pwd");
-    setPassword("");
-    setIsAuthenticated(false);
-    setLicenses([]);
-    setAdminLogs([]);
-    setRecentScans([]);
-  };
-
-  const handleCreateLicense = async (e) => {
-    e.preventDefault();
-    setError("");
-    if (!ownerName || !phoneNumber || !durationDays) {
-      setError("يرجى ملء كافة الحقول.");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const response = await fetch("/api/admin/licenses", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": password,
-        },
-        body: JSON.stringify({
-          owner_name: ownerName,
-          phone_number: phoneNumber,
-          package_type: packageType,
-          duration_days: durationDays,
-        }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setGeneratedCode(data.license.license_code);
-        setOwnerName("");
-        setPhoneNumber("");
-        // تحديث البيانات
-        validateAndLoad(password);
-      } else {
-        const errData = await response.json();
-        setError(errData.error || "فشل إنشاء الترخيص.");
-      }
-    } catch (err) {
-      setError("حدث خطأ أثناء الاتصال بالخادم.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleToggleStatus = async (id, currentStatus) => {
-    const nextStatus = currentStatus === "active" ? "suspended" : "active";
-    setLoading(true);
-    try {
-      const response = await fetch("/api/admin/licenses", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": password,
-        },
-        body: JSON.stringify({ id, status: nextStatus }),
-      });
-      if (response.ok) {
-        validateAndLoad(password);
-      } else {
-        setError("فشل تحديث حالة الترخيص.");
-      }
-    } catch (err) {
-      setError("حدث خطأ في الشبكة.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleExtendLicense = async (id, currentExpiry, days) => {
-    const date = new Date(currentExpiry);
-    date.setDate(date.getDate() + days);
-    setLoading(true);
-    try {
-      const response = await fetch("/api/admin/licenses", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": password,
-        },
-        body: JSON.stringify({ id, expires_at: date.toISOString() }),
-      });
-      if (response.ok) {
-        validateAndLoad(password);
-      } else {
-        setError("فشل تمديد الترخيص.");
-      }
-    } catch (err) {
-      setError("حدث خطأ في الشبكة.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDeleteLicense = async (id) => {
-    if (!confirm("هل أنت متأكد من رغبتك في حذف هذا الترخيص نهائياً؟")) return;
-    setLoading(true);
-    try {
-      const response = await fetch("/api/admin/licenses", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": password,
-        },
-        body: JSON.stringify({ id }),
-      });
-      if (response.ok) {
-        validateAndLoad(password);
-      } else {
-        setError("فشل حذف الترخيص.");
-      }
-    } catch (err) {
-      setError("حدث خطأ في الشبكة.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // فلترة التراخيص ديناميكياً
-  const filteredLicenses = licenses.filter((lic) => {
-    const matchesSearch = 
-      lic.owner_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      lic.phone_number.includes(searchTerm) ||
-      lic.license_code.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const isExpired = new Date(lic.expires_at) <= new Date();
-    const computedStatus = lic.status === "active" && isExpired ? "expired" : lic.status;
-    const matchesStatus = filterStatus === "all" || computedStatus === filterStatus;
-
-    return matchesSearch && matchesStatus;
-  });
-
-  if (!mounted) {
-    return <div style={{ backgroundColor: "#0B0D17", minHeight: "100vh" }}></div>;
+  if (loading) {
+    return (
+      <div>
+        <SkeletonLoader type="stats" />
+        <div style={{ marginTop: 32 }} />
+        <div className="grid-2-1">
+          <SkeletonLoader type="chart" />
+          <SkeletonLoader type="chart" />
+        </div>
+        <div style={{ marginTop: 32 }} />
+        <SkeletonLoader type="list" count={5} />
+      </div>
+    );
   }
 
-  return (
-    <div className="app-wrapper">
-      {/* هالات التوهج الجرانيتية */}
-      <div className="parallax-glow-1"></div>
-      <div className="parallax-glow-2"></div>
+  const growthRate = analytics?.kpis?.growthRate || 0;
 
-      {!isAuthenticated ? (
-        <div className="login-container">
-          <div className="login-card">
-            <div className="logo-title">سِجِلّها</div>
-            <div className="logo-subtitle">لوحة الإدارة سحابية والتراخيص</div>
-            <form onSubmit={handleLoginSubmit}>
-              {error && <div className="error-msg">{error}</div>}
-              <div className="form-group">
-                <label className="form-label">رمز الدخول السري للمسؤول</label>
-                <input
-                  type="password"
-                  className="form-input"
-                  placeholder="كلمة المرور..."
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
+  return (
+    <div>
+      {/* KPI Stats Grid */}
+      <div className="stats-grid section-gap">
+        <StatCard
+          label="إجمالي التراخيص"
+          value={stats?.totalLicenses || 0}
+          icon={
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
+            </svg>
+          }
+          accentColor="var(--color-gold-primary)"
+        />
+        <StatCard
+          label="التراخيص النشطة"
+          value={stats?.activeLicenses || 0}
+          icon={
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+          }
+          accentColor="var(--color-success)"
+        />
+        <StatCard
+          label="تنتهي قريباً (30 يوم)"
+          value={stats?.expiringSoon || 0}
+          icon={
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+          }
+          accentColor="var(--color-warning)"
+          trendLabel={(stats?.expiringSoon || 0) > 0 ? "⚠ تحتاج متابعة" : ""}
+        />
+        <StatCard
+          label="مسح الذكاء الاصطناعي"
+          value={stats?.totalAiScans || 0}
+          icon={
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+          }
+          accentColor="var(--color-info)"
+        />
+        <StatCard
+          label="الإيرادات المقدرة"
+          value={stats?.totalRevenue || 0}
+          prefix="$"
+          icon={
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          }
+          accentColor="var(--color-gold-primary)"
+          trend={growthRate}
+          trendLabel="مقارنة بالشهر السابق"
+        />
+      </div>
+
+      {/* Charts Section */}
+      <div className="grid-2-1 section-gap">
+        <div className="dashboard-card">
+          <div className="card-header">
+            <h3 className="card-title">
+              <span className="card-title-accent" />
+              نمو التسجيلات والإيرادات الشهرية
+            </h3>
+          </div>
+          <div style={{ width: "100%", height: 300 }}>
+            <ResponsiveContainer>
+              <ComposedChart data={analytics?.monthlyData || []} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" opacity={0.5} />
+                <XAxis dataKey="month" tick={{ fontFamily: "Cairo", fontSize: 12, fill: "var(--color-text-tertiary)" }} />
+                <YAxis yAxisId="left" tick={{ fontFamily: "Cairo", fontSize: 12, fill: "var(--color-text-tertiary)" }} />
+                <YAxis yAxisId="right" orientation="right" tick={{ fontFamily: "Cairo", fontSize: 12, fill: "var(--color-text-tertiary)" }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "var(--chart-tooltip-bg)",
+                    borderColor: "var(--chart-tooltip-border)",
+                    borderRadius: "12px",
+                    fontFamily: "Cairo",
+                    textAlign: "right",
+                    color: "var(--color-text-primary)",
+                  }}
+                  labelStyle={{ fontWeight: "bold", color: "var(--color-text-primary)" }}
                 />
-              </div>
-              <button type="submit" className="btn-primary" disabled={loading} style={{ background: "#131626", color: "#ffffff", border: "none" }}>
-                {loading ? "جاري التحقق..." : "دخول إلى الكونسول"}
-              </button>
-            </form>
+                <Legend wrapperStyle={{ fontFamily: "Cairo", fontSize: 12 }} />
+                <Bar yAxisId="left" dataKey="registrations" name="تسجيلات جديدة" fill="var(--chart-bar)" radius={[6, 6, 0, 0]} />
+                <Line yAxisId="right" type="monotone" dataKey="revenue" name="الإيرادات ($)" stroke="var(--chart-line)" strokeWidth={3} dot={{ r: 5, fill: "var(--chart-line)" }} />
+              </ComposedChart>
+            </ResponsiveContainer>
           </div>
         </div>
-      ) : (
-        <div className="admin-layout">
-          {/* ترويسة الكونسول */}
-          <div className="header">
-            <div className="header-title-container">
-              <h1 className="header-title">كونسول إدارة تراخيص سِجِلّها</h1>
-              <div className="header-subtitle">البنية السحابية الحجرية لإصدار وفحص التراخيص بالذكاء الاصطناعي</div>
-            </div>
-            <button onClick={handleLogout} className="btn-logout">إنهاء الجلسة</button>
+
+        <div className="dashboard-card">
+          <div className="card-header">
+            <h3 className="card-title">
+              <span className="card-title-accent" />
+              توزيع الباقات
+            </h3>
           </div>
-
-          {/* شبكة الإحصائيات الجرانيتية المحدثة */}
-          <div className="advanced-stats-grid">
-            <div className="stat-card-advanced active-card">
-              <div className="stat-header">
-                <span className="stat-lbl-small">إجمالي التراخيص المصدرة</span>
-                <span className="stat-icon-wrapper">
-                  <svg className="stat-icon-vector" viewBox="0 0 24 24">
-                    <path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/>
-                  </svg>
-                </span>
-              </div>
-              <div className="stat-val-big">
-                <AnimatedCounter value={stats.totalLicenses} />
-              </div>
-            </div>
-            <div className="stat-card-advanced active-card">
-              <div className="stat-header">
-                <span className="stat-lbl-small">التراخيص النشطة</span>
-                <span className="stat-icon-wrapper">
-                  <svg className="stat-icon-vector" viewBox="0 0 24 24">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                  </svg>
-                </span>
-              </div>
-              <div className="stat-val-big">
-                <AnimatedCounter value={stats.activeLicenses} />
-              </div>
-            </div>
-            <div className="stat-card-advanced active-card">
-              <div className="stat-header">
-                <span className="stat-lbl-small">تنتهي قريباً (30 يوم)</span>
-                <span className="stat-icon-wrapper">
-                  <svg className="stat-icon-vector" viewBox="0 0 24 24">
-                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
-                  </svg>
-                </span>
-              </div>
-              <div className="stat-val-big">
-                <AnimatedCounter value={stats.expiringSoon} />
-              </div>
-            </div>
-            <div className="stat-card-advanced active-card">
-              <div className="stat-header">
-                <span className="stat-lbl-small">فحوصات الذكاء الاصطناعي</span>
-                <span className="stat-icon-wrapper">
-                  <svg className="stat-icon-vector" viewBox="0 0 24 24">
-                    <path d="M19 13H5v-2h14v2zm-2-7H7v2h10V6zm2 14H5v-2h14v2zm-2-7h-4v-2h4v2zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
-                  </svg>
-                </span>
-              </div>
-              <div className="stat-val-big">
-                <AnimatedCounter value={stats.totalAiScans} />
-              </div>
-            </div>
-            <div className="stat-card-advanced active-card">
-              <div className="stat-header">
-                <span className="stat-lbl-small">الإيرادات المقدرة</span>
-                <span className="stat-icon-wrapper">
-                  <svg className="stat-icon-vector" viewBox="0 0 24 24">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/>
-                  </svg>
-                </span>
-              </div>
-              <div className="stat-val-big">
-                $<AnimatedCounter value={stats.totalRevenue} />
-              </div>
-            </div>
-          </div>
-
-          {/* تبويبات الكونسول */}
-          <div className="tabs-header">
-            <button 
-              className={`tab-button ${activeTab === "licenses" ? "active" : ""}`}
-              onClick={() => setActiveTab("licenses")}
-            >
-              <svg className="tab-icon-vector" viewBox="0 0 24 24">
-                <path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65z"/>
-              </svg>
-              قاعدة التراخيص ({licenses.length})
-            </button>
-            <button 
-              className={`tab-button ${activeTab === "logs" ? "active" : ""}`}
-              onClick={() => setActiveTab("logs")}
-            >
-              <svg className="tab-icon-vector" viewBox="0 0 24 24">
-                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
-              </svg>
-              التدقيق والنشاط الإداري ({adminLogs.length})
-            </button>
-            <button 
-              className={`tab-button ${activeTab === "ai_scans" ? "active" : ""}`}
-              onClick={() => setActiveTab("ai_scans")}
-            >
-              <svg className="tab-icon-vector" viewBox="0 0 24 24">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
-              </svg>
-              سجل مسح AI ({recentScans.length})
-            </button>
-            <button 
-              className={`tab-button ${activeTab === "analytics" ? "active" : ""}`}
-              onClick={() => setActiveTab("analytics")}
-            >
-              <svg className="tab-icon-vector" viewBox="0 0 24 24">
-                <path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/>
-              </svg>
-              📊 التحليلات والمخططات الذكية
-            </button>
-            <button 
-              className={`tab-button ${activeTab === "broadcast" ? "active" : ""}`}
-              onClick={() => setActiveTab("broadcast")}
-            >
-              <svg className="tab-icon-vector" viewBox="0 0 24 24">
-                <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
-              </svg>
-              📢 إرسال إشعار للتجار
-            </button>
-          </div>
-
-          {/* مساحة العرض الرئيسية */}
-          <div className="content-area">
-            {activeTab === "broadcast" && (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '24px' }}>
-                
-                {/* البطاقة 1: إدارة وإطلاق إصدارات التطبيق (Version Release Control) */}
-                <div style={{ padding: '24px', background: '#fff', borderRadius: '18px', boxShadow: '0 4px 20px rgba(0,0,0,0.04)' }}>
-                  <div style={{ marginBottom: '20px' }}>
-                    <h3 style={{ fontSize: '17px', fontWeight: 'bold', color: '#131626', marginBottom: '6px' }}>🚀 إطلاق وتحديث إصدار التطبيق (App Release Manager)</h3>
-                    <p style={{ fontSize: '12.5px', color: '#64748B' }}>التحكم برقم الإصدار وتفعيل التحديثات الإلزامية/الاختيارية ونشر الميزات الجديدة</p>
-                  </div>
-
-                  <form onSubmit={handlePublishVersion}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
-                      <div>
-                        <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#1E293B', marginBottom: '4px' }}>أحدث إصدار (Latest Version):</label>
-                        <input 
-                          type="text" 
-                          value={verLatest} 
-                          onChange={(e) => setVerLatest(e.target.value)}
-                          placeholder="2.6.0"
-                          required 
-                          style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13.5px' }}
-                        />
-                      </div>
-                      <div>
-                        <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#1E293B', marginBottom: '4px' }}>الحد الأدنى المطلوب (Min Version):</label>
-                        <input 
-                          type="text" 
-                          value={verMin} 
-                          onChange={(e) => setVerMin(e.target.value)}
-                          placeholder="2.4.0"
-                          required 
-                          style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13.5px' }}
-                        />
-                      </div>
-                    </div>
-
-                    <div style={{ marginBottom: '14px' }}>
-                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#1E293B', marginBottom: '4px' }}>عنوان التحديث:</label>
-                      <input 
-                        type="text" 
-                        value={verTitle} 
-                        onChange={(e) => setVerTitle(e.target.value)}
-                        placeholder="تحديث جديد لتطبيق سجلها"
-                        required 
-                        style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13.5px' }}
-                      />
-                    </div>
-
-                    {/* خيار رفع ملف الـ APK المباشر */}
-                    <div style={{ marginBottom: '14px', padding: '12px', background: '#F8FAFC', borderRadius: '10px', border: '1px dashed #94A3B8' }}>
-                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#1E293B', marginBottom: '6px' }}>📁 رفع ملف التطبيق المباشر (.apk):</label>
-                      <input 
-                        type="file" 
-                        accept=".apk" 
-                        onChange={handleFileUpload}
-                        disabled={apkUploading}
-                        style={{ fontSize: '12.5px' }}
-                      />
-                      {apkUploading && (
-                        <div style={{ marginTop: '10px' }}>
-                          <div style={{ width: '100%', height: '8px', background: '#E2E8F0', borderRadius: '4px', overflow: 'hidden' }}>
-                            <div style={{
-                              width: `${apkProgress}%`,
-                              height: '100%',
-                              background: '#10B981',
-                              transition: 'width 0.2s ease-in-out'
-                            }} />
-                          </div>
-                        </div>
-                      )}
-
-                      {apkUploadMsg && (
-                        <div style={{
-                          marginTop: '8px',
-                          fontSize: '11.5px',
-                          fontWeight: 'bold',
-                          color: apkUploadMsg.type === 'success' ? '#047857' : (apkUploadMsg.type === 'error' ? '#DC2626' : '#2563EB')
-                        }}>
-                          {apkUploadMsg.text}
-                        </div>
-                      )}
-                    </div>
-
-                    <div style={{ marginBottom: '14px' }}>
-                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#1E293B', marginBottom: '4px' }}>رابط التحديث والتحميل (Play Store / APK Link):</label>
-                      <input 
-                        type="url" 
-                        value={verDownloadUrl} 
-                        onChange={(e) => setVerDownloadUrl(e.target.value)}
-                        placeholder="https://sajlha.vercel.app"
-                        required 
-                        style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13.5px' }}
-                      />
-                    </div>
-
-                    <div style={{ marginBottom: '14px' }}>
-                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#1E293B', marginBottom: '4px' }}>مميزات التحديث (كل ميزة في سطر):</label>
-                      <textarea 
-                        value={verNotesText} 
-                        onChange={(e) => setVerNotesText(e.target.value)}
-                        rows={3}
-                        style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13px', fontFamily: 'inherit' }}
-                      />
-                    </div>
-
-                    <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <input 
-                        type="checkbox" 
-                        id="isForceCheck" 
-                        checked={verIsForce} 
-                        onChange={(e) => setVerIsForce(e.target.checked)}
-                        style={{ width: '16px', height: '16px', cursor: 'pointer' }}
-                      />
-                      <label htmlFor="isForceCheck" style={{ fontSize: '13px', fontWeight: 'bold', color: verIsForce ? '#DC2626' : '#1E293B', cursor: 'pointer' }}>
-                        {verIsForce ? "⚠️ جعل التحديث إجبارياً للجميع (Force Update)" : "إشعارات تحديث اختياري (Optional Update)"}
-                      </label>
-                    </div>
-
-                    {verMsg && (
-                      <div style={{
-                        padding: '10px 14px',
-                        borderRadius: '8px',
-                        marginBottom: '14px',
-                        fontSize: '12.5px',
-                        fontWeight: 'bold',
-                        background: verMsg.type === 'success' ? '#ECFDF5' : '#FEF2F2',
-                        color: verMsg.type === 'success' ? '#047857' : '#DC2626',
-                        border: `1px solid ${verMsg.type === 'success' ? '#A7F3D0' : '#FECACA'}`,
-                      }}>
-                        {verMsg.text}
-                      </div>
-                    )}
-
-                    <button 
-                      type="submit" 
-                      disabled={verLoading}
-                      style={{
-                        width: '100%',
-                        padding: '12px',
-                        borderRadius: '10px',
-                        background: '#9E2A2B',
-                        color: '#fff',
-                        fontWeight: 'bold',
-                        fontSize: '13.5px',
-                        border: 'none',
-                        cursor: 'pointer',
-                        opacity: verLoading ? 0.7 : 1,
-                      }}
-                    >
-                      {verLoading ? "جاري نشر التحديث..." : "🚀 تفعيل وإطلاق الإصدار الجديد الآن"}
-                    </button>
-                  </form>
-                </div>
-
-                {/* البطاقة 2: إرسال إشعار وبث حي لكافة التجار */}
-                <div style={{ padding: '24px', background: '#fff', borderRadius: '18px', boxShadow: '0 4px 20px rgba(0,0,0,0.04)' }}>
-                  <div style={{ marginBottom: '20px' }}>
-                    <h3 style={{ fontSize: '17px', fontWeight: 'bold', color: '#131626', marginBottom: '6px' }}>📡 إرسال إشعار وبث حي لكافة التجار</h3>
-                    <p style={{ fontSize: '12.5px', color: '#64748B' }}>اكتب رسالة أو تنبيه أو عرض خاص ليصل فوراً لأيقونة الإشعارات في الجوّال</p>
-                  </div>
-
-                  <form onSubmit={handleSendBroadcast}>
-                    <div style={{ marginBottom: '14px' }}>
-                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#1E293B', marginBottom: '4px' }}>عنوان الإشعار:</label>
-                      <input 
-                        type="text" 
-                        value={broadcastTitle} 
-                        onChange={(e) => setBroadcastTitle(e.target.value)}
-                        placeholder="مثال: 🎉 ميزة جديدة في الإصدار 2.5 أو خصم خاص!"
-                        required 
-                        style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13.5px' }}
-                      />
-                    </div>
-
-                    <div style={{ marginBottom: '14px' }}>
-                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#1E293B', marginBottom: '4px' }}>نص وتفاصيل الإشعار:</label>
-                      <textarea 
-                        value={broadcastBody} 
-                        onChange={(e) => setBroadcastBody(e.target.value)}
-                        placeholder="اكتب نص الإشعار بالتفصيل للتاجر..."
-                        required 
-                        rows={4}
-                        style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13.5px', fontFamily: 'inherit' }}
-                      />
-                    </div>
-
-                    <div style={{ marginBottom: '14px' }}>
-                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#1E293B', marginBottom: '4px' }}>نوع الإشعار:</label>
-                      <select 
-                        value={broadcastType} 
-                        onChange={(e) => setBroadcastType(e.target.value)}
-                        style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '13.5px', background: '#fff' }}
-                      >
-                        <option value="release">🚀 تحديث إصدار جديد (Release)</option>
-                        <option value="offer">🎁 عرض وتخفيض خاص (Offer)</option>
-                        <option value="info">ℹ️ إعلان ومعلومات عامة (Info)</option>
-                        <option value="alert">⚠️ تنبيه إداري عاجل (Alert)</option>
-                      </select>
-                    </div>
-
-                    {broadcastMsg && (
-                      <div style={{
-                        padding: '10px 14px',
-                        borderRadius: '8px',
-                        marginBottom: '14px',
-                        fontSize: '12.5px',
-                        fontWeight: 'bold',
-                        background: broadcastMsg.type === 'success' ? '#ECFDF5' : '#FEF2F2',
-                        color: broadcastMsg.type === 'success' ? '#047857' : '#DC2626',
-                        border: `1px solid ${broadcastMsg.type === 'success' ? '#A7F3D0' : '#FECACA'}`,
-                      }}>
-                        {broadcastMsg.text}
-                      </div>
-                    )}
-
-                    <button 
-                      type="submit" 
-                      disabled={broadcastLoading}
-                      style={{
-                        width: '100%',
-                        padding: '12px',
-                        borderRadius: '10px',
-                        background: '#131626',
-                        color: '#fff',
-                        fontWeight: 'bold',
-                        fontSize: '13.5px',
-                        border: 'none',
-                        cursor: 'pointer',
-                        opacity: broadcastLoading ? 0.7 : 1,
-                      }}
-                    >
-                      {broadcastLoading ? "جاري الإرسال..." : "📡 إرسال الإشعار الفوري لكافة التجار"}
-                    </button>
-                  </form>
-                </div>
-
-              </div>
-            )}
-            {activeTab === "licenses" && (
-              <div className="card">
-                <div className="card-title-bar">
-                  <h2 className="card-title">تراخيص المستخدمين المفعلة</h2>
-                  <button 
-                    onClick={() => { setGeneratedCode(""); setIsModalOpen(true); }}
-                    className="btn-primary" 
-                    style={{ width: "auto", padding: "10px 24px", background: "#131626", color: "#ffffff", border: "none" }}
-                  >
-                    + إصدار ترخيص
-                  </button>
-                </div>
-
-                {/* خيارات البحث والفلترة */}
-                <div className="search-filter-row">
-                  <input
-                    type="text"
-                    className="form-input search-box"
-                    placeholder="بحث في كود الترخيص، المالك، أو الهاتف..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                  <select
-                    className="form-select filter-select"
-                    value={filterStatus}
-                    onChange={(e) => setFilterStatus(e.target.value)}
-                  >
-                    <option value="all">كل الحالات</option>
-                    <option value="active">نشط وصالح</option>
-                    <option value="expired">منتهي الصلاحية</option>
-                    <option value="suspended">موقوف مؤقتاً</option>
-                  </select>
-                </div>
-
-                {/* جدول التراخيص */}
-                <div className="table-container">
-                  <table className="license-table">
-                    <thead>
-                      <tr>
-                        <th style={{ textAlign: "right" }}>كود الترخيص</th>
-                        <th style={{ textAlign: "right" }}>المالك والهاتف</th>
-                        <th style={{ textAlign: "right" }}>الباقة</th>
-                        <th style={{ textAlign: "right" }}>إصدار التطبيق</th>
-                        <th style={{ textAlign: "right" }}>مسحات AI</th>
-                        <th style={{ textAlign: "right" }}>تاريخ الانتهاء</th>
-                        <th style={{ textAlign: "right" }}>الحالة</th>
-                        <th style={{ textAlign: "right" }}>الجهاز المقترن</th>
-                        <th style={{ textAlign: "left" }}>إجراءات التحكم</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredLicenses.map((lic) => {
-                        const isExpired = new Date(lic.expires_at) <= new Date();
-                        const showStatus = lic.status === "active" && isExpired ? "expired" : lic.status;
-                        const isLatest = lic.app_version === verLatest || lic.app_version === '2.5.0';
-                        
-                        return (
-                          <tr key={lic._id}>
-                            <td style={{ fontWeight: "bold", color: "var(--color-gold-cream)" }}>{lic.license_code}</td>
-                            <td>
-                              <div style={{ fontWeight: "bold", color: "#ffffff" }}>{lic.owner_name}</div>
-                              <div style={{ fontSize: "12px", color: "var(--color-gold-cream)", opacity: 0.7 }}>{lic.phone_number}</div>
-                            </td>
-                            <td>
-                              {lic.package_type === "monthly" ? "6 أشهر" : 
-                               lic.package_type === "yearly" ? "سنوية" : "سنتين"}
-                            </td>
-                            <td>
-                              <span style={{
-                                padding: '4px 10px',
-                                borderRadius: '12px',
-                                fontSize: '11.5px',
-                                fontWeight: 'bold',
-                                background: isLatest ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)',
-                                color: isLatest ? '#10B981' : '#F59E0B',
-                                border: `1px solid ${isLatest ? '#10B981' : '#F59E0B'}`
-                              }}>
-                                v{lic.app_version || '2.5.0'}
-                              </span>
-                            </td>
-                            <td style={{ fontWeight: "bold" }}>
-                              {lic.ai_scan_count || 0}
-                            </td>
-                            <td>
-                              {new Date(lic.expires_at).toLocaleDateString("ar-SA")}
-                            </td>
-                            <td>
-                              <span className={`status-badge status-${showStatus}`}>
-                                {showStatus === "active" ? "نشط" : 
-                                 showStatus === "expired" ? "منتهي" : "موقوف"}
-                              </span>
-                            </td>
-                            <td>
-                              {lic.device_id ? (
-                                <span className="device-info" title={lic.device_id}>{lic.device_id.substring(0, 14)}...</span>
-                              ) : (
-                                <span style={{ fontSize: "12px", color: "var(--color-gold-cream)", opacity: 0.5, fontStyle: "italic" }}>غير مقترن</span>
-                              )}
-                            </td>
-                            <td className="actions-cell">
-                              <button 
-                                onClick={() => handleToggleStatus(lic._id, lic.status)}
-                                className="btn-table-action"
-                                title="إيقاف / تفعيل مؤقت"
-                              >
-                                <svg className="action-icon-vector" viewBox="0 0 24 24">
-                                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4-9H8v2h8v-2z"/>
-                                </svg>
-                                {lic.status === "active" ? "تعليق" : "تنشيط"}
-                              </button>
-                              <button 
-                                onClick={() => handleExtendLicense(lic._id, lic.expires_at, 360)}
-                                className="btn-table-action"
-                                title="تمديد الرخصة لسنة إضافية"
-                              >
-                                <svg className="action-icon-vector" viewBox="0 0 24 24">
-                                  <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-                                </svg>
-                                + سنة
-                              </button>
-                              <button 
-                                onClick={() => handleDeleteLicense(lic._id)}
-                                className="btn-table-action delete-action"
-                                title="حذف نهائي"
-                              >
-                                <svg className="action-icon-vector" viewBox="0 0 24 24">
-                                  <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-                                </svg>
-                                حذف
-                              </button>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                      {filteredLicenses.length === 0 && (
-                        <tr>
-                          <td colSpan="8" style={{ textAlign: "center", color: "var(--color-gold-cream)", opacity: 0.7, padding: "40px" }}>
-                            لا توجد تراخيص مسجلة مطابقة للبحث.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-
-            {activeTab === "logs" && (
-              <div className="card">
-                <h2 className="card-title">سجل العمليات والنشاط الإداري</h2>
-                <div style={{ marginBottom: "20px" }}>
-                  {error && <div className="error-msg">{error}</div>}
-                </div>
-                <div className="logs-list">
-                  {adminLogs.map((log) => (
-                    <div key={log._id} className="log-item">
-                      <div style={{ display: "flex", gap: "14px", alignItems: "center" }}>
-                        <span className="log-action-tag">
-                          {log.action === "create_license" ? "إصدار" :
-                           log.action === "delete_license" ? "حذف" :
-                           log.action === "suspend_license" ? "تعليق" :
-                           log.action === "activate_license" ? "تنشيط" : "تعديل"}
-                        </span>
-                        <div style={{ display: "flex", flexDirection: "column" }}>
-                          <span style={{ fontWeight: "700", fontSize: "14.5px", color: "#ffffff" }}>{log.details}</span>
-                          <span style={{ fontSize: "12px", color: "var(--color-gold-cream)", opacity: 0.7 }}>الكود: {log.license_code} | IP: {log.ip_address}</span>
-                        </div>
-                      </div>
-                      <span className="log-date">{new Date(log.created_at).toLocaleString("ar-SA")}</span>
-                    </div>
+          <div style={{ width: "100%", height: 240, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <ResponsiveContainer>
+              <PieChart>
+                <Pie
+                  data={analytics?.packageDistribution || []}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={55}
+                  outerRadius={80}
+                  paddingAngle={5}
+                  dataKey="value"
+                >
+                  {(analytics?.packageDistribution || []).map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
-                  {adminLogs.length === 0 && (
-                    <div style={{ textAlign: "center", color: "var(--color-gold-cream)", opacity: 0.5, padding: "30px" }}>
-                      لا توجد سجلات تدقيق مسجلة حالياً.
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {activeTab === "ai_scans" && (
-              <div className="card">
-                <h2 className="card-title">آخر عمليات مسح الفواتير بالذكاء الاصطناعي</h2>
-                <div style={{ marginBottom: "20px" }}>
-                  {error && <div className="error-msg">{error}</div>}
-                </div>
-                <div className="logs-list">
-                  {recentScans.map((scan) => (
-                    <div key={scan._id} className="scan-item">
-                      <div style={{ display: "flex", gap: "14px", alignItems: "center" }}>
-                        <span className="scan-badge scan-success">
-                          {scan.status === "success" ? "قراءة ناجحة" : "فشل القراءة"}
-                        </span>
-                        <div style={{ display: "flex", flexDirection: "column" }}>
-                          <span style={{ fontWeight: "700", fontSize: "14.5px", color: "#ffffff" }}>
-                            العميل: {scan.license_id?.owner_name || "غير معروف"} ({scan.license_id?.license_code || "بدون كود"})
-                          </span>
-                          <span style={{ fontSize: "12px", color: "var(--color-gold-cream)", opacity: 0.7 }}>
-                            رقم الجهاز: {scan.device_id} {scan.error_message && `| تفاصيل الخطأ: ${scan.error_message}`}
-                          </span>
-                        </div>
-                      </div>
-                      <span className="log-date">{new Date(scan.created_at).toLocaleString("ar-SA")}</span>
-                    </div>
-                  ))}
-                  {recentScans.length === 0 && (
-                    <div style={{ textAlign: "center", color: "var(--color-gold-cream)", opacity: 0.5, padding: "30px" }}>
-                      لا توجد عمليات مسح AI مسجلة بعد.
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {activeTab === "analytics" && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "30px" }}>
-                {/* بطاقات KPI إضافية */}
-                <div className="analytics-kpis-grid">
-                  <div className="stat-card-advanced active-card">
-                    <div className="stat-header">
-                      <span className="stat-lbl-small">معدل تحويل التراخيص</span>
-                      <span className="stat-icon-wrapper">
-                        <svg className="stat-icon-vector" viewBox="0 0 24 24">
-                          <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/>
-                        </svg>
-                      </span>
-                    </div>
-                    <div className="stat-val-big">
-                      {analytics.kpis.conversionRate}%
-                    </div>
-                  </div>
-
-                  <div className="stat-card-advanced active-card">
-                    <div className="stat-header">
-                      <span className="stat-lbl-small">متوسط قيمة العميل (ARPU)</span>
-                      <span className="stat-icon-wrapper">
-                        <svg className="stat-icon-vector" viewBox="0 0 24 24">
-                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/>
-                        </svg>
-                      </span>
-                    </div>
-                    <div className="stat-val-big">
-                      ${analytics.kpis.arpu}
-                    </div>
-                  </div>
-
-                  <div className="stat-card-advanced active-card">
-                    <div className="stat-header">
-                      <span className="stat-lbl-small">نمو التسجيلات هذا الشهر</span>
-                      <span className="stat-icon-wrapper">
-                        <svg className="stat-icon-vector" viewBox="0 0 24 24">
-                          <path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/>
-                        </svg>
-                      </span>
-                    </div>
-                    <div className="stat-val-big" style={{ color: analytics.kpis.growthRate >= 0 ? "#2e7d68" : "#c62828" }}>
-                      {analytics.kpis.growthRate >= 0 ? "+" : ""}{analytics.kpis.growthRate}%
-                    </div>
-                  </div>
-                </div>
-
-                {/* شبكة الرسوم البيانية */}
-                <div className="charts-grid-container">
-                  <div className="card chart-card">
-                    <h3 className="card-title" style={{ marginBottom: "20px" }}>نمو التسجيلات والإيرادات الشهرية</h3>
-                    <div style={{ width: "100%", height: 300 }}>
-                      <ResponsiveContainer>
-                        <ComposedChart data={analytics.monthlyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                          <CartesianGrid strokeDasharray="3 3" stroke="#e8e2d8" opacity={0.5} />
-                          <XAxis dataKey="month" tick={{ fontFamily: 'Cairo', fontSize: 12, fill: '#5A607F' }} />
-                          <YAxis yAxisId="left" tick={{ fontFamily: 'Cairo', fontSize: 12, fill: '#5A607F' }} />
-                          <YAxis yAxisId="right" orientation="right" tick={{ fontFamily: 'Cairo', fontSize: 12, fill: '#5A607F' }} />
-                          <Tooltip 
-                            contentStyle={{ backgroundColor: '#ffffff', borderColor: '#E8E2D8', borderRadius: '12px', fontFamily: 'Cairo', textAlign: 'right' }} 
-                            labelStyle={{ fontWeight: 'bold', color: '#131626' }}
-                          />
-                          <Legend wrapperStyle={{ fontFamily: 'Cairo', fontSize: 12 }} />
-                          <Bar yAxisId="left" dataKey="registrations" name="تسجيلات جديدة" fill="#131626" radius={[4, 4, 0, 0]} />
-                          <Line yAxisId="right" type="monotone" dataKey="revenue" name="الإيرادات ($)" stroke="#B08B4E" strokeWidth={3} dot={{ r: 5, fill: '#B08B4E' }} />
-                        </ComposedChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </div>
-
-                  <div className="card chart-card">
-                    <h3 className="card-title" style={{ marginBottom: "20px" }}>توزيع الباقات المشتركة</h3>
-                    <div style={{ width: "100%", height: 300, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
-                      <div style={{ width: "100%", height: 240 }}>
-                        <ResponsiveContainer>
-                          <PieChart>
-                            <Pie
-                              data={analytics.packageDistribution}
-                              cx="50%"
-                              cy="50%"
-                              innerRadius={60}
-                              outerRadius={80}
-                              paddingAngle={5}
-                              dataKey="value"
-                            >
-                              {analytics.packageDistribution.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={entry.color} />
-                              ))}
-                            </Pie>
-                            <Tooltip 
-                              contentStyle={{ backgroundColor: '#ffffff', borderColor: '#E8E2D8', borderRadius: '12px', fontFamily: 'Cairo', textAlign: 'right' }}
-                            />
-                          </PieChart>
-                        </ResponsiveContainer>
-                      </div>
-                      <div style={{ display: "flex", gap: "16px", justifyContent: "center", flexWrap: "wrap", fontFamily: 'Cairo', fontSize: '13px' }}>
-                        {analytics.packageDistribution.map((entry, index) => (
-                          <div key={index} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                            <span style={{ width: "12px", height: "12px", borderRadius: "3px", backgroundColor: entry.color }}></span>
-                            <span style={{ color: "#5A607F", fontWeight: "700" }}>{entry.name}: {entry.value}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* جدول أحدث المشتركين */}
-                <div className="card">
-                  <h3 className="card-title" style={{ marginBottom: "20px" }}>أحدث المشتركين الجدد</h3>
-                  <div className="table-container">
-                    <table className="license-table">
-                      <thead>
-                        <tr>
-                          <th>الاسم</th>
-                          <th>الهاتف</th>
-                          <th>نوع الباقة</th>
-                          <th>تاريخ التسجيل</th>
-                          <th>تاريخ الانتهاء</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {analytics.recentRegistrations.map((lic) => (
-                          <tr key={lic.id}>
-                            <td style={{ fontWeight: "700" }}>{lic.owner_name}</td>
-                            <td>{lic.phone_number}</td>
-                            <td>
-                              <span className="status-badge status-active">
-                                {lic.package_type === "monthly" ? "6 أشهر" : lic.package_type === "yearly" ? "سنوية" : "سنتين"}
-                              </span>
-                            </td>
-                            <td>{new Date(lic.created_at).toLocaleDateString("ar-SA")}</td>
-                            <td>{new Date(lic.expires_at).toLocaleDateString("ar-SA")}</td>
-                          </tr>
-                        ))}
-                        {analytics.recentRegistrations.length === 0 && (
-                          <tr>
-                            <td colSpan="5" style={{ textAlign: "center", padding: "30px", opacity: 0.5 }}>
-                              لا توجد تسجيلات حديثة.
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            )}
+                </Pie>
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "var(--chart-tooltip-bg)",
+                    borderColor: "var(--chart-tooltip-border)",
+                    borderRadius: "12px",
+                    fontFamily: "Cairo",
+                    textAlign: "right",
+                    color: "var(--color-text-primary)",
+                  }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
           </div>
+          <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", fontSize: "12.5px", marginTop: 8 }}>
+            {(analytics?.packageDistribution || []).map((entry, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <span style={{ width: 10, height: 10, borderRadius: 3, background: entry.color, flexShrink: 0 }} />
+                <span style={{ color: "var(--color-text-secondary)", fontWeight: 700 }}>{entry.name}: {entry.value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
 
-          {/* محاورة توليد كود ترخيص جديد العائمة */}
-          {isModalOpen && (
-            <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
-              <div className="modal-container" onClick={(e) => e.stopPropagation()}>
-                <button className="modal-close-btn" onClick={() => setIsModalOpen(false)}>×</button>
-                <h3 className="card-title" style={{ marginBottom: "24px" }}>إصدار كود ترخيص جديد</h3>
-                
-                {error && <div className="error-msg">{error}</div>}
-                
-                <form onSubmit={handleCreateLicense}>
-                  <div className="form-group">
-                    <label className="form-label">اسم صاحب المحل / المشترك</label>
-                    <input
-                      type="text"
-                      className="form-input"
-                      placeholder="اسم صاحب المحل..."
-                      value={ownerName}
-                      onChange={(e) => setOwnerName(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">رقم الهاتف</label>
-                    <input
-                      type="text"
-                      className="form-input"
-                      placeholder="رقم الهاتف..."
-                      value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">نوع الباقة المالية</label>
-                    <select 
-                      className="form-select"
-                      value={packageType}
-                      onChange={(e) => {
-                        setPackageType(e.target.value);
-                        if (e.target.value === "monthly") setDurationDays("180");
-                        else if (e.target.value === "yearly") setDurationDays("360");
-                        else if (e.target.value === "lifetime") setDurationDays("720");
-                      }}
-                    >
-                      <option value="monthly">6 أشهر (8$)</option>
-                      <option value="yearly">سنوية (14$)</option>
-                      <option value="lifetime">سنتين (28$)</option>
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">مدة صلاحية الترخيص (أيام)</label>
-                    <input
-                      type="number"
-                      className="form-input"
-                      placeholder="عدد الأيام..."
-                      value={durationDays}
-                      onChange={(e) => setDurationDays(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <button type="submit" className="btn-primary" disabled={loading} style={{ background: "#131626", color: "#ffffff", border: "none" }}>
-                    {loading ? "جاري إنشاء الترخيص..." : "توليد كود التفعيل المعتمد"}
-                  </button>
-                </form>
-
-                {generatedCode && (
-                  <div className="license-result">
-                    <div style={{ fontSize: "12px", color: "var(--color-gold-cream)", opacity: 0.7, fontWeight: "bold" }}>كود الترخيص الجديد (انقر للنسخ الفوري):</div>
-                    <div className="license-code-display" onClick={() => {
-                      navigator.clipboard.writeText(generatedCode);
-                      alert("تم نسخ كود التفعيل بنجاح!");
-                    }}>
-                      {generatedCode}
-                      <svg style={{ width: "16px", height: "16px", fill: "currentColor" }} viewBox="0 0 24 24">
-                        <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-                      </svg>
+      {/* Recent Activity & KPIs */}
+      <div className="grid-1-1">
+        <div className="dashboard-card">
+          <div className="card-header">
+            <h3 className="card-title">
+              <span className="card-title-accent" />
+              آخر العمليات الإدارية
+            </h3>
+          </div>
+          {adminLogs.length === 0 ? (
+            <div style={{ textAlign: "center", padding: 30, color: "var(--color-text-tertiary)" }}>
+              لا توجد سجلات نشاط حالياً
+            </div>
+          ) : (
+            <div className="activity-list">
+              {adminLogs.map((log) => (
+                <div key={log._id} className="activity-item">
+                  <div className="activity-item-content">
+                    <span className="activity-tag">
+                      {log.action === "create_license" ? "إصدار" :
+                       log.action === "delete_license" ? "حذف" :
+                       log.action === "suspend_license" ? "تعليق" :
+                       log.action === "activate_license" ? "تنشيط" : "تعديل"}
+                    </span>
+                    <div className="activity-details">
+                      <span className="activity-text">{log.details}</span>
+                      <span className="activity-meta">الكود: {log.license_code}</span>
                     </div>
                   </div>
-                )}
-              </div>
+                  <span className="activity-date">{new Date(log.created_at).toLocaleString("ar-SA")}</span>
+                </div>
+              ))}
             </div>
           )}
         </div>
-      )}
+
+        <div className="dashboard-card">
+          <div className="card-header">
+            <h3 className="card-title">
+              <span className="card-title-accent" />
+              مؤشرات الأداء الرئيسية
+            </h3>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+            {/* Conversion Rate */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span style={{ fontSize: 13, fontWeight: 700, color: "var(--color-text-secondary)" }}>معدل تحويل التراخيص</span>
+              <span style={{ fontSize: 22, fontWeight: 900, color: "var(--color-text-primary)" }}>{analytics?.kpis?.conversionRate || 0}%</span>
+            </div>
+            <div style={{ height: 6, background: "var(--color-bg-input)", borderRadius: 20, overflow: "hidden" }}>
+              <div style={{ height: "100%", width: `${Math.min(analytics?.kpis?.conversionRate || 0, 100)}%`, background: "linear-gradient(90deg, var(--color-gold-primary), var(--color-success))", borderRadius: 20, transition: "width 1s ease" }} />
+            </div>
+
+            {/* ARPU */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 10 }}>
+              <span style={{ fontSize: 13, fontWeight: 700, color: "var(--color-text-secondary)" }}>متوسط قيمة العميل (ARPU)</span>
+              <span style={{ fontSize: 22, fontWeight: 900, color: "var(--color-text-primary)" }}>${analytics?.kpis?.arpu || 0}</span>
+            </div>
+
+            {/* This Month vs Last */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 10 }}>
+              <span style={{ fontSize: 13, fontWeight: 700, color: "var(--color-text-secondary)" }}>تسجيلات هذا الشهر</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ fontSize: 22, fontWeight: 900, color: "var(--color-text-primary)" }}>{analytics?.kpis?.thisMonthCount || 0}</span>
+                {growthRate !== 0 && (
+                  <span className={`stat-trend-badge ${growthRate >= 0 ? "trend-up" : "trend-down"}`}>
+                    {growthRate >= 0 ? "+" : ""}{growthRate}%
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Expired Count */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 10 }}>
+              <span style={{ fontSize: 13, fontWeight: 700, color: "var(--color-text-secondary)" }}>تراخيص منتهية</span>
+              <span style={{ fontSize: 22, fontWeight: 900, color: "var(--color-warning)" }}>{stats?.expiredLicenses || 0}</span>
+            </div>
+
+            {/* Suspended */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 10 }}>
+              <span style={{ fontSize: 13, fontWeight: 700, color: "var(--color-text-secondary)" }}>تراخيص موقوفة</span>
+              <span style={{ fontSize: 22, fontWeight: 900, color: "var(--color-text-tertiary)" }}>{stats?.suspendedLicenses || 0}</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

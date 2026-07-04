@@ -1,31 +1,182 @@
 /* 
-  Sajlha Web Admin Panel - Master Global CSS
-  Premium Saudi Desert Gold & Light Sandstone Theme (Day Mode)
+  Sajlha Admin Panel — Master Design System
+  Premium Desert Gold & Sandstone Theme (Light/Dark)
+  Inspired by: Stripe, Linear, Vercel Dashboards
 */
 
-:root {
-  --color-bg-stone-dark: #F5F6FA;      /* خلفية نهارية ناعمة كالأحجار الرملية */
-  --color-bg-stone-card: #FFFFFF;      /* بطاقات بيضاء ناصعة وفخمة */
-  --color-gold-sand: #B08B4E;          /* رمال الصحراء الذهبية */
-  --color-gold-cream: #5A607F;         /* نصوص ثانوية رمادية ذهبية ناعمة */
-  --color-text-bright: #131626;        /* نصوص رئيسية حجرية داكنة فخمة */
-  
-  /* ألوان التوهج والحدود المستوحاة من رمال الدهناء */
-  --color-gold-border: #E8E2D8;
-  --color-gold-border-active: #C6A46A;
-  --color-gold-glow: rgba(198, 164, 106, 0.08);
-  --color-gold-glow-intense: rgba(198, 164, 106, 0.15);
-  
-  /* ألوان الجداول والصفوف للوضع النهاري */
+/* ===== LIGHT THEME (Default) ===== */
+:root,
+[data-theme="light"] {
+  /* Core Surfaces */
+  --color-bg-primary: #F7F8FC;
+  --color-bg-secondary: #EDEEF3;
+  --color-bg-card: #FFFFFF;
+  --color-bg-card-hover: #FAFBFE;
+  --color-bg-sidebar: #FFFFFF;
+  --color-bg-sidebar-hover: rgba(198, 164, 106, 0.06);
+  --color-bg-sidebar-active: rgba(198, 164, 106, 0.10);
+  --color-bg-input: #F5F6FA;
+  --color-bg-input-focus: #FFFFFF;
   --color-bg-row: #FAF9F6;
   --color-bg-row-hover: rgba(198, 164, 106, 0.06);
-  
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-  --radius-xl: 30px;
+  --color-bg-overlay: rgba(19, 22, 38, 0.35);
+  --color-bg-tooltip: #131626;
+  --color-bg-badge: rgba(198, 164, 106, 0.08);
+
+  /* Brand Colors — Saudi Desert Gold */
+  --color-gold-primary: #B08B4E;
+  --color-gold-light: #C6A46A;
+  --color-gold-dark: #8C6F3E;
+  --color-gold-muted: rgba(198, 164, 106, 0.12);
+  --color-gold-glow: rgba(198, 164, 106, 0.08);
+  --color-gold-glow-intense: rgba(198, 164, 106, 0.20);
+
+  /* Text */
+  --color-text-primary: #131626;
+  --color-text-secondary: #5A607F;
+  --color-text-tertiary: #8B90A7;
+  --color-text-inverse: #FFFFFF;
+  --color-text-on-gold: #FFFFFF;
+
+  /* Borders */
+  --color-border: #E8E2D8;
+  --color-border-light: #F0ECE4;
+  --color-border-active: #C6A46A;
+  --color-border-focus: #B08B4E;
+
+  /* Semantic Colors */
+  --color-success: #10B981;
+  --color-success-bg: rgba(16, 185, 129, 0.08);
+  --color-success-border: rgba(16, 185, 129, 0.25);
+  --color-warning: #F59E0B;
+  --color-warning-bg: rgba(245, 158, 11, 0.08);
+  --color-warning-border: rgba(245, 158, 11, 0.25);
+  --color-danger: #EF4444;
+  --color-danger-bg: rgba(239, 68, 68, 0.08);
+  --color-danger-border: rgba(239, 68, 68, 0.25);
+  --color-info: #3B82F6;
+  --color-info-bg: rgba(59, 130, 246, 0.08);
+  --color-info-border: rgba(59, 130, 246, 0.25);
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 16px 50px rgba(0, 0, 0, 0.10), 0 6px 20px rgba(0, 0, 0, 0.06);
+  --shadow-gold: 0 4px 20px rgba(176, 139, 78, 0.12);
+  --shadow-gold-intense: 0 8px 30px rgba(176, 139, 78, 0.20);
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(176, 139, 78, 0.03);
+  --shadow-card-hover: 0 8px 25px rgba(176, 139, 78, 0.08), 0 2px 8px rgba(0,0,0,0.04);
+
+  /* Chart Colors */
+  --chart-bar: #131626;
+  --chart-line: #B08B4E;
+  --chart-grid: #e8e2d8;
+  --chart-tooltip-bg: #ffffff;
+  --chart-tooltip-border: #E8E2D8;
 }
 
+/* ===== DARK THEME ===== */
+[data-theme="dark"] {
+  --color-bg-primary: #0B0D17;
+  --color-bg-secondary: #0F1120;
+  --color-bg-card: #131626;
+  --color-bg-card-hover: #181B30;
+  --color-bg-sidebar: #0F1120;
+  --color-bg-sidebar-hover: rgba(198, 164, 106, 0.08);
+  --color-bg-sidebar-active: rgba(198, 164, 106, 0.14);
+  --color-bg-input: #181B30;
+  --color-bg-input-focus: #1E2140;
+  --color-bg-row: #181B30;
+  --color-bg-row-hover: rgba(198, 164, 106, 0.08);
+  --color-bg-overlay: rgba(0, 0, 0, 0.60);
+  --color-bg-tooltip: #FFFFFF;
+  --color-bg-badge: rgba(198, 164, 106, 0.12);
+
+  --color-gold-primary: #C6A46A;
+  --color-gold-light: #D4B87E;
+  --color-gold-dark: #B08B4E;
+  --color-gold-muted: rgba(198, 164, 106, 0.15);
+  --color-gold-glow: rgba(198, 164, 106, 0.12);
+  --color-gold-glow-intense: rgba(198, 164, 106, 0.25);
+
+  --color-text-primary: #F5F6FA;
+  --color-text-secondary: #8B90A7;
+  --color-text-tertiary: #5A607F;
+  --color-text-inverse: #131626;
+  --color-text-on-gold: #0B0D17;
+
+  --color-border: #1E2235;
+  --color-border-light: #252840;
+  --color-border-active: #C6A46A;
+  --color-border-focus: #C6A46A;
+
+  --color-success: #34D399;
+  --color-success-bg: rgba(52, 211, 153, 0.10);
+  --color-success-border: rgba(52, 211, 153, 0.25);
+  --color-warning: #FBBF24;
+  --color-warning-bg: rgba(251, 191, 36, 0.10);
+  --color-warning-border: rgba(251, 191, 36, 0.25);
+  --color-danger: #F87171;
+  --color-danger-bg: rgba(248, 113, 113, 0.10);
+  --color-danger-border: rgba(248, 113, 113, 0.25);
+  --color-info: #60A5FA;
+  --color-info-bg: rgba(96, 165, 250, 0.10);
+  --color-info-border: rgba(96, 165, 250, 0.25);
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.20);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.20), 0 1px 3px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.25), 0 2px 6px rgba(0, 0, 0, 0.18);
+  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.30), 0 4px 12px rgba(0, 0, 0, 0.22);
+  --shadow-xl: 0 16px 50px rgba(0, 0, 0, 0.40), 0 6px 20px rgba(0, 0, 0, 0.30);
+  --shadow-gold: 0 4px 20px rgba(198, 164, 106, 0.15);
+  --shadow-gold-intense: 0 8px 30px rgba(198, 164, 106, 0.25);
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.20), 0 4px 12px rgba(0,0,0,0.15);
+  --shadow-card-hover: 0 8px 25px rgba(198, 164, 106, 0.12), 0 2px 8px rgba(0,0,0,0.25);
+
+  --chart-bar: #C6A46A;
+  --chart-line: #D4B87E;
+  --chart-grid: #1E2235;
+  --chart-tooltip-bg: #131626;
+  --chart-tooltip-border: #1E2235;
+}
+
+/* ===== DESIGN TOKENS ===== */
+:root {
+  /* Border Radius */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* Sidebar */
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 72px;
+  --topbar-height: 64px;
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+  --transition-slow: 0.4s ease;
+  --transition-spring: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* ===== GLOBAL RESET ===== */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -33,26 +184,109 @@
 }
 
 body {
-  background-color: var(--color-bg-stone-dark);
-  color: var(--color-gold-cream);
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-secondary);
   font-family: 'Cairo', sans-serif;
   direction: rtl;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
 }
 
-/* تحسين شريط التمرير ليطابق الهوية الذهبية */
+/* ===== SCROLLBAR ===== */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--color-bg-stone-dark);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-gold-sand);
-  border-radius: var(--radius-sm);
+  background: var(--color-border);
+  border-radius: var(--radius-full);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-bright);
+  background: var(--color-gold-primary);
+}
+
+/* ===== GLOBAL ANIMATIONS ===== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOutRight {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0; }
+}
+
+@keyframes modalSpring {
+  0% { opacity: 0; transform: scale(0.9) translateY(30px); }
+  60% { transform: scale(1.02) translateY(-4px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(198, 164, 106, 0.2); }
+  50% { box-shadow: 0 0 0 8px rgba(198, 164, 106, 0); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes bounce-in {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes count-up-glow {
+  0% { text-shadow: 0 0 0 transparent; }
+  50% { text-shadow: 0 0 20px var(--color-gold-glow-intense); }
+  100% { text-shadow: 0 0 0 transparent; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* Selection color */
+::selection {
+  background: var(--color-gold-muted);
+  color: var(--color-text-primary);
 }
