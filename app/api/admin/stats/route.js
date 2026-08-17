@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import dbConnect from '../../../../lib/db';
 import License from '../../../../models/License';
 import ScanLog from '../../../../models/ScanLog';
+import SupportTicket from '../../../../models/SupportTicket';
 import { checkRateLimit, rateLimitResponse } from '../../../../lib/rateLimit';
 
 function checkAuth(request) {
@@ -72,11 +73,13 @@ export async function GET(request) {
       else if (l.package_type === 'lifetime') totalRevenue += 28;
     });
 
-    // 6. آخر 10 عمليات مسح للذكاء الاصطناعي (مفيدة للشاشات الفرعية)
-    const recentScans = await ScanLog.find()
-      .populate('license_id', 'owner_name license_code')
-      .sort({ created_at: -1 })
-      .limit(10);
+    // 7. إحصائيات تذاكر الدعم الفني
+    let totalTickets = 0;
+    let newTickets = 0;
+    try {
+      totalTickets = await SupportTicket.countDocuments();
+      newTickets = await SupportTicket.countDocuments({ status: 'new' });
+    } catch {}
 
     return NextResponse.json({
       success: true,
@@ -89,6 +92,8 @@ export async function GET(request) {
         totalAiScans,
         packagesCount,
         totalRevenue,
+        totalTickets,
+        newTickets,
       },
       recentScans,
     });
