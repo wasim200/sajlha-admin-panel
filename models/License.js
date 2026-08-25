@@ -17,20 +17,44 @@ const LicenseSchema = new mongoose.Schema({
     required: [true, 'Please provide owner name'],
     trim: true,
   },
+  shop_name: {
+    type: String,
+    default: '',
+    trim: true,
+  },
   phone_number: {
     type: String,
     required: [true, 'Please provide phone number'],
     trim: true,
   },
+  email: {
+    type: String,
+    default: '',
+    trim: true,
+    lowercase: true,
+  },
+  currency: {
+    type: String,
+    default: 'YER',
+    trim: true,
+  },
+  password_hash: {
+    type: String,
+    default: '',
+  },
   package_type: {
     type: String,
-    enum: ['monthly', 'yearly', 'lifetime'],
-    default: 'yearly',
+    enum: ['trial', 'monthly', 'yearly', 'lifetime'],
+    default: 'trial',
   },
   status: {
     type: String,
     enum: ['active', 'suspended', 'expired'],
     default: 'active',
+  },
+  is_trial: {
+    type: Boolean,
+    default: false,
   },
   expires_at: {
     type: Date,
