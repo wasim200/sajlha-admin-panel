@@ -37,11 +37,20 @@ export async function POST(request) {
     }
     license.last_seen_at = new Date();
 
-    // التحقق من تاريخ الانتهاء
-    const expired = new Date() > new Date(license.expires_at);
+    // التحقق من تاريخ الانتهاء ونوع الباقة
+    const now = new Date();
+    const expDate = new Date(license.expires_at);
+    const expired = now > expDate;
     if (expired && license.status === 'active') {
       license.status = 'expired';
     }
+
+    const diffDays = Math.ceil((expDate - now) / (1000 * 60 * 60 * 24));
+    if (diffDays > 3650 && license.package_type !== 'lifetime') {
+      license.package_type = 'lifetime';
+      license.is_trial = false;
+    }
+
     await license.save();
 
     const isActive = license.status === 'active' && !expired;
@@ -50,8 +59,8 @@ export async function POST(request) {
       active: isActive,
       status: license.status,
       expires_at: license.expires_at,
-      package_type: license.package_type,
-      is_trial: license.is_trial ?? (license.package_type === 'trial'),
+      package_type: license.package_type || (diffDays > 3650 ? 'lifetime' : 'yearly'),
+      is_trial: license.package_type === 'lifetime' ? false : (license.is_trial ?? (license.package_type === 'trial')),
       owner_name: license.owner_name,
       shop_name: license.shop_name,
       phone_number: license.phone_number,

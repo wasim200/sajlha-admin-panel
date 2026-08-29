@@ -67,9 +67,20 @@ export async function POST(request) {
         break;
 
       case 'custom_days':
-        baseDate.setDate(baseDate.getDate() + parseInt(custom_days || 30, 10));
+        const days = parseInt(custom_days || 30, 10);
+        baseDate.setDate(baseDate.getDate() + days);
         merchant.expires_at = baseDate;
         merchant.status = 'active';
+        if (days > 3650) {
+          merchant.package_type = 'lifetime';
+          merchant.is_trial = false;
+        } else if (days >= 300) {
+          merchant.package_type = 'yearly';
+          merchant.is_trial = false;
+        } else if (days >= 25) {
+          merchant.package_type = 'monthly';
+          merchant.is_trial = false;
+        }
         break;
 
       case 'suspend':
@@ -87,6 +98,13 @@ export async function POST(request) {
 
       default:
         break;
+    }
+
+    // فحص إضافي: إذا كان تاريخ الانتهاء أكثر من 10 سنوات فهو باقة مدى الحياة حتماً
+    const totalRemainingDays = Math.ceil((new Date(merchant.expires_at) - new Date()) / (1000 * 60 * 60 * 24));
+    if (totalRemainingDays > 3650) {
+      merchant.package_type = 'lifetime';
+      merchant.is_trial = false;
     }
 
     if (notes) {
