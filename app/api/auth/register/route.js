@@ -26,11 +26,10 @@ export async function POST(request) {
 
     await dbConnect();
 
-    // البحث عن التاجر برقم الهاتف أو معرّف الجهاز أو البريد
+    // البحث عن حساب موجود بـ phone_number أو email فقط - بدون device_id لمنع التداخل
     const query = [];
     if (phone_number) query.push({ phone_number });
-    if (device_id) query.push({ device_id });
-    if (email) query.push({ email });
+    if (email) query.push({ email: email.toLowerCase() });
 
     let existingLicense = null;
     if (query.length > 0) {
@@ -38,38 +37,17 @@ export async function POST(request) {
     }
 
     if (existingLicense) {
-      // تحديث بيانات التاجر الحالية
-      if (owner_name) existingLicense.owner_name = owner_name;
-      if (shop_name) existingLicense.shop_name = shop_name;
-      if (email) existingLicense.email = email;
-      if (currency) existingLicense.currency = currency;
-      if (device_id) existingLicense.device_id = device_id;
-      if (password_hash) existingLicense.password_hash = password_hash;
-      if (app_version) existingLicense.app_version = app_version;
-      existingLicense.last_seen_at = new Date();
-
-      await existingLicense.save();
-
-      const expired = new Date() > new Date(existingLicense.expires_at);
-      const isActive = existingLicense.status === 'active' && !expired;
-
-      return NextResponse.json({
-        success: true,
-        is_new: false,
-        message: 'تم تسجيل الدخول وتحديث بيانات المتجر بنجاح.',
-        license: {
-          license_code: existingLicense.license_code,
-          status: existingLicense.status,
-          is_active: isActive,
-          package_type: existingLicense.package_type,
-          expires_at: existingLicense.expires_at,
-          is_trial: existingLicense.is_trial,
-          owner_name: existingLicense.owner_name,
-          shop_name: existingLicense.shop_name,
-          currency: existingLicense.currency,
+      // الحساب موجود مسبقاً → أعد خطأ واضح بدلاً من تحديثه بصمت
+      return NextResponse.json(
+        {
+          success: false,
+          is_duplicate: true,
+          error: 'يوجد حساب مسجل مسبقاً بهذا الرقم أو البريد الإلكتروني. يرجى تسجيل الدخول.',
         },
-      });
+        { status: 409 }
+      );
     }
+
 
     // إنشاء اشتراك تجريبي جديد لمدة 7 أيام
     const trialDays = 7;
