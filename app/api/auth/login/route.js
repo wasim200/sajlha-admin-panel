@@ -95,7 +95,7 @@ export async function POST(request) {
       status: license.status,
       expires_at: license.expires_at,
       package_type: diffDays > 3650 ? 'lifetime' : (license.package_type || 'trial'),
-      is_trial: license.is_trial ?? true,
+      is_trial: license.package_type === 'lifetime' ? false : (license.is_trial ?? true),
       license_code: license.license_code,
     });
 

@@ -15,12 +15,21 @@ export async function POST(request) {
 
     await dbConnect();
 
-    const query = [];
-    if (device_id) query.push({ device_id });
-    if (phone_number) query.push({ phone_number });
-    if (email) query.push({ email });
+    let license = null;
+    
+    // الأولوية 1: البحث برقم الهاتف أو البريد (إذا كان المستخدم مسجلاً دخوله)
+    if (phone_number || email) {
+      const authQuery = [];
+      if (phone_number) authQuery.push({ phone_number });
+      if (email) authQuery.push({ email });
+      license = await License.findOne({ $or: authQuery });
+    }
 
-    const license = await License.findOne({ $or: query });
+    // الأولوية 2: إذا لم يجد شيئاً أو لم يكن المستخدم مسجلاً، نبحث برقم الجهاز
+    if (!license && device_id) {
+      // جلب أحدث رخصة نشطة أو غير موقوفة تخص هذا الجهاز
+      license = await License.findOne({ device_id }).sort({ created_at: -1 });
+    }
 
     if (!license) {
       return NextResponse.json({
@@ -59,8 +68,8 @@ export async function POST(request) {
       active: isActive,
       status: license.status,
       expires_at: license.expires_at,
-      package_type: license.package_type || (diffDays > 3650 ? 'lifetime' : 'yearly'),
-      is_trial: license.package_type === 'lifetime' ? false : (license.is_trial ?? (license.package_type === 'trial')),
+      package_type: license.package_type || (diffDays > 3650 ? 'lifetime' : 'trial'),
+      is_trial: license.package_type === 'lifetime' ? false : (license.is_trial ?? (license.package_type === 'trial' || !license.package_type)),
       owner_name: license.owner_name,
       shop_name: license.shop_name,
       phone_number: license.phone_number,
