@@ -88,14 +88,33 @@ export default function BroadcastPage() {
     if (!broadcastTitle || !broadcastBody) return;
     setBroadcastLoading(true);
     try {
+      // 1. حفظ الإشعار في السيرفر ليظهر داخل التطبيق
       const res = await fetch("/api/admin/broadcast", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: getAuth() },
         body: JSON.stringify({ title: broadcastTitle, body: broadcastBody, type: broadcastType }),
       });
       const data = await res.json();
+      
       if (res.ok && data.success) {
-        toast.success("✅ تم إرسال الإشعار بنجاح لكافة التجار!");
+        // 2. إرسال الإشعار كـ Push Notification للموبايلات عبر Firebase
+        try {
+          await fetch("/api/notifications/send", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: getAuth() },
+            body: JSON.stringify({ 
+              title: broadcastTitle, 
+              message: broadcastBody,
+              is_update: broadcastType === 'update',
+              is_offer: broadcastType === 'offer',
+              is_feature: broadcastType === 'feature'
+            }),
+          });
+        } catch (fcmError) {
+          console.error("FCM Send Error:", fcmError);
+        }
+
+        toast.success("✅ تم حفظ وإرسال الإشعار الفوري (Push) بنجاح!");
         setBroadcastTitle("");
         setBroadcastBody("");
       } else {
