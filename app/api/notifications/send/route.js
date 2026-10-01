@@ -61,7 +61,7 @@ export async function POST(request) {
   } catch (error) {
     console.error('Send Notification Error:', error);
     return NextResponse.json(
-      { success: false, error: 'حدث خطأ في الخادم أثناء إرسال الإشعار.' },
+      { success: false, error: error.message || 'حدث خطأ في الخادم أثناء إرسال الإشعار.' },
       { status: 500 }
     );
   }

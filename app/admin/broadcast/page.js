@@ -112,13 +112,13 @@ export default function BroadcastPage() {
             }),
           });
           const fcmData = await fcmRes.json();
-          fcmMessage = fcmData.message || "";
+          fcmMessage = fcmData.message || fcmData.error || "";
         } catch (fcmError) {
           console.error("FCM Send Error:", fcmError);
-          fcmMessage = "حدث خطأ أثناء إرسال إشعار فايربيس.";
+          fcmMessage = "حدث خطأ أثناء الاتصال بخادم فايربيس.";
         }
 
-        toast.success(`✅ تم حفظ الإشعار بنجاح! \n ${fcmMessage}`);
+        toast.success(`✅ تم حفظ الإشعار بنجاح! \n (فايربيس: ${fcmMessage})`);
         setBroadcastTitle("");
         setBroadcastBody("");
       } else {
