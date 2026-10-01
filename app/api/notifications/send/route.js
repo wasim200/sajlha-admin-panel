@@ -15,7 +15,7 @@ export async function POST(request) {
       );
     }
 
-    if (!admin.apps.length) {
+    if (!admin.apps?.length) {
       return NextResponse.json(
         { success: false, error: 'السيرفر غير مربوط بخدمة Firebase حالياً.' },
         { status: 500 }
