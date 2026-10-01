@@ -98,8 +98,9 @@ export default function BroadcastPage() {
       
       if (res.ok && data.success) {
         // 2. إرسال الإشعار كـ Push Notification للموبايلات عبر Firebase
+        let fcmMessage = "";
         try {
-          await fetch("/api/notifications/send", {
+          const fcmRes = await fetch("/api/notifications/send", {
             method: "POST",
             headers: { "Content-Type": "application/json", Authorization: getAuth() },
             body: JSON.stringify({ 
@@ -110,11 +111,14 @@ export default function BroadcastPage() {
               is_feature: broadcastType === 'feature'
             }),
           });
+          const fcmData = await fcmRes.json();
+          fcmMessage = fcmData.message || "";
         } catch (fcmError) {
           console.error("FCM Send Error:", fcmError);
+          fcmMessage = "حدث خطأ أثناء إرسال إشعار فايربيس.";
         }
 
-        toast.success("✅ تم حفظ وإرسال الإشعار الفوري (Push) بنجاح!");
+        toast.success(`✅ تم حفظ الإشعار بنجاح! \n ${fcmMessage}`);
         setBroadcastTitle("");
         setBroadcastBody("");
       } else {
