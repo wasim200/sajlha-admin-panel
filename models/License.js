@@ -12,6 +12,11 @@ const LicenseSchema = new mongoose.Schema({
     default: '',
     trim: true,
   },
+  fcm_token: {
+    type: String,
+    default: '',
+    trim: true,
+  },
   owner_name: {
     type: String,
     required: [true, 'Please provide owner name'],

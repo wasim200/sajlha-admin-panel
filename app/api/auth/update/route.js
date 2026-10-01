@@ -5,7 +5,7 @@ import License from '../../../../models/License';
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { phone_number, device_id, new_phone_number, owner_name, shop_name } = body;
+    const { phone_number, device_id, new_phone_number, owner_name, shop_name, fcm_token } = body;
 
     if (!phone_number) {
       return NextResponse.json(
@@ -48,6 +48,7 @@ export async function POST(request) {
     // تحديث البيانات الأخرى
     if (owner_name) license.owner_name = owner_name;
     if (shop_name) license.shop_name = shop_name;
+    if (fcm_token) license.fcm_token = fcm_token;
 
     await license.save();
 

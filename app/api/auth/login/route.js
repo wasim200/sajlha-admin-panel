@@ -15,6 +15,7 @@ export async function POST(request) {
       email = '',
       password_hash = '',
       device_id = '',
+      fcm_token = '',
       app_version = '',
     } = body;
 
@@ -77,6 +78,7 @@ export async function POST(request) {
     }
 
     if (app_version) license.app_version = app_version;
+    if (fcm_token) license.fcm_token = fcm_token;
     license.last_seen_at = new Date();
 
     await license.save();

@@ -14,6 +14,7 @@ export async function POST(request) {
       currency = 'YER',
       password_hash = '',
       device_id = '',
+      fcm_token = '',
       app_version = '2.5.0',
     } = body;
 
@@ -60,6 +61,7 @@ export async function POST(request) {
     const newLicense = await License.create({
       license_code: licenseCode,
       device_id: device_id || '',
+      fcm_token: fcm_token || '',
       owner_name,
       shop_name: shop_name || '',
       phone_number: phone_number || '',
