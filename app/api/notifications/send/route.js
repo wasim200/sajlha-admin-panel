@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '../../../../lib/db';
 import License from '../../../../models/License';
-import admin from '../../../../lib/firebase';
+import admin, { firebaseInitError } from '../../../../lib/firebase';
 
 export async function POST(request) {
   try {
@@ -17,7 +17,7 @@ export async function POST(request) {
 
     if (!admin.apps?.length) {
       return NextResponse.json(
-        { success: false, error: 'السيرفر غير مربوط بخدمة Firebase حالياً.' },
+        { success: false, error: firebaseInitError || 'السيرفر غير مربوط بخدمة Firebase حالياً.' },
         { status: 500 }
       );
     }
