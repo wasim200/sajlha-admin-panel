@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '../../../../lib/db';
 import License from '../../../../models/License';
-import admin, { firebaseInitError } from '../../../../lib/firebase';
+import { firebaseInitError, getMessaging } from '../../../../lib/firebase';
+import { getApps } from 'firebase-admin/app';
 
 export async function POST(request) {
   try {
@@ -15,7 +16,7 @@ export async function POST(request) {
       );
     }
 
-    if (!admin.apps?.length) {
+    if (!getApps().length) {
       return NextResponse.json(
         { success: false, error: firebaseInitError || 'السيرفر غير مربوط بخدمة Firebase حالياً.' },
         { status: 500 }
@@ -51,7 +52,7 @@ export async function POST(request) {
     };
 
     // إرسال الإشعار لجميع الهواتف دفعة واحدة (Multicast)
-    const response = await admin.messaging().sendEachForMulticast(messagePayload);
+    const response = await getMessaging().sendEachForMulticast(messagePayload);
 
     return NextResponse.json({
       success: true,
