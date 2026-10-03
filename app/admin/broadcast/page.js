@@ -20,6 +20,8 @@ export default function BroadcastPage() {
   const [broadcastBody, setBroadcastBody] = useState("");
   const [broadcastType, setBroadcastType] = useState("release");
   const [broadcastLoading, setBroadcastLoading] = useState(false);
+  const [broadcasts, setBroadcasts] = useState([]);
+  const [editingBroadcast, setEditingBroadcast] = useState(null);
 
   // APK Upload
   const [apkUploading, setApkUploading] = useState(false);
@@ -31,6 +33,7 @@ export default function BroadcastPage() {
 
   useEffect(() => {
     loadVersionInfo();
+    loadBroadcasts();
   }, []);
 
   const loadVersionInfo = async () => {
@@ -51,6 +54,18 @@ export default function BroadcastPage() {
       }
     } catch {}
     setLoading(false);
+  };
+
+  const loadBroadcasts = async () => {
+    try {
+      const res = await fetch("/api/admin/broadcast");
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.broadcasts) {
+          setBroadcasts(data.broadcasts);
+        }
+      }
+    } catch {}
   };
 
   const handlePublishVersion = async (e) => {
@@ -88,39 +103,54 @@ export default function BroadcastPage() {
     if (!broadcastTitle || !broadcastBody) return;
     setBroadcastLoading(true);
     try {
-      // 1. حفظ الإشعار في السيرفر ليظهر داخل التطبيق
-      const res = await fetch("/api/admin/broadcast", {
-        method: "POST",
+      const isEditing = !!editingBroadcast;
+      const url = "/api/admin/broadcast";
+      const method = isEditing ? "PUT" : "POST";
+      const bodyPayload = {
+        title: broadcastTitle,
+        body: broadcastBody,
+        type: broadcastType,
+        ...(isEditing && { id: editingBroadcast.id })
+      };
+
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json", Authorization: getAuth() },
-        body: JSON.stringify({ title: broadcastTitle, body: broadcastBody, type: broadcastType }),
+        body: JSON.stringify(bodyPayload),
       });
       const data = await res.json();
       
       if (res.ok && data.success) {
-        // 2. إرسال الإشعار كـ Push Notification للموبايلات عبر Firebase
-        let fcmMessage = "";
-        try {
-          const fcmRes = await fetch("/api/notifications/send", {
-            method: "POST",
-            headers: { "Content-Type": "application/json", Authorization: getAuth() },
-            body: JSON.stringify({ 
-              title: broadcastTitle, 
-              message: broadcastBody,
-              is_update: broadcastType === 'update',
-              is_offer: broadcastType === 'offer',
-              is_feature: broadcastType === 'feature'
-            }),
-          });
-          const fcmData = await fcmRes.json();
-          fcmMessage = fcmData.message || fcmData.error || "";
-        } catch (fcmError) {
-          console.error("FCM Send Error:", fcmError);
-          fcmMessage = "حدث خطأ أثناء الاتصال بخادم فايربيس.";
+        if (!isEditing) {
+          // Send push notification only on new broadcasts
+          let fcmMessage = "";
+          try {
+            const fcmRes = await fetch("/api/notifications/send", {
+              method: "POST",
+              headers: { "Content-Type": "application/json", Authorization: getAuth() },
+              body: JSON.stringify({ 
+                title: broadcastTitle, 
+                message: broadcastBody,
+                is_update: broadcastType === 'update',
+                is_offer: broadcastType === 'offer',
+                is_feature: broadcastType === 'feature'
+              }),
+            });
+            const fcmData = await fcmRes.json();
+            fcmMessage = fcmData.message || fcmData.error || "";
+          } catch (fcmError) {
+            console.error("FCM Send Error:", fcmError);
+            fcmMessage = "حدث خطأ أثناء الاتصال بخادم فايربيس.";
+          }
+          toast.success(`✅ تم حفظ وإرسال الإشعار بنجاح! \n (فايربيس: ${fcmMessage})`);
+        } else {
+          toast.success("✅ تم تعديل الإشعار بنجاح!");
         }
-
-        toast.success(`✅ تم حفظ الإشعار بنجاح! \n (فايربيس: ${fcmMessage})`);
+        
         setBroadcastTitle("");
         setBroadcastBody("");
+        setEditingBroadcast(null);
+        loadBroadcasts(); // Reload list
       } else {
         toast.error(data.error || "فشل إرسال الإشعار.");
       }
@@ -128,6 +158,33 @@ export default function BroadcastPage() {
       toast.error("حدث خطأ في الاتصال بالشبكة.");
     } finally {
       setBroadcastLoading(false);
+    }
+  };
+
+  const handleEditClick = (b) => {
+    setEditingBroadcast(b);
+    setBroadcastTitle(b.title);
+    setBroadcastBody(b.body);
+    setBroadcastType(b.type || 'info');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleDeleteBroadcast = async (id) => {
+    if (!confirm('هل أنت متأكد من حذف هذا الإشعار تماماً؟ سيمحى من التطبيق لجميع المستخدمين!')) return;
+    try {
+      const res = await fetch(`/api/admin/broadcast?id=${id}`, {
+        method: "DELETE",
+        headers: { Authorization: getAuth() },
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        toast.success("✅ تم حذف الإشعار بنجاح!");
+        loadBroadcasts();
+      } else {
+        toast.error(data.error || "فشل الحذف");
+      }
+    } catch {
+      toast.error("خطأ في الاتصال");
     }
   };
 
@@ -283,7 +340,7 @@ export default function BroadcastPage() {
         <div className="card-header">
           <h3 className="card-title">
             <span className="card-title-accent" />
-            📡 إرسال إشعار للتجار
+            {editingBroadcast ? "✏️ تعديل الإشعار" : "📡 إرسال إشعار للتجار"}
           </h3>
         </div>
         <form onSubmit={handleSendBroadcast}>
@@ -305,9 +362,65 @@ export default function BroadcastPage() {
             </select>
           </div>
           <button type="submit" className="btn-primary" disabled={broadcastLoading} style={{ width: "100%" }}>
-            {broadcastLoading ? "جاري الإرسال..." : "📡 إرسال الإشعار لكافة التجار"}
+            {broadcastLoading ? "جاري الحفظ..." : (editingBroadcast ? "✏️ حفظ التعديلات" : "📡 إرسال الإشعار الفوري لكافة التجار")}
           </button>
+          {editingBroadcast && (
+            <button type="button" className="btn-secondary" style={{ width: "100%", marginTop: 8 }} onClick={() => {
+              setEditingBroadcast(null);
+              setBroadcastTitle("");
+              setBroadcastBody("");
+            }}>
+              ❌ إلغاء التعديل
+            </button>
+          )}
         </form>
+      </div>
+      
+      {/* Broadcasts List */}
+      <div className="dashboard-card" style={{ gridColumn: "1 / -1" }}>
+        <div className="card-header">
+          <h3 className="card-title">
+            <span className="card-title-accent" />
+            📋 سجل الإشعارات المرسلة
+          </h3>
+        </div>
+        <div className="table-responsive">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>التاريخ</th>
+                <th>عنوان الإشعار</th>
+                <th>نوع الإشعار</th>
+                <th style={{ textAlign: "left" }}>إجراءات</th>
+              </tr>
+            </thead>
+            <tbody>
+              {broadcasts.length === 0 ? (
+                <tr><td colSpan="4" style={{ textAlign: "center", padding: "2rem" }}>لا توجد إشعارات سابقة</td></tr>
+              ) : (
+                broadcasts.map((b) => (
+                  <tr key={b.id}>
+                    <td style={{ whiteSpace: "nowrap" }}>{new Date(b.date).toLocaleDateString('ar-SA')}</td>
+                    <td style={{ fontWeight: 500 }}>{b.title}</td>
+                    <td>
+                      <span className="badge" style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-primary)' }}>
+                        {b.type === 'release' ? '🚀 تحديث' : b.type === 'offer' ? '🎁 عرض' : b.type === 'alert' ? '⚠️ تنبيه' : 'ℹ️ إعلان'}
+                      </span>
+                    </td>
+                    <td style={{ textAlign: "left" }}>
+                      <button className="btn-icon" onClick={() => handleEditClick(b)} title="تعديل">
+                        ✏️
+                      </button>
+                      <button className="btn-icon" onClick={() => handleDeleteBroadcast(b.id)} title="حذف" style={{ color: "var(--color-danger)", marginRight: 8 }}>
+                        🗑️
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

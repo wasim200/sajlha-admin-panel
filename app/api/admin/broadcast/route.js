@@ -95,3 +95,64 @@ export async function POST(request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function DELETE(request) {
+  try {
+    const authHeader = request.headers.get('Authorization');
+    const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'sajlha_admin_2026';
+
+    if (!authHeader || authHeader !== ADMIN_PASSWORD) {
+      return NextResponse.json({ error: 'غير مصرح بالدخول' }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json({ error: 'يرجى تقديم معرف الإشعار للحذف' }, { status: 400 });
+    }
+
+    await dbConnect();
+    const deleted = await Broadcast.findByIdAndDelete(id);
+    if (!deleted) {
+      return NextResponse.json({ error: 'لم يتم العثور على الإشعار' }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, message: 'تم الحذف بنجاح' });
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function PUT(request) {
+  try {
+    const authHeader = request.headers.get('Authorization');
+    const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'sajlha_admin_2026';
+
+    if (!authHeader || authHeader !== ADMIN_PASSWORD) {
+      return NextResponse.json({ error: 'غير مصرح بالدخول' }, { status: 401 });
+    }
+
+    const data = await request.json();
+    const { id, title, body, type, actionRoute } = data;
+
+    if (!id || !title || !body) {
+      return NextResponse.json({ error: 'بيانات غير مكتملة للتعديل' }, { status: 400 });
+    }
+
+    await dbConnect();
+    const updated = await Broadcast.findByIdAndUpdate(
+      id,
+      { title, body, type: type || 'info', actionRoute: actionRoute || '' },
+      { new: true }
+    );
+
+    if (!updated) {
+      return NextResponse.json({ error: 'لم يتم العثور على الإشعار' }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, message: 'تم التعديل بنجاح', broadcast: updated });
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
