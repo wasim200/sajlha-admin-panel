@@ -49,7 +49,6 @@ export async function GET(request) {
         activities,
         cashbook_entries
       }
-      }
     });
 
   } catch (error) {
