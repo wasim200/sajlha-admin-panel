@@ -13,7 +13,7 @@ export async function POST(request) {
     // until we implement JWT.
 
     const body = await request.json();
-    const { device_id, phone_number, customers = [], debts = [], payments = [], activities = [] } = body;
+    const { device_id, phone_number, customers = [], debts = [], payments = [], activities = [], deleted = {} } = body;
 
     if (!device_id && !phone_number) {
       return NextResponse.json({ success: false, error: 'Unauthorized: missing device_id or phone_number' }, { status: 401 });
@@ -33,7 +33,27 @@ export async function POST(request) {
 
     const merchant_id = merchant._id;
 
-    // 2. Upsert Customers
+    // 2. Process Deletions (Tombstones) FIRST to avoid conflict with upserts
+    const deletePromises = [];
+    if (deleted.customers && deleted.customers.length > 0) {
+      deletePromises.push(Customer.deleteMany({ merchant_id, local_id: { $in: deleted.customers } }));
+      // Cascade delete
+      deletePromises.push(Debt.deleteMany({ merchant_id, local_customer_id: { $in: deleted.customers } }));
+      deletePromises.push(Payment.deleteMany({ merchant_id, local_customer_id: { $in: deleted.customers } }));
+      deletePromises.push(Activity.deleteMany({ merchant_id, local_customer_id: { $in: deleted.customers } }));
+    }
+    if (deleted.debts && deleted.debts.length > 0) {
+      deletePromises.push(Debt.deleteMany({ merchant_id, local_id: { $in: deleted.debts } }));
+    }
+    if (deleted.payments && deleted.payments.length > 0) {
+      deletePromises.push(Payment.deleteMany({ merchant_id, local_id: { $in: deleted.payments } }));
+    }
+    if (deleted.activities && deleted.activities.length > 0) {
+      deletePromises.push(Activity.deleteMany({ merchant_id, local_id: { $in: deleted.activities } }));
+    }
+    await Promise.all(deletePromises);
+
+    // 3. Upsert Customers
     const customerPromises = customers.map(c => 
       Customer.updateOne(
         { merchant_id, local_id: c.id },
@@ -51,7 +71,7 @@ export async function POST(request) {
       )
     );
 
-    // 3. Upsert Debts
+    // 4. Upsert Debts
     const debtPromises = debts.map(d => 
       Debt.updateOne(
         { merchant_id, local_id: d.id },
@@ -69,7 +89,7 @@ export async function POST(request) {
       )
     );
 
-    // 4. Upsert Payments
+    // 5. Upsert Payments
     const paymentPromises = payments.map(p => 
       Payment.updateOne(
         { merchant_id, local_id: p.id },
@@ -85,7 +105,7 @@ export async function POST(request) {
       )
     );
 
-    // 5. Upsert Activities
+    // 6. Upsert Activities
     const activityPromises = activities.map(a => 
       Activity.updateOne(
         { merchant_id, local_id: a.id },
