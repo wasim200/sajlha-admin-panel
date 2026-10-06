@@ -5,6 +5,7 @@ import Customer from '../../../../models/Customer';
 import Debt from '../../../../models/Debt';
 import Payment from '../../../../models/Payment';
 import Activity from '../../../../models/Activity';
+import CashbookEntry from '../../../../models/CashbookEntry';
 
 export async function GET(request) {
   try {
@@ -31,11 +32,12 @@ export async function GET(request) {
     const merchant_id = merchant._id;
 
     // 2. Fetch all data
-    const [customers, debts, payments, activities] = await Promise.all([
+    const [customers, debts, payments, activities, cashbook_entries] = await Promise.all([
       Customer.find({ merchant_id }).select('-_id -__v -merchant_id'),
       Debt.find({ merchant_id }).select('-_id -__v -merchant_id'),
       Payment.find({ merchant_id }).select('-_id -__v -merchant_id'),
       Activity.find({ merchant_id }).select('-_id -__v -merchant_id'),
+      CashbookEntry.find({ merchant_id }).select('-_id -__v -merchant_id'),
     ]);
 
     return NextResponse.json({ 
@@ -44,7 +46,9 @@ export async function GET(request) {
         customers,
         debts,
         payments,
-        activities
+        activities,
+        cashbook_entries
+      }
       }
     });
 

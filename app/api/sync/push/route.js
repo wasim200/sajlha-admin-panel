@@ -5,6 +5,7 @@ import Customer from '../../../../models/Customer';
 import Debt from '../../../../models/Debt';
 import Payment from '../../../../models/Payment';
 import Activity from '../../../../models/Activity';
+import CashbookEntry from '../../../../models/CashbookEntry';
 
 export async function POST(request) {
   try {
@@ -13,7 +14,7 @@ export async function POST(request) {
     // until we implement JWT.
 
     const body = await request.json();
-    const { device_id, phone_number, customers = [], debts = [], payments = [], activities = [], deleted = {} } = body;
+    const { device_id, phone_number, customers = [], debts = [], payments = [], activities = [], cashbook_entries = [], deleted = {} } = body;
 
     if (!device_id && !phone_number) {
       return NextResponse.json({ success: false, error: 'Unauthorized: missing device_id or phone_number' }, { status: 401 });
@@ -50,6 +51,9 @@ export async function POST(request) {
     }
     if (deleted.activities && deleted.activities.length > 0) {
       deletePromises.push(Activity.deleteMany({ merchant_id, local_id: { $in: deleted.activities } }));
+    }
+    if (deleted.cashbook_entries && deleted.cashbook_entries.length > 0) {
+      deletePromises.push(CashbookEntry.deleteMany({ merchant_id, local_id: { $in: deleted.cashbook_entries } }));
     }
     await Promise.all(deletePromises);
 
@@ -122,12 +126,34 @@ export async function POST(request) {
       )
     );
 
+    // 7. Upsert Cashbook Entries
+    const cashbookPromises = cashbook_entries.map(e => 
+      CashbookEntry.updateOne(
+        { merchant_id, local_id: e.id },
+        {
+          $set: {
+            type: e.type,
+            amount: e.amount,
+            category: e.category,
+            title: e.title,
+            date: e.date,
+            notes: e.notes,
+            payment_method: e.payment_method,
+            attachment_path: e.attachment_path,
+            local_customer_id: e.customer_id,
+          }
+        },
+        { upsert: true }
+      )
+    );
+
     // Execute all upserts in parallel
     await Promise.all([
       ...customerPromises,
       ...debtPromises,
       ...paymentPromises,
-      ...activityPromises
+      ...activityPromises,
+      ...cashbookPromises
     ]);
 
     return NextResponse.json({ 
@@ -138,6 +164,7 @@ export async function POST(request) {
         debts: debts.length,
         payments: payments.length,
         activities: activities.length,
+        cashbook_entries: cashbook_entries.length,
       }
     });
 
