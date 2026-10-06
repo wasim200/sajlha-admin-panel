@@ -1,26 +1,11 @@
-const fs = require('fs');
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import dbConnect from './lib/db.js';
+import CashbookEntry from './models/CashbookEntry.js';
 
-async function dumpDB() {
-  const envFile = fs.readFileSync('.env.local', 'utf8');
-  const mongoUriLine = envFile.split('\\n').find(line => line.startsWith('MONGODB_URI='));
-  const mongoUri = mongoUriLine.split('=')[1].trim();
-
-  await mongoose.connect(mongoUri);
-  
-  const LicenseSchema = new mongoose.Schema({}, { strict: false });
-  const License = mongoose.model('License', LicenseSchema, 'licenses');
-
-  const CustomerSchema = new mongoose.Schema({}, { strict: false });
-  const Customer = mongoose.model('Customer', CustomerSchema, 'customers');
-
-  const licenses = await License.find().lean();
-  console.log('Licenses:', JSON.stringify(licenses, null, 2));
-
-  const customers = await Customer.find().lean();
-  console.log('Customers:', JSON.stringify(customers, null, 2));
-
-  mongoose.disconnect();
+async function check() {
+  await dbConnect();
+  const entries = await CashbookEntry.find({});
+  console.log("Cashbook Entries in DB:", entries);
+  process.exit(0);
 }
-
-dumpDB().catch(console.error);
+check();
