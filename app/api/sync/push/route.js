@@ -14,7 +14,7 @@ export async function POST(request) {
     // until we implement JWT.
 
     const body = await request.json();
-    const { device_id, phone_number, customers = [], debts = [], payments = [], activities = [], cashbook_entries = [], deleted = {} } = body;
+    const { device_id, phone_number, profile, settings, customers = [], debts = [], payments = [], activities = [], cashbook_entries = [], deleted = {} } = body;
 
     if (!device_id && !phone_number) {
       return NextResponse.json({ success: false, error: 'Unauthorized: missing device_id or phone_number' }, { status: 401 });
@@ -33,6 +33,25 @@ export async function POST(request) {
     }
 
     const merchant_id = merchant._id;
+    let merchantUpdated = false;
+
+    if (profile) {
+      if (profile.name) merchant.owner_name = profile.name;
+      if (profile.shop_name) merchant.shop_name = profile.shop_name;
+      if (profile.phone) merchant.phone_number = profile.phone;
+      if (profile.currency) merchant.currency = profile.currency;
+      if (profile.profile_image !== undefined) merchant.profile_image = profile.profile_image;
+      merchantUpdated = true;
+    }
+
+    if (settings && Object.keys(settings).length > 0) {
+      merchant.settings = { ...merchant.settings, ...settings };
+      merchantUpdated = true;
+    }
+
+    if (merchantUpdated) {
+      await merchant.save();
+    }
 
     // 2. Process Deletions (Tombstones) FIRST to avoid conflict with upserts
     const deletePromises = [];

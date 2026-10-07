@@ -43,9 +43,17 @@ const LicenseSchema = new mongoose.Schema({
     default: 'YER',
     trim: true,
   },
+  profile_image: {
+    type: String,
+    default: '',
+  },
   password_hash: {
     type: String,
     default: '',
+  },
+  settings: {
+    type: Object,
+    default: {},
   },
   package_type: {
     type: String,

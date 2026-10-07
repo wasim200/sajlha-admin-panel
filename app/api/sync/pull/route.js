@@ -43,6 +43,14 @@ export async function GET(request) {
     return NextResponse.json({ 
       success: true, 
       data: {
+        profile: {
+          name: merchant.owner_name,
+          shop_name: merchant.shop_name,
+          phone: merchant.phone_number,
+          currency: merchant.currency,
+          profile_image: merchant.profile_image,
+        },
+        settings: merchant.settings || {},
         customers,
         debts,
         payments,
