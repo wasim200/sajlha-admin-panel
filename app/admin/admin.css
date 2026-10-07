@@ -8,7 +8,7 @@
   background-color: var(--color-bg-stone-dark);
   color: var(--color-gold-cream);
   direction: rtl;
-  font-family: 'Cairo', sans-serif;
+  font-family: 'Inter', sans-serif;
   overflow-x: hidden;
   position: relative;
 }
@@ -66,7 +66,7 @@
   font-size: 38px;
   font-weight: 900;
   margin-bottom: 6px;
-  text-shadow: 0 0 15px rgba(198, 164, 106, 0.15);
+  text-shadow: 0 0 15px rgba(33, 66, 231, 0.15);
 }
 .logo-subtitle {
   color: var(--color-text-bright);
@@ -154,7 +154,7 @@
 }
 .stat-card-advanced:hover {
   transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 20px 40px rgba(198, 164, 106, 0.08);
+  box-shadow: 0 20px 40px rgba(33, 66, 231, 0.08);
   border-color: var(--color-gold-border-active);
 }
 .stat-card-advanced::after {
@@ -181,7 +181,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(198, 164, 106, 0.08);
+  background-color: rgba(33, 66, 231, 0.08);
   color: var(--color-gold-sand);
 }
 .stat-icon-vector {
@@ -216,7 +216,7 @@
   padding: 14px 28px;
   border: none;
   background: transparent;
-  font-family: 'Cairo', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 15px;
   font-weight: 800;
   color: var(--color-gold-cream);
@@ -231,13 +231,13 @@
 .tab-button:hover {
   color: var(--color-text-bright);
   opacity: 0.9;
-  background: rgba(198, 164, 106, 0.05);
+  background: rgba(33, 66, 231, 0.05);
 }
 .tab-button.active {
   color: #ffffff;
   background: linear-gradient(135deg, var(--color-gold-sand) 0%, var(--color-gold-border-active) 100%);
   opacity: 1;
-  box-shadow: 0 6px 20px rgba(198, 164, 106, 0.25);
+  box-shadow: 0 6px 20px rgba(33, 66, 231, 0.25);
   font-weight: 900;
 }
 .tab-icon-vector {
@@ -515,7 +515,7 @@
   font-weight: 800;
   padding: 6px 12px;
   border-radius: 8px;
-  background: rgba(198, 164, 106, 0.08);
+  background: rgba(33, 66, 231, 0.08);
   color: var(--color-text-bright);
   border: 1px solid var(--color-gold-border);
 }
@@ -539,7 +539,7 @@
 }
 .scan-success {
   border-color: var(--color-gold-border-active);
-  background: rgba(198, 164, 106, 0.12);
+  background: rgba(33, 66, 231, 0.12);
 }
 
 /* Master Form Inputs */
@@ -586,11 +586,11 @@
   font-weight: 800;
   cursor: pointer;
   transition: all 0.25s;
-  box-shadow: 0 6px 20px rgba(198, 164, 106, 0.2);
+  box-shadow: 0 6px 20px rgba(33, 66, 231, 0.2);
 }
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(198, 164, 106, 0.35);
+  box-shadow: 0 10px 25px rgba(33, 66, 231, 0.35);
 }
 
 /* Animations */

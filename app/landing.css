@@ -6,7 +6,7 @@
 .landing-wrapper {
   background-color: var(--color-bg-primary);
   color: var(--color-text-secondary);
-  font-family: 'Cairo', sans-serif;
+  font-family: 'Inter', sans-serif;
   direction: rtl;
   min-height: 100vh;
   overflow-x: hidden;
@@ -32,13 +32,13 @@
   color: var(--color-text-inverse) !important;
   border: none;
   border-radius: var(--radius-md);
-  font-family: 'Cairo', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
   text-decoration: none !important;
   transition: all var(--transition-normal);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-btn-primary);
   box-sizing: border-box;
 }
 .btn-primary:hover {
@@ -53,7 +53,7 @@
   border: none !important;
 }
 .btn-gold:hover {
-  box-shadow: var(--shadow-gold-intense) !important;
+  box-shadow: var(--shadow-btn-primary) !important;
   transform: translateY(-2px);
 }
 
@@ -67,9 +67,9 @@
   color: var(--color-text-primary) !important;
   border: 1.5px solid var(--color-border) !important;
   border-radius: var(--radius-md);
-  font-family: 'Cairo', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 600;
   cursor: pointer;
   text-decoration: none !important;
   transition: all var(--transition-fast);
@@ -97,9 +97,9 @@
   left: 0;
   right: 0;
   z-index: 100;
-  background: rgba(247, 248, 252, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: var(--color-paper-white);
+  /* backdrop-filter removed for arcade */
+  -webkit-/* backdrop-filter removed for arcade */
   border-bottom: 1px solid var(--color-border);
   transition: all var(--transition-normal);
 }
@@ -111,7 +111,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 72px;
+  height: 64px;
 }
 
 .landing-logo {
@@ -120,7 +120,7 @@
   gap: var(--space-3);
   text-decoration: none;
   font-size: 24px;
-  font-weight: 900;
+  font-weight: 700;
   color: var(--color-text-primary);
 }
 .landing-logo-badge {
@@ -195,7 +195,7 @@
 
 .mobile-drawer-link {
   font-size: 17px;
-  font-weight: 800;
+  font-weight: 600;
   color: var(--color-text-primary);
   text-decoration: none;
   padding: 14px 8px;
@@ -221,7 +221,7 @@
   padding-bottom: 90px;
   position: relative;
   overflow: hidden;
-  background: radial-gradient(circle at 50% 0%, var(--color-gold-glow-intense) 0%, transparent 60%);
+  background: linear-gradient(135deg, var(--color-fog-50) 0%, rgba(33, 66, 231, 0.4) 40%, var(--color-voltage-blue) 100%);
 }
 
 .hero-badge-wrapper {
@@ -233,7 +233,7 @@
   background: var(--color-gold-muted);
   border: 1px solid var(--color-border-active);
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 600;
   color: var(--color-gold-primary);
   margin-bottom: var(--space-6);
 }
@@ -247,7 +247,7 @@
 
 .hero-title-main {
   font-size: 48px;
-  font-weight: 900;
+  font-weight: 700;
   line-height: 1.3;
   color: var(--color-text-primary);
   max-width: 840px;
@@ -295,7 +295,7 @@
 }
 .hero-stat-number {
   font-size: 24px;
-  font-weight: 900;
+  font-weight: 700;
   color: var(--color-text-primary);
 }
 .hero-stat-label {
@@ -356,7 +356,7 @@
 .showcase-tab-btn.active {
   border-color: var(--color-gold-primary);
   background: var(--color-gold-muted);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-btn-primary);
 }
 
 .showcase-tab-icon {
@@ -377,7 +377,7 @@
 
 .showcase-tab-title {
   font-size: 16px;
-  font-weight: 800;
+  font-weight: 600;
   color: var(--color-text-primary);
   margin-bottom: 2px;
 }
@@ -432,7 +432,7 @@
 }
 .mockup-app-title {
   font-size: 15px;
-  font-weight: 900;
+  font-weight: 700;
   color: var(--color-text-primary);
 }
 
@@ -454,7 +454,7 @@
 }
 .mockup-stat-num {
   font-size: 20px;
-  font-weight: 900;
+  font-weight: 700;
   color: var(--color-gold-primary);
 }
 .mockup-stat-lbl {
@@ -474,7 +474,7 @@
 }
 .mockup-debt-name {
   font-size: 12.5px;
-  font-weight: 800;
+  font-weight: 600;
   color: var(--color-text-primary);
 }
 .mockup-debt-sub {
@@ -483,7 +483,7 @@
 }
 .mockup-debt-val {
   font-size: 13px;
-  font-weight: 900;
+  font-weight: 700;
   color: var(--color-danger);
 }
 
@@ -527,7 +527,7 @@
   background: var(--color-bg-input);
   font-family: inherit;
   font-size: 12.5px;
-  font-weight: 800;
+  font-weight: 600;
   color: var(--color-text-secondary);
   cursor: pointer;
   transition: all var(--transition-fast);
@@ -637,7 +637,7 @@
 
 .feature-title {
   font-size: 19px;
-  font-weight: 800;
+  font-weight: 600;
   color: var(--color-text-primary);
   margin-bottom: var(--space-3);
 }
@@ -694,7 +694,7 @@
   background: var(--color-gold-primary);
   color: white;
   font-size: 12px;
-  font-weight: 900;
+  font-weight: 700;
   padding: 4px 14px;
   border-radius: var(--radius-full);
   box-shadow: var(--shadow-gold);
@@ -702,7 +702,7 @@
 
 .plan-name {
   font-size: 22px;
-  font-weight: 900;
+  font-weight: 700;
   color: var(--color-text-primary);
   margin-bottom: 4px;
 }
@@ -720,12 +720,12 @@
 }
 .plan-price {
   font-size: 46px;
-  font-weight: 900;
+  font-weight: 700;
   color: var(--color-text-primary);
 }
 .plan-currency {
   font-size: 18px;
-  font-weight: 800;
+  font-weight: 600;
   color: var(--color-gold-primary);
   margin-right: 6px;
 }
@@ -784,7 +784,7 @@
   border: 2px solid var(--color-gold-primary);
   color: var(--color-gold-primary);
   font-size: 20px;
-  font-weight: 900;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -793,7 +793,7 @@
 
 .step-title {
   font-size: 18px;
-  font-weight: 800;
+  font-weight: 600;
   color: var(--color-text-primary);
   margin-bottom: var(--space-2);
 }
@@ -841,7 +841,7 @@
   color: var(--color-text-primary);
   font-family: inherit;
   font-size: 16px;
-  font-weight: 800;
+  font-weight: 600;
   text-align: right;
   cursor: pointer;
   display: flex;
@@ -868,7 +868,7 @@
 }
 .footer-logo {
   font-size: 28px;
-  font-weight: 900;
+  font-weight: 700;
   color: var(--color-text-primary);
   text-decoration: none;
   display: inline-block;
@@ -1050,7 +1050,7 @@
 
 .modal-title {
   font-size: 17px;
-  font-weight: 900;
+  font-weight: 700;
   color: var(--color-text-primary);
   margin: 0;
   display: flex;
@@ -1092,7 +1092,7 @@
 .form-label {
   display: block;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 600;
   color: var(--color-text-primary);
   margin-bottom: var(--space-2);
 }
@@ -1106,7 +1106,7 @@
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-md);
   color: var(--color-text-primary);
-  font-family: 'Cairo', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 600;
   transition: all var(--transition-fast);

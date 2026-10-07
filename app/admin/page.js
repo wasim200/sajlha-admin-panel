@@ -146,21 +146,21 @@ export default function DashboardPage() {
             <ResponsiveContainer>
               <ComposedChart data={analytics?.monthlyData || []} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" opacity={0.5} />
-                <XAxis dataKey="month" tick={{ fontFamily: "Cairo", fontSize: 12, fill: "var(--color-text-tertiary)" }} />
-                <YAxis yAxisId="left" tick={{ fontFamily: "Cairo", fontSize: 12, fill: "var(--color-text-tertiary)" }} />
-                <YAxis yAxisId="right" orientation="right" tick={{ fontFamily: "Cairo", fontSize: 12, fill: "var(--color-text-tertiary)" }} />
+                <XAxis dataKey="month" tick={{ fontFamily: "Inter", fontSize: 12, fill: "var(--color-text-tertiary)" }} />
+                <YAxis yAxisId="left" tick={{ fontFamily: "Inter", fontSize: 12, fill: "var(--color-text-tertiary)" }} />
+                <YAxis yAxisId="right" orientation="right" tick={{ fontFamily: "Inter", fontSize: 12, fill: "var(--color-text-tertiary)" }} />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: "var(--chart-tooltip-bg)",
                     borderColor: "var(--chart-tooltip-border)",
                     borderRadius: "12px",
-                    fontFamily: "Cairo",
+                    fontFamily: "Inter",
                     textAlign: "right",
                     color: "var(--color-text-primary)",
                   }}
                   labelStyle={{ fontWeight: "bold", color: "var(--color-text-primary)" }}
                 />
-                <Legend wrapperStyle={{ fontFamily: "Cairo", fontSize: 12 }} />
+                <Legend wrapperStyle={{ fontFamily: "Inter", fontSize: 12 }} />
                 <Bar yAxisId="left" dataKey="registrations" name="تسجيلات جديدة" fill="var(--chart-bar)" radius={[6, 6, 0, 0]} />
                 <Line yAxisId="right" type="monotone" dataKey="revenue" name="الإيرادات ($)" stroke="var(--chart-line)" strokeWidth={3} dot={{ r: 5, fill: "var(--chart-line)" }} />
               </ComposedChart>
@@ -196,7 +196,7 @@ export default function DashboardPage() {
                     backgroundColor: "var(--chart-tooltip-bg)",
                     borderColor: "var(--chart-tooltip-border)",
                     borderRadius: "12px",
-                    fontFamily: "Cairo",
+                    fontFamily: "Inter",
                     textAlign: "right",
                     color: "var(--color-text-primary)",
                   }}
