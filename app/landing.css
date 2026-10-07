@@ -99,7 +99,6 @@
   z-index: 100;
   background: var(--color-paper-white);
   /* backdrop-filter removed for arcade */
-  -webkit-/* backdrop-filter removed for arcade */
   border-bottom: 1px solid var(--color-border);
   transition: all var(--transition-normal);
 }
