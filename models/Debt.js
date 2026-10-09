@@ -19,7 +19,8 @@ const DebtSchema = new mongoose.Schema({
   details: { type: String, default: '' },
   date: { type: String, required: true },
   due_date: { type: String, default: null },
-  attachment_path: { type: String, default: '' }, // We will store the Cloud URL here later
+  attachment_path: { type: String, default: '' },
+  base64_data: { type: String, default: '' }, // لتخزين الصور مؤقتاً
 }, { 
   timestamps: true 
 });

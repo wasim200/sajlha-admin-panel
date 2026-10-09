@@ -19,6 +19,7 @@ const CashbookEntrySchema = new mongoose.Schema({
   notes: { type: String, default: '' },
   payment_method: { type: String, default: 'cash' },
   attachment_path: { type: String, default: '' },
+  base64_data: { type: String, default: '' },
   local_customer_id: { type: Number, default: null }, // Maps to customer_id in SQLite
 }, { 
   timestamps: true 
