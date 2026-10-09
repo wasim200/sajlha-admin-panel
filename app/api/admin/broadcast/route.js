@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import dbConnect from '../../../../lib/db';
 import Broadcast from '../../../../models/Broadcast';
 
+export const dynamic = 'force-dynamic';
+
 // ذاكرة مؤقتة احتياطية
 let inMemoryBroadcasts = [
   {

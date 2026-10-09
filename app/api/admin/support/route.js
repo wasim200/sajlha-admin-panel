@@ -4,6 +4,8 @@ import SupportTicket from '../../../../models/SupportTicket';
 import AdminLog from '../../../../models/AdminLog';
 import { checkRateLimit, rateLimitResponse } from '../../../../lib/rateLimit';
 
+export const dynamic = 'force-dynamic';
+
 function checkAuth(request) {
   const rateCheck = checkRateLimit(request, {
     maxRequests: 10,

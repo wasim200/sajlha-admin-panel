@@ -8,6 +8,8 @@ import Activity from '../../../../models/Activity';
 import CashbookEntry from '../../../../models/CashbookEntry';
 import DebtAttachment from '../../../../models/DebtAttachment';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
