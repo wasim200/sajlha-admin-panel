@@ -5,16 +5,7 @@ import Broadcast from '../../../../models/Broadcast';
 export const dynamic = 'force-dynamic';
 
 // ذاكرة مؤقتة احتياطية
-let inMemoryBroadcasts = [
-  {
-    id: 'bc_welcome_2026',
-    title: '🎉 مرحباً بك في الإصدار الجديد 2.5 من سجلها!',
-    body: 'تم إضافة ميزات كشف الحساب المصور الفاخر، معرض الفواتير المتعددة، والبحث الذكي الشامل للسلع والمبالغ.',
-    type: 'release',
-    date: new Date().toISOString(),
-    actionRoute: '/stats',
-  },
-];
+let inMemoryBroadcasts = [];
 
 export async function GET(request) {
   try {
