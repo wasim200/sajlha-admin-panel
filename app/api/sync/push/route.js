@@ -59,13 +59,15 @@ export async function POST(request) {
     if (deleted.customers && deleted.customers.length > 0) {
       deletePromises.push(Customer.deleteMany({ merchant_id, local_id: { $in: deleted.customers } }));
       // Cascade delete
+      const debtsToDelete = await Debt.find({ merchant_id, local_customer_id: { $in: deleted.customers } }, 'local_id');
+      const debtIdsToDelete = debtsToDelete.map(d => d.local_id);
+      
       deletePromises.push(Debt.deleteMany({ merchant_id, local_customer_id: { $in: deleted.customers } }));
       deletePromises.push(Payment.deleteMany({ merchant_id, local_customer_id: { $in: deleted.customers } }));
       deletePromises.push(Activity.deleteMany({ merchant_id, local_customer_id: { $in: deleted.customers } }));
-      
-      // Since we don't have local_customer_id on DebtAttachment directly, we skip cascade deleting them here
-      // and rely on the fact that if a debt is deleted, its attachments are theoretically orphaned.
-      // But we can delete them if we fetch the debt ids first, which is too complex here.
+      if (debtIdsToDelete.length > 0) {
+        deletePromises.push(DebtAttachment.deleteMany({ merchant_id, local_debt_id: { $in: debtIdsToDelete } }));
+      }
     }
     if (deleted.debts && deleted.debts.length > 0) {
       deletePromises.push(Debt.deleteMany({ merchant_id, local_id: { $in: deleted.debts } }));
