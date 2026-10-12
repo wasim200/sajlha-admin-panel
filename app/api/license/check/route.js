@@ -27,8 +27,11 @@ export async function POST(request) {
 
     // الأولوية 2: إذا لم يجد شيئاً أو لم يكن المستخدم مسجلاً، نبحث برقم الجهاز
     if (!license && device_id) {
-      // جلب أحدث رخصة نشطة أو غير موقوفة تخص هذا الجهاز
-      license = await License.findOne({ device_id }).sort({ created_at: -1 });
+      // جلب أحدث رخصة نشطة أو غير موقوفة تخص هذا الجهاز أولاً
+      license = await License.findOne({ device_id, status: 'active' }).sort({ created_at: -1 });
+      if (!license) {
+        license = await License.findOne({ device_id }).sort({ created_at: -1 });
+      }
     }
 
     if (!license) {
@@ -41,7 +44,7 @@ export async function POST(request) {
     if (app_version) {
       license.app_version = app_version;
     }
-    if (device_id && !license.device_id) {
+    if (device_id) {
       license.device_id = device_id;
     }
     license.last_seen_at = new Date();
