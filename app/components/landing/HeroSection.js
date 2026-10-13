@@ -9,7 +9,7 @@ export default function HeroSection() {
           <div style={{ textAlign: "center" }}>
             <div className="hero-badge-wrapper">
               <span className="hero-badge-dot" />
-              <span>جيل جديد من الذكاء الاصطناعي للمحلات التجارية v2.5</span>
+              <span>جيل جديد من الذكاء الاصطناعي لتسجيل ديون عملائك v2.5</span>
             </div>
           </div>
 
@@ -27,13 +27,13 @@ export default function HeroSection() {
           <div className="hero-ctas-group">
             <a href="#pricing" className="btn-primary btn-gold" style={{ padding: "16px 36px", fontSize: 16 }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
               </svg>
               تفعيل التطبيق واختيار الباقة
             </a>
             <a href="#ai-demo" className="btn-outline" style={{ padding: "16px 32px", fontSize: 16 }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/>
+                <circle cx="12" cy="12" r="10" /><polygon points="10 8 16 12 10 16 10 8" />
               </svg>
               تجربة الـ AI مباشرة
             </a>
